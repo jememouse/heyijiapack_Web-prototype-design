@@ -1,0 +1,2295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智盒工坊 (iboxify) - 在线包装定制平台</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="智盒工坊 (iboxify) - 专业在线包装定制平台。提供卡盒、礼品盒、飞机盒等各类包装盒小批量定制服务。在线即时报价，快速打样，高品质生产交付。">
+    <meta name="keywords" content="包装定制, 包装盒, 礼品盒, 在线定制, 飞机盒, 小批量定制, 印刷厂, 包装设计, 电商包装, 化妆品包装盒">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
+
+    <!-- JSON-LD for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "智盒工坊 (iboxify)",
+      "url": "https://www.example.com",
+      "logo": "https://placehold.co/200x60/1E293B/FFFFFF?text=iboxify",
+      "description": "智盒工坊 (iboxify) - 专业在线包装定制平台。提供卡盒、礼品盒、飞机盒等各类包装盒小批量定制服务。在线即时报价，快速打样，高品质生产交付。",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+86-021-8888-8888",
+        "contactType": "Customer Service"
+      }
+    }
+    </script>
+
+    <style>
+        /* 自定义样式 */
+        body {
+            font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #F8FAFC;
+            color: #1E293B;
+        }
+
+        /* 订单状态时间轴的连接线样式 */
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 2.5rem;
+            width: 2px;
+            height: calc(100% - 1.5rem);
+            background-color: #E2E8F0; /* slate-200 */
+            z-index: -1;
+        }
+        
+        .timeline-item.active:not(:last-child)::after {
+            background-color: #3b82f6; /* blue-500 */
+        }
+
+        /* 产品卡片图片悬停效果 */
+        .product-card .image-container {
+            position: relative;
+            cursor: pointer;
+        }
+        .product-card .img-3d, .product-card .img-2d {
+            transition: opacity 0.3s ease-in-out;
+            backface-visibility: hidden;
+        }
+        .product-card .img-2d {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+        .product-card:hover .img-3d {
+            opacity: 0;
+        }
+        .product-card:hover .img-2d {
+            opacity: 1;
+        }
+
+        /* 隐藏数字输入框的默认箭头 */
+        input[type='number']::-webkit-inner-spin-button,
+        input[type='number']::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type='number'] {
+            -moz-appearance: textfield;
+        }
+        /* 导航激活状态 */
+        .sidebar-link.active {
+            background-color: #EFF6FF; /* bg-blue-50 */
+            color: #2563EB; /* text-blue-600 */
+            font-weight: 600;
+        }
+        /* Tab 激活状态 */
+        .tab-button.active {
+            border-color: #2563EB;
+            color: #2563EB;
+            font-weight: 600;
+        }
+        .order-tab-button.active {
+            border-color: #2563EB;
+            color: #2563EB;
+            font-weight: 600;
+        }
+        .auth-tab-button.active {
+            border-color: #2563EB;
+            color: #1E293B;
+        }
+        /* 优化: 主按钮渐变效果 */
+        .btn-primary {
+            background-image: linear-gradient(to bottom, #3B82F6, #2563EB);
+        }
+        .btn-primary:hover {
+            background-image: linear-gradient(to bottom, #2563EB, #1D4ED8);
+        }
+        /* FAQ 折叠面板 */
+        .faq-item details > summary {
+            list-style: none;
+        }
+        .faq-item details > summary::-webkit-details-marker {
+            display: none;
+        }
+        .faq-item details > summary .icon {
+            transition: transform 0.2s;
+        }
+        .faq-item details[open] > summary .icon {
+            transform: rotate(45deg);
+        }
+        
+        /* 新增: 购物车图标晃动动画 */
+        @keyframes cart-shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+        .cart-shake-animation {
+            animation: cart-shake 0.4s ease-in-out;
+        }
+        
+        /* Tooltip for customization options */
+        .tooltip-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            width: 220px;
+            background-color: #1E293B;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 8px 12px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-white text-slate-800">
+
+    <div id="app" class="min-h-screen flex flex-col">
+
+        <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-200">
+            <nav class="container mx-auto px-8 md:px-16 py-4 flex justify-between items-center">
+                <a href="#" onclick="showPage('homepage')" class="flex items-center space-x-2">
+                    <svg width="32" height="32" viewBox="0 0 24 24" class="text-blue-600"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 15h-2v-5h-4v5H9V9h2v4h2V9h2v8z"></path></svg>
+                    <span class="text-xl font-bold text-slate-900">智盒工坊</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" onclick="showPage('homepage')" class="text-slate-600 hover:text-blue-600">首页</a>
+                    <a href="#" onclick="showPage('product-center-page')" class="text-slate-600 hover:text-blue-600">在线定制</a>
+                    <a href="#" onclick="showPage('user-center-page')" class="text-slate-600 hover:text-blue-600">个人中心</a>
+                    <a href="#" onclick="showPage('solutions-page')" class="text-slate-600 hover:text-blue-600">解决方案</a>
+                    <a href="#" onclick="showPage('help-center-page')" class="text-slate-600 hover:text-blue-600">帮助中心</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#" onclick="openLoginModal()" class="text-slate-600 hover:text-blue-600 text-sm">登录/注册</a>
+                    <a href="#" onclick="showPage('shopping-cart-page')" id="cart-icon-container" class="relative flex items-center text-slate-600 hover:text-blue-600 transition-colors font-medium">
+                        <i data-lucide="shopping-cart" class="w-5 h-5 mr-1"></i>
+                        <span>我的购物车</span>
+                        <span id="cart-badge" class="ml-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                    </a>
+                    <button onclick="showPage('product-center-page')" class="btn-primary text-white px-5 py-2 rounded-lg font-semibold shadow-sm transition-all hidden sm:block">
+                        立即定制
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-grow">
+            
+            <div id="homepage" class="page">
+                <!-- Hero Section -->
+                <section class="bg-slate-900 text-white">
+                    <div class="container mx-auto px-8 md:px-16 py-24 md:py-32 text-center">
+                        <h1 class="text-5xl md:text-7xl font-bold tracking-tight">包装定制，从未如此简单。</h1>
+                        <p class="mt-6 text-lg md:text-xl text-slate-300 max-w-3xl mx-auto">
+                            从设计到交付，体验前所未有的流畅与高效。智盒工坊，为您的品牌注入新活力。
+                        </p>
+                        <div class="mt-10 flex justify-center items-center space-x-4">
+                            <button onclick="showPage('product-center-page')" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-500 transition-colors text-lg">
+                                开启定制之旅
+                            </button>
+                            <a href="#features" class="text-blue-400 hover:text-white font-semibold flex items-center text-lg">
+                                了解更多 <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="container mx-auto px-8 md:px-16 -mt-16">
+                        <img src="https://placehold.co/1200x600/1E293B/FFFFFF?text=智盒工坊包装定制" alt="智盒工坊定制的精美品牌包装盒展示" class="rounded-2xl shadow-2xl mx-auto">
+                    </div>
+                </section>
+
+                <!-- Features Section -->
+                <section id="features" class="py-24 sm:py-32 bg-white">
+                    <div class="container mx-auto px-8 md:px-16">
+                        <div class="text-center mb-20">
+                            <h2 class="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">为何选择智盒工坊?</h2>
+                            <p class="mt-4 text-lg text-slate-600">我们致力于解决传统包装行业的每一个痛点。</p>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-16 items-center">
+                            <div class="space-y-12">
+                                <div class="flex items-start space-x-6">
+                                    <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-lg p-3">
+                                        <i data-lucide="calculator" class="w-8 h-8"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-2xl font-semibold mb-2">即时透明报价</h3>
+                                        <p class="text-slate-600 text-lg leading-relaxed">输入参数，秒级获取精准报价，无任何隐藏费用，让您的预算尽在掌握。</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-6">
+                                    <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-lg p-3">
+                                        <i data-lucide="file-check-2" class="w-8 h-8"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-2xl font-semibold mb-2">专业文件处理</h3>
+                                        <p class="text-slate-600 text-lg leading-relaxed">专业工程师审核您的稿件，确保生产可行性，让您的创意完美落地。</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-12">
+                                <div class="flex items-start space-x-6">
+                                    <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-lg p-3">
+                                        <i data-lucide="gem" class="w-8 h-8"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-2xl font-semibold mb-2">优质供应链</h3>
+                                        <p class="text-slate-600 text-lg leading-relaxed">严选认证供应商，保证高品质生产与交付，让您的品牌更值得信赖。</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-6">
+                                    <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-lg p-3">
+                                        <i data-lucide="truck" class="w-8 h-8"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-2xl font-semibold mb-2">全程订单跟踪</h3>
+                                        <p class="text-slate-600 text-lg leading-relaxed">从文件处理到签收，每一步都清晰可见，让您随时随地掌握订单动态。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Application Scenarios Section -->
+                <section class="py-24 sm:py-32 bg-slate-50">
+                    <div class="container mx-auto px-8 md:px-16">
+                        <div class="text-center mb-20">
+                            <h2 class="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">适用于各类商业场景</h2>
+                            <p class="mt-4 text-lg text-slate-600">无论您是初创品牌还是成熟企业，我们都有适合您的包装解决方案。</p>
+                        </div>
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <div class="text-center">
+                                <img src="https://placehold.co/400x300/F1F5F9/1E293B?text=电商快递盒" alt="电商快递飞机盒定制" class="rounded-lg mb-4 shadow-md">
+                                <h3 class="text-2xl font-semibold">电商与零售</h3>
+                                <p class="text-slate-600 mt-2">为您的线上商店提供坚固且美观的快递包装盒，提升开箱体验。</p>
+                            </div>
+                            <div class="text-center">
+                                <img src="https://placehold.co/400x300/F1F5F9/1E293B?text=化妆品包装盒" alt="化妆品礼品盒定制" class="rounded-lg mb-4 shadow-md">
+                                <h3 class="text-2xl font-semibold">美妆护肤</h3>
+                                <p class="text-slate-600 mt-2">精致的化妆品包装盒，完美衬托您的产品，吸引消费者目光。</p>
+                            </div>
+                            <div class="text-center">
+                                <img src="https://placehold.co/400x300/F1F5F9/1E293B?text=电子产品包装" alt="3C电子产品包装盒定制" class="rounded-lg mb-4 shadow-md">
+                                <h3 class="text-2xl font-semibold">3C数码产品</h3>
+                                <p class="text-slate-600 mt-2">提供专业的结构设计和内托，为您的电子产品提供最佳保护。</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FAQ Section on Homepage -->
+                <section class="py-24 sm:py-32 bg-white">
+                    <div class="container mx-auto px-8 md:px-16 max-w-4xl">
+                        <div class="text-center mb-16">
+                             <h2 class="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">常见问题解答</h2>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="faq-item bg-slate-50 p-6 rounded-lg"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold text-lg">你们支持多大的起订量？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-600" style="line-height: 1.7;">我们支持小批量定制，大部分产品的最小起订量为100个，非常适合初创企业和新品试产。</div></details></div>
+                            <div class="faq-item bg-slate-50 p-6 rounded-lg"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold text-lg">从下单到收货需要多久？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-600" style="line-height: 1.7;">在您确认生产文件后，生产周期通常为7-10个工作日。具体时间取决于您定制包装盒的工艺复杂程度。</div></details></div>
+                             <div class="faq-item bg-slate-50 p-6 rounded-lg"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold text-lg">我没有设计文件怎么办？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-600" style="line-height: 1.7;">我们提供标准盒型的刀线模板文件供您下载。您只需将设计内容填充进去即可。我们的印前工程师也会对您的文件进行专业审核，确保符合印刷标准。</div></details></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div id="customization-page" class="page hidden">
+                 <div class="container mx-auto px-8 md:px-16 py-12">
+                    <div class="grid lg:grid-cols-5 gap-12">
+                        <div class="lg:col-span-3">
+                            <div class="bg-white rounded-xl shadow-sm sticky top-28 p-4">
+                                <div class="aspect-w-4 aspect-h-3 bg-slate-100 rounded-lg flex items-center justify-center">
+                                    <img src="https://placehold.co/800x600/E2E8F0/4A5568?text=通用彩盒" alt="通用彩盒" id="customization-preview-img" class="max-w-full max-h-full object-contain">
+                                </div>
+                                <div class="mt-4 px-2">
+                                    <h3 class="text-lg font-semibold" id="customization-title">通用彩盒</h3>
+                                    <p class="text-sm text-slate-500 mt-1" id="customization-desc">根据您的需求，定制高品质通用彩盒。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <h2 class="text-2xl font-bold mb-6" id="customization-header">通用彩盒 定制</h2>
+                            <div class="space-y-6">
+                                <!-- 1. 输入尺寸 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">1. 输入尺寸 *</h3>
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div><label for="length" class="block text-sm font-medium text-slate-700">长 (L)</label><div class="mt-1 relative rounded-md shadow-sm"><input type="number" name="length" id="length" value="200" oninput="updateQuote()" class="w-full p-2 border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500"><div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"><span class="text-slate-500 sm:text-sm">mm</span></div></div></div>
+                                        <div><label for="width" class="block text-sm font-medium text-slate-700">宽 (W)</label><div class="mt-1 relative rounded-md shadow-sm"><input type="number" name="width" id="width" value="150" oninput="updateQuote()" class="w-full p-2 border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500"><div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"><span class="text-slate-500 sm:text-sm">mm</span></div></div></div>
+                                        <div><label for="height" class="block text-sm font-medium text-slate-700">高 (H)</label><div class="mt-1 relative rounded-md shadow-sm"><input type="number" name="height" id="height" value="50" oninput="updateQuote()" class="w-full p-2 border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500"><div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"><span class="text-slate-500 sm:text-sm">mm</span></div></div></div>
+                                    </div>
+                                </div>
+                                <!-- 2. 选择材料 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">2. 选择材料</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-700 mb-2">纸张类型 *</label>
+                                            <div id="material-type-options" class="grid grid-cols-2 gap-3">
+                                                <!-- Material options will be generated by JS -->
+                                            </div>
+                                        </div>
+                                        <div id="grammage-options-container">
+                                            <!-- Grammage options will be generated by JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 3. 图案印制方式 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">3. 图案印制方式</h3>
+                                    <div class="space-y-3">
+                                        <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 block">
+                                            <div class="flex items-center justify-between">
+                                                <span class="font-semibold text-sm">精美数码印刷</span>
+                                                <input type="radio" name="printing-method" value="digital" onchange="toggleSpotColorOptions(this.value)" class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                            </div>
+                                            <p class="text-xs text-slate-500 mt-1">适合小批量、色彩鲜艳的设计，无专色选项。</p>
+                                        </label>
+                                        
+                                        <div class="border rounded-lg has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500" id="offset-printing-option">
+                                            <label class="p-3 cursor-pointer block" for="printing-offset">
+                                                <div class="flex items-center justify-between">
+                                                    <span class="font-semibold text-sm">胶印方式</span>
+                                                    <input type="radio" id="printing-offset" name="printing-method" value="offset" onchange="toggleSpotColorOptions(this.value)" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                                </div>
+                                                 <p class="text-xs text-slate-500 mt-1">适合大批量生产，默认包含CMYK，可增加专色。</p>
+                                            </label>
+                                            <!-- Spot Color Options (conditionally shown) -->
+                                            <div id="spot-color-options" class="hidden p-4 border-t border-slate-200 mt-2 space-y-3">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-slate-700 mb-2">专色数量</label>
+                                                     <div class="flex items-center gap-2">
+                                                        <label class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-white has-[:checked]:border-blue-600 text-sm"><input type="radio" name="printing-spot-color" value="0" data-price-factor="0" onchange="updateQuote()" class="sr-only" checked> 无</label>
+                                                        <label class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-white has-[:checked]:border-blue-600 text-sm"><input type="radio" name="printing-spot-color" value="1" data-price-factor="0.2" onchange="updateQuote()" class="sr-only"> 1个</label>
+                                                        <label class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-white has-[:checked]:border-blue-600 text-sm"><input type="radio" name="printing-spot-color" value="2" data-price-factor="0.4" onchange="updateQuote()" class="sr-only"> 2个</label>
+                                                        <label class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-white has-[:checked]:border-blue-600 text-sm"><input type="radio" name="printing-spot-color" value="3" data-price-factor="0.6" onchange="updateQuote()" class="sr-only"> 3个</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-slate-100 has-[:checked]:border-slate-400 flex items-center justify-between">
+                                            <span class="font-semibold text-sm">不印刷</span>
+                                            <input type="radio" name="printing-method" value="none" onchange="toggleSpotColorOptions(this.value)" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- 4. 表面处理 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">4. 表面处理</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-500 mb-2">覆膜类</p>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input type="radio" name="surface-treatment" value="哑胶/哑膜" data-price-factor="1.1" onchange="updateQuote()" class="sr-only" checked><span class="font-semibold text-sm">哑胶/哑膜</span><p class="text-xs text-slate-500 mt-1">表面哑光，手感舒适</p></label>
+                                                <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input type="radio" name="surface-treatment" value="光胶/光膜" data-price-factor="1.1" onchange="updateQuote()" class="sr-only"><span class="font-semibold text-sm">光胶/光膜</span><p class="text-xs text-slate-500 mt-1">表面光亮，防水防污</p></label>
+                                                <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input type="radio" name="surface-treatment" value="防刮花哑膜" data-price-factor="1.4" onchange="updateQuote()" class="sr-only"><span class="font-semibold text-sm">防刮花哑膜</span><p class="text-xs text-slate-500 mt-1">耐磨防刮，触感高级</p></label>
+                                                <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input type="radio" name="surface-treatment" value="防刮花光膜" data-price-factor="1.4" onchange="updateQuote()" class="sr-only"><span class="font-semibold text-sm">防刮花光膜</span><p class="text-xs text-slate-500 mt-1">耐磨防刮，更光亮</p></label>
+                                                <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input type="radio" name="surface-treatment" value="镭射膜" data-price-factor="1.8" onchange="updateQuote()" class="sr-only"><span class="font-semibold text-sm">镭射膜</span><p class="text-xs text-slate-500 mt-1">炫彩金属光泽效果</p></label>
+                                                <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input type="radio" name="surface-treatment" value="触感膜" data-price-factor="1.6" onchange="updateQuote()" class="sr-only"><span class="font-semibold text-sm">触感膜</span><p class="text-xs text-slate-500 mt-1">如肌肤般柔软触感</p></label>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-500 mb-2">上光/过油类</p>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input type="radio" name="surface-treatment" value="光油" data-price-factor="1.05" onchange="updateQuote()" class="sr-only"><span class="font-semibold text-sm">光油</span><p class="text-xs text-slate-500 mt-1">提升光泽，保护印面</p></label>
+                                                <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input type="radio" name="surface-treatment" value="哑油" data-price-factor="1.05" onchange="updateQuote()" class="sr-only"><span class="font-semibold text-sm">哑油</span><p class="text-xs text-slate-500 mt-1">哑光质感，保护印面</p></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 5. 装饰工艺 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">5. 装饰工艺</h3>
+                                    <div id="special-processes-container" class="space-y-4">
+                                        <!-- Process options will be rendered here by JS -->
+                                    </div>
+                                </div>
+                                <!-- 6. 配件 & 7. 服务 -->
+                                <div class="grid grid-cols-2 gap-6">
+                                    <div>
+                                        <h3 class="text-lg font-semibold mb-3">6. 配件</h3>
+                                        <div class="space-y-3">
+                                            <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between"><span class="font-semibold text-sm">塑料手提</span><input type="checkbox" name="accessories" value="塑料手提" data-price-factor="0.5" onchange="updateQuote()"></label>
+                                            <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between"><span class="font-semibold text-sm">手提绳</span><input type="checkbox" name="accessories" value="手提绳" data-price-factor="0.4" onchange="updateQuote()"></label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold mb-3">7. 服务</h3>
+                                        <div class="space-y-3">
+                                            <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between"><span class="font-semibold text-sm">适配</span><input type="checkbox" name="services" value="适配" data-price-factor="50" onchange="updateQuote()"></label>
+                                            <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between"><span class="font-semibold text-sm">橡皮筋打包</span><input type="checkbox" name="services" value="橡皮筋打包" data-price-factor="20" onchange="updateQuote()"></label>
+                                            <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between"><span class="font-semibold text-sm">有样跟色</span><input type="checkbox" name="services" value="有样跟色" data-price-factor="100" onchange="updateQuote()"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 8. 打样服务 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">8. 打样服务</h3>
+                                    <div class="space-y-3">
+                                        <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <span class="font-semibold text-sm">3D数字展示</span>
+                                            <input type="checkbox" name="sampling-service" value="3D数字展示" data-price-factor="100" onchange="updateQuote()">
+                                        </label>
+                                        <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <span class="font-semibold text-sm">结构白样</span>
+                                            <input type="checkbox" name="sampling-service" value="结构白样" data-price-factor="200" onchange="updateQuote()">
+                                        </label>
+                                        <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <span class="font-semibold text-sm">平面色样</span>
+                                            <input type="checkbox" name="sampling-service" value="平面色样" data-price-factor="150" onchange="updateQuote()">
+                                        </label>
+                                        <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <span class="font-semibold text-sm">全工艺大货样</span>
+                                            <input type="checkbox" name="sampling-service" value="全工艺大货样" data-price-factor="500" onchange="updateQuote()">
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- 9. 输入数量 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">9. 输入数量 *</h3>
+                                    <input type="number" name="quantity" id="quantity" value="500" oninput="updateQuote()" class="w-full p-2 border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                            <!-- 价格 -->
+                            <div class="bg-white rounded-xl shadow-sm p-6 mt-6 sticky bottom-6">
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between items-center text-slate-600"><span>产品单价</span><span id="unit-price" class="font-medium text-slate-800">¥ 0.00</span></div>
+                                    <div class="flex justify-between items-center text-slate-600"><span>产品总价</span><span id="subtotal-price" class="font-medium text-slate-800">¥ 0.00</span></div>
+                                    <div class="flex justify-between items-center text-slate-600"><span>物流费用</span><span id="logistics-fee" class="font-medium text-slate-800">¥ 0.00</span></div>
+                                    <div class="flex justify-between items-center text-slate-600"><span>预计货期</span><span id="lead-time" class="font-medium text-slate-800">-</span></div>
+                                </div>
+                                <div class="border-t border-slate-200 my-4"></div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg font-semibold">总计价</span>
+                                    <span id="total-price" class="text-2xl font-bold text-blue-600">¥ 0.00</span>
+                                </div>
+                                <button onclick="handleAddToCart()" class="mt-6 w-full btn-primary text-white px-8 py-3 rounded-lg font-bold text-base transition-all">加入购物车</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="shopping-cart-page" class="page hidden">
+                <div class="container mx-auto px-8 md:px-16 py-12">
+                    <h1 class="text-4xl font-bold mb-8">购物车</h1>
+                    <div class="grid lg:grid-cols-3 gap-12">
+                        <div id="cart-items-container" class="lg:col-span-2 space-y-6">
+                            <!-- Cart items will be rendered here by JS -->
+                        </div>
+                        <aside class="lg:col-span-1">
+                            <div class="bg-white rounded-xl shadow-sm p-6 sticky top-28">
+                                <h2 class="text-xl font-semibold mb-4">订单摘要</h2>
+                                <div class="space-y-3 text-slate-600">
+                                    <div class="flex justify-between">
+                                        <span>商品小计</span>
+                                        <span id="cart-subtotal" class="font-medium text-slate-800">¥ 0.00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>运费</span>
+                                        <span id="cart-shipping" class="font-medium text-slate-800">¥ 0.00</span>
+                                    </div>
+                                </div>
+                                <div class="border-t border-slate-200 my-4"></div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg font-semibold">总计</span>
+                                    <span id="cart-total" class="text-2xl font-bold text-blue-600">¥ 0.00</span>
+                                </div>
+                                <button onclick="handleCheckout()" class="mt-6 w-full btn-primary text-white px-8 py-3 rounded-lg font-bold text-base transition-all">
+                                    前往结算
+                                </button>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+
+            <div id="checkout-page" class="page hidden">
+                <div class="container mx-auto px-8 md:px-16 py-12">
+                    <div class="flex items-center mb-8">
+                         <a href="#" onclick="showPage('shopping-cart-page')" class="text-slate-500 hover:text-blue-600 flex items-center">
+                            <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+                            返回购物车
+                        </a>
+                        <span class="mx-4 text-slate-300">|</span>
+                        <h1 class="text-4xl font-bold">确认订单</h1>
+                    </div>
+                    
+                    <div class="grid lg:grid-cols-3 gap-12">
+                        <div class="lg:col-span-2 space-y-8">
+                            <div class="bg-white rounded-xl shadow-sm p-8">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h2 class="text-2xl font-semibold">1. 收货地址</h2>
+                                    <button onclick="openAddressModal()" class="text-sm font-semibold text-blue-600 hover:underline">管理地址</button>
+                                </div>
+                                <div id="checkout-address-container" class="grid md:grid-cols-2 gap-4">
+                                    <!-- Address options will be rendered here -->
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl shadow-sm p-8">
+                                <h2 class="text-2xl font-semibold mb-6">2. 订单商品</h2>
+                                <div id="checkout-items-container" class="space-y-4">
+                                     <!-- Checkout items will be rendered here -->
+                                </div>
+                            </div>
+                             <div class="bg-white rounded-xl shadow-sm p-8">
+                                <h2 class="text-2xl font-semibold mb-6">3. 支付及发票</h2>
+                                <div class="space-y-6">
+                                    <div>
+                                        <h3 class="font-semibold mb-3">支付方式</h3>
+                                        <div class="flex space-x-4">
+                                            <label class="flex items-center p-4 border rounded-lg cursor-pointer has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 flex-1">
+                                                <input type="radio" name="payment" class="sr-only" checked>
+                                                <i data-lucide="zap" class="w-6 h-6 text-blue-500 mr-3"></i>
+                                                <span class="font-semibold">支付宝</span>
+                                            </label>
+                                             <label class="flex items-center p-4 border rounded-lg cursor-pointer has-[:checked]:border-green-500 has-[:checked]:bg-green-50 flex-1">
+                                                <input type="radio" name="payment" class="sr-only">
+                                                <i data-lucide="message-circle" class="w-6 h-6 text-green-500 mr-3"></i>
+                                                <span class="font-semibold">微信支付</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold mb-3">发票信息</h3>
+                                         <p class="text-sm text-slate-600 p-4 bg-slate-50 rounded-lg">
+                                            默认抬头: 智盒工坊（上海）信息科技有限公司 <a href="#" onclick="showPage('user-center-page', {viewId: 'invoice-view'})" class="ml-2 font-semibold text-blue-600 hover:underline">修改</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <aside class="lg:col-span-1">
+                            <div class="bg-white rounded-xl shadow-sm p-6 sticky top-28">
+                                <h2 class="text-xl font-semibold mb-4">订单摘要</h2>
+                                <div class="space-y-3 text-slate-600">
+                                    <div class="flex justify-between">
+                                        <span>商品小计</span>
+                                        <span id="checkout-subtotal" class="font-medium text-slate-800">¥ 0.00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>运费</span>
+                                        <span id="checkout-shipping" class="font-medium text-slate-800">¥ 0.00</span>
+                                    </div>
+                                </div>
+                                <div class="border-t border-slate-200 my-4"></div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg font-semibold">应付总额</span>
+                                    <span id="checkout-total" class="text-2xl font-bold text-blue-600">¥ 0.00</span>
+                                </div>
+                                <button onclick="handlePayment()" class="mt-6 w-full btn-primary text-white px-8 py-3 rounded-lg font-bold text-base transition-all">
+                                    提交订单并支付
+                                </button>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+
+            <div id="user-center-page" class="page hidden">
+                 <div class="container mx-auto px-8 md:px-16 py-12">
+                      <div class="grid lg:grid-cols-4 gap-8">
+                           <aside class="lg:col-span-1">
+                               <div class="bg-white p-4 rounded-xl shadow-sm h-fit sticky top-28">
+                                   <div class="flex items-center space-x-4 p-4 border-b border-slate-200">
+                                       <img src="https://placehold.co/64x64/E2E8F0/4A5568?text=头像" class="w-16 h-16 rounded-full" alt="用户头像">
+                                       <div>
+                                           <p class="font-semibold text-slate-900">李婷</p>
+                                           <p class="text-sm text-slate-500">企业认证用户</p>
+                                       </div>
+                                   </div>
+                                   <nav id="user-center-sidebar" class="py-2"></nav>
+                               </div>
+                           </aside>
+                           <main id="user-center-content" class="lg:col-span-3">
+                               <div id="dashboard-view" class="user-center-view"><div class="bg-white p-8 rounded-xl shadow-sm"><h1 class="text-3xl font-bold mb-2">欢迎回来, 李婷!</h1><p class="text-slate-600 mb-8">这是您的账户总览，祝您有美好的一天。</p><div class="grid sm:grid-cols-3 gap-6 mb-8"><div class="bg-slate-50 p-6 rounded-lg"><p class="text-sm text-slate-500">待处理订单</p><p class="text-3xl font-bold mt-1">3</p></div><div class="bg-slate-50 p-6 rounded-lg"><p class="text-sm text-slate-500">待收货</p><p class="text-3xl font-bold mt-1">1</p></div><div class="bg-slate-50 p-6 rounded-lg"><p class="text-sm text-slate-500">可用优惠券</p><p class="text-3xl font-bold mt-1">5</p></div></div><h2 class="text-xl font-semibold mb-4">最近订单</h2><div class="overflow-x-auto"><table class="w-full text-left"><thead class="bg-slate-50 text-sm text-slate-600"><tr><th class="p-4 font-semibold">订单号</th><th class="p-4 font-semibold">下单日期</th><th class="p-4 font-semibold">总金额</th><th class="p-4 font-semibold">状态</th><th class="p-4 font-semibold"></th></tr></thead><tbody><tr class="border-b border-slate-200"><td class="p-4">#...001</td><td class="p-4">2025-07-20</td><td class="p-4">¥1,250.00</td><td class="p-4"><span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">文件处理中</span></td><td class="p-4"><a href="#" onclick="showUserCenterView('order-detail-view')" class="font-semibold text-blue-600">查看</a></td></tr><tr class="border-b border-slate-200"><td class="p-4">#...985</td><td class="p-4">2025-07-18</td><td class="p-4">¥3,500.00</td><td class="p-4"><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">已发货</span></td><td class="p-4"><a href="#" onclick="showUserCenterView('order-detail-view')" class="font-semibold text-blue-600">查看</a></td></tr><tr class="border-b border-slate-200"><td class="p-4">#...752</td><td class="p-4">2025-07-15</td><td class="p-4">¥880.00</td><td class="p-4"><span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">已完成</span></td><td class="p-4"><a href="#" onclick="showUserCenterView('order-detail-view')" class="font-semibold text-blue-600">查看</a></td></tr></tbody></table></div></div></div>
+                               <div id="orders-view" class="user-center-view hidden"><div class="bg-white p-8 rounded-xl shadow-sm"><h1 class="text-3xl font-bold mb-6">我的订单</h1><div class="border-b border-slate-200"><nav class="-mb-px flex space-x-8" aria-label="Tabs"><button onclick="switchOrderTab(this, 'all')" class="order-tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">全部订单</button><button onclick="switchOrderTab(this, 'in-production')" class="order-tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">生产中</button><button onclick="switchOrderTab(this, 'shipped')" class="order-tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">待收货</button><button onclick="switchOrderTab(this, 'completed')" class="order-tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">已完成</button></nav></div><div id="orders-list-container" class="mt-6 space-y-6"></div></div></div>
+                               <div id="address-view" class="user-center-view hidden"><div class="bg-white p-8 rounded-xl shadow-sm"><div class="flex justify-between items-center mb-8"><h1 class="text-3xl font-bold">地址管理</h1><button onclick="openAddressModal()" class="btn-primary text-white px-5 py-2 rounded-lg font-semibold flex items-center space-x-2"><i data-lucide="plus" class="w-4 h-4"></i><span>新增收货地址</span></button></div><div class="grid md:grid-cols-2 gap-6"><div class="border-2 border-blue-500 p-6 rounded-xl relative"><div class="flex justify-between items-start"><div><p class="font-semibold text-slate-900">李婷 <span class="ml-2 text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">默认地址</span></p><p class="text-sm text-slate-600 mt-2">138****1234</p><p class="text-sm text-slate-600" style="line-height: 1.6;">上海市 浦东新区 世纪大道100号 东方明珠大厦 88层</p></div></div><div class="border-t border-slate-200 mt-4 pt-4 flex justify-end space-x-4 text-sm"><button class="text-slate-500 hover:text-blue-600 font-semibold">编辑</button><button class="text-slate-500 hover:text-red-600 font-semibold">删除</button></div></div><div class="border border-slate-200 p-6 rounded-xl"><div class="flex justify-between items-start"><div><p class="font-semibold text-slate-900">王经理</p><p class="text-sm text-slate-600 mt-2">159****5678</p><p class="text-sm text-slate-600" style="line-height: 1.6;">江苏省 苏州市 工业园区 星湖街328号 创意产业园 A栋 201室</p></div></div><div class="border-t border-slate-200 mt-4 pt-4 flex justify-end space-x-4 text-sm"><button class="text-blue-600 hover:text-blue-700 font-semibold">设为默认</button><button class="text-slate-500 hover:text-blue-600 font-semibold">编辑</button><button class="text-slate-500 hover:text-red-600 font-semibold">删除</button></div></div></div></div></div>
+                               <div id="invoice-view" class="user-center-view hidden"><div class="bg-white p-8 rounded-xl shadow-sm"><div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold">发票管理</h1><button onclick="openInvoiceModal()" class="btn-primary text-white px-5 py-2 rounded-lg font-semibold flex items-center space-x-2"><i data-lucide="plus" class="w-4 h-4"></i><span>申请开票</span></button></div><div class="border-b border-slate-200"><nav class="-mb-px flex space-x-8" aria-label="Tabs"><button onclick="switchTab(this, 'invoice-history')" class="tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">开票历史</button><button onclick="switchTab(this, 'invoice-info')" class="tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">发票抬头</button></nav></div><div id="invoice-history" class="tab-content mt-6"><div class="overflow-x-auto"><table class="w-full text-left"><thead class="bg-slate-50 text-sm text-slate-600"><tr><th class="p-4 font-semibold">申请日期</th><th class="p-4 font-semibold">发票号码</th><th class="p-4 font-semibold">开票金额</th><th class="p-4 font-semibold">状态</th><th class="p-4 font-semibold"></th></tr></thead><tbody><tr class="border-b border-slate-200"><td class="p-4">2025-07-21</td><td class="p-4">FP20250721001</td><td class="p-4">¥1,250.00</td><td class="p-4"><span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">已开具</span></td><td class="p-4"><a href="#" class="font-semibold text-blue-600">下载</a></td></tr><tr class="border-b border-slate-200"><td class="p-4">2025-07-19</td><td class="p-4">-</td><td class="p-4">¥3,500.00</td><td class="p-4"><span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">处理中</span></td><td class="p-4"></td></tr></tbody></table></div></div><div id="invoice-info" class="tab-content hidden mt-6"><div class="bg-slate-50 p-6 rounded-lg"><div class="flex justify-between items-center"><h3 class="text-lg font-semibold">默认发票抬头</h3><button class="text-sm font-semibold text-blue-600 hover:underline">编辑</button></div><div class="mt-4 space-y-2 text-sm text-slate-700" style="line-height: 1.7;"><p><strong>公司名称:</strong> 智盒工坊（上海）信息科技有限公司</p><p><strong>纳税人识别号:</strong> 91310000MA1FN12345</p><p><strong>注册地址:</strong> 上海市浦东新区世纪大道100号</p><p><strong>注册电话:</strong> 021-88888888</p><p><strong>开户银行:</strong> 中国工商银行上海分行</p><p><strong>银行账户:</strong> 6222021001001234567</p></div></div></div></div></div>
+                               <div id="distribution-view" class="user-center-view hidden">
+                                    <!-- Apply View -->
+                                    <div id="distribution-apply-view">
+                                        <div class="bg-white p-8 rounded-xl shadow-sm">
+                                            <h1 class="text-3xl font-bold text-slate-900">申请成为企业分销商</h1>
+                                            <p class="mt-2 text-slate-500">加入我们的分销网络，必须以公司主体的名义进行申请，共享成功，共创未来。</p>
+                                            <div class="mt-8 grid md:grid-cols-3 gap-8">
+                                                <div class="flex items-start space-x-4">
+                                                    <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-lg p-3"><i data-lucide="dollar-sign" class="w-6 h-6"></i></div>
+                                                    <div><h4 class="font-semibold">丰厚的佣金</h4><p class="text-sm text-slate-500 mt-1">根据您的推广业绩，享受行业领先的佣金回报。</p></div>
+                                                </div>
+                                                <div class="flex items-start space-x-4">
+                                                    <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-lg p-3"><i data-lucide="bar-chart-2" class="w-6 h-6"></i></div>
+                                                    <div><h4 class="font-semibold">透明的追踪</h4><p class="text-sm text-slate-500 mt-1">通过您的专属后台，实时追踪客户订单与佣金结算。</p></div>
+                                                </div>
+                                                <div class="flex items-start space-x-4">
+                                                    <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-lg p-3"><i data-lucide="award" class="w-6 h-6"></i></div>
+                                                    <div><h4 class="font-semibold">官方物料支持</h4><p class="text-sm text-slate-500 mt-1">我们提供专业的推广海报和素材，助您轻松开展业务。</p></div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-8 border-t border-slate-200 pt-8">
+                                                <h2 class="text-xl font-semibold">填写申请信息</h2>
+                                                <form class="mt-6 space-y-4 max-w-lg">
+                                                    <div><label for="dist-company-name" class="block text-sm font-medium text-slate-700">公司全称</label><input type="text" id="dist-company-name" placeholder="请输入工商注册的全称" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="dist-credit-code" class="block text-sm font-medium text-slate-700">统一社会信用代码</label><input type="text" id="dist-credit-code" placeholder="请输入18位统一社会信用代码" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="dist-contact-name" class="block text-sm font-medium text-slate-700">联系人姓名</label><input type="text" id="dist-contact-name" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="dist-contact-phone" class="block text-sm font-medium text-slate-700">联系电话</label><input type="text" id="dist-contact-phone" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div>
+                                                        <label class="block text-sm font-medium text-slate-700">营业执照</label>
+                                                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-md">
+                                                            <div class="space-y-1 text-center">
+                                                                <i data-lucide="file-up" class="mx-auto h-12 w-12 text-slate-400"></i>
+                                                                <div class="flex text-sm text-slate-600">
+                                                                    <label for="dist-license-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                                                                        <span>上传文件</span>
+                                                                        <input id="dist-license-upload" name="dist-license-upload" type="file" class="sr-only">
+                                                                    </label>
+                                                                    <p class="pl-1">或拖拽到此处</p>
+                                                                </div>
+                                                                <p class="text-xs text-slate-500">支持 PDF, JPG, PNG, 不超过10MB</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" onclick="handleDistributionApply()" class="btn-primary text-white px-6 py-2.5 rounded-lg font-semibold">提交申请</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Pending View -->
+                                    <div id="distribution-pending-view" class="hidden">
+                                        <div class="bg-white p-8 rounded-xl shadow-sm text-center">
+                                            <i data-lucide="loader-2" class="w-16 h-16 mx-auto text-blue-500 animate-spin"></i>
+                                            <h2 class="mt-6 text-2xl font-bold">申请已提交，等待审核</h2>
+                                            <p class="mt-2 text-slate-500">我们将在1-3个工作日内完成审核，请您耐心等待。</p>
+                                            <button onclick="simulateApproval()" class="mt-6 bg-slate-200 text-slate-700 px-5 py-2 rounded-lg font-semibold text-sm">（模拟）刷新审核状态</button>
+                                        </div>
+                                    </div>
+                                    <!-- Dashboard View (Approved) -->
+                                    <div id="distribution-dashboard-view" class="hidden">
+                                        <div class="bg-white p-8 rounded-xl shadow-sm">
+                                            <div class="flex justify-between items-center mb-8">
+                                                <h1 class="text-3xl font-bold">分销管理</h1>
+                                                <button onclick="openWithdrawalModal()" class="btn-primary text-white px-5 py-2 rounded-lg font-semibold">申请提现</button>
+                                            </div>
+                                            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                                                <div class="bg-slate-50 p-6 rounded-lg"><p class="text-sm text-slate-500">累计佣金</p><p id="dist-total-commission" class="text-3xl font-bold mt-1">¥0.00</p></div>
+                                                <div class="bg-slate-50 p-6 rounded-lg"><p class="text-sm text-slate-500">可提现佣金</p><p id="dist-withdrawable-commission" class="text-3xl font-bold mt-1 text-green-600">¥0.00</p></div>
+                                                <div class="bg-slate-50 p-6 rounded-lg"><p class="text-sm text-slate-500">我的客户</p><p id="dist-customer-count" class="text-3xl font-bold mt-1">0</p></div>
+                                                <div class="bg-slate-50 p-6 rounded-lg"><p class="text-sm text-slate-500">我的等级 / 佣金比例</p><div class="flex items-baseline mt-1"><p id="dist-level" class="text-3xl font-bold text-blue-600">青铜</p><p id="dist-rate" class="ml-2 text-lg font-semibold text-blue-600">/ 10%</p></div></div>
+                                            </div>
+                                            
+                                            <div class="grid lg:grid-cols-5 gap-8 mb-8">
+                                                <div class="lg:col-span-3 bg-slate-50 p-6 rounded-lg">
+                                                    <h3 class="text-lg font-semibold mb-4">我的专属推广</h3>
+                                                    <div class="flex items-center space-x-4">
+                                                        <div class="flex-grow">
+                                                            <label class="text-sm font-medium text-slate-700">推广链接</label>
+                                                            <div class="flex items-center mt-1">
+                                                                <input id="referral-link" type="text" value="https://www.iboxify.com/ref?code=USER123" readonly class="flex-grow p-3 bg-white border border-slate-300 rounded-l-md shadow-sm">
+                                                                <button onclick="copyReferralLink(this)" class="bg-white border-y border-r border-slate-300 px-4 py-3 rounded-r-md text-sm font-semibold hover:bg-slate-100 flex items-center space-x-2">
+                                                                    <i data-lucide="copy" class="w-4 h-4"></i><span id="copy-btn-text">复制</span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="text-center">
+                                                            <label class="text-sm font-medium text-slate-700">推广二维码</label>
+                                                            <img id="referral-qr-code" src="" alt="推广二维码" class="w-24 h-24 mt-1 rounded-md border p-1 bg-white">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="lg:col-span-2 bg-slate-50 p-6 rounded-lg">
+                                                    <h3 class="text-lg font-semibold mb-4">收益趋势 (近6个月)</h3>
+                                                    <div id="earnings-chart" class="h-32 flex items-end justify-around space-x-2">
+                                                        <!-- Chart bars will be rendered by JS -->
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="border-b border-slate-200">
+                                                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                                    <button onclick="switchTab(this, 'dist-orders')" class="tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">分销订单</button>
+                                                    <button onclick="switchTab(this, 'dist-customers')" class="tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">我的客户</button>
+                                                    <button onclick="switchTab(this, 'dist-withdrawals')" class="tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">提现记录</button>
+                                                </nav>
+                                            </div>
+                                            <div id="dist-orders" class="tab-content mt-6">
+                                                <div class="overflow-x-auto">
+                                                    <table class="w-full text-left">
+                                                        <thead class="bg-slate-50 text-sm text-slate-600"><tr><th class="p-4 font-semibold">订单号</th><th class="p-4 font-semibold">客户</th><th class="p-4 font-semibold">下单日期</th><th class="p-4 font-semibold">订单金额</th><th class="p-4 font-semibold">佣金</th><th class="p-4 font-semibold">状态</th></tr></thead>
+                                                        <tbody id="dist-orders-table-body"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div id="dist-customers" class="tab-content mt-6 hidden">
+                                                <div class="overflow-x-auto">
+                                                    <table class="w-full text-left">
+                                                        <thead class="bg-slate-50 text-sm text-slate-600"><tr><th class="p-4 font-semibold">客户昵称</th><th class="p-4 font-semibold">注册时间</th><th class="p-4 font-semibold">累计消费</th><th class="p-4 font-semibold">最近下单</th></tr></thead>
+                                                        <tbody id="dist-customers-table-body"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div id="dist-withdrawals" class="tab-content hidden mt-6">
+                                                <div class="overflow-x-auto">
+                                                    <table class="w-full text-left">
+                                                        <thead class="bg-slate-50 text-sm text-slate-600"><tr><th class="p-4 font-semibold">提现单号</th><th class="p-4 font-semibold">申请日期</th><th class="p-4 font-semibold">提现金额</th><th class="p-4 font-semibold">状态</th></tr></thead>
+                                                        <tbody id="dist-withdrawals-table-body"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-12">
+                                                <h3 class="text-2xl font-bold mb-6">推广物料</h3>
+                                                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                                    <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
+                                                        <img src="https://placehold.co/400x600/1E293B/FFFFFF?text=新品上市海报" alt="推广海报1" class="w-full h-auto object-cover">
+                                                        <div class="p-4 text-center">
+                                                            <button class="w-full bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-200">下载海报</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
+                                                        <img src="https://placehold.co/400x600/3B82F6/FFFFFF?text=优惠活动海报" alt="推广海报2" class="w-full h-auto object-cover">
+                                                        <div class="p-4 text-center">
+                                                            <button class="w-full bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-200">下载海报</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                               </div>
+                               <div id="coupons-view" class="user-center-view hidden"><div class="bg-white p-8 rounded-xl shadow-sm"><h1 class="text-3xl font-bold mb-8">我的优惠券</h1><div class="grid md:grid-cols-2 gap-6"><div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg flex justify-between"><div><p class="text-3xl font-bold">¥50</p><p class="text-sm opacity-80">满500元可用</p></div><div class="text-right"><p class="font-semibold">新人专享券</p><p class="text-xs opacity-70 mt-2">有效期至 2025-08-31</p></div></div><div class="bg-gradient-to-r from-slate-300 to-slate-400 text-white p-6 rounded-lg opacity-70 flex justify-between"><div><p class="text-3xl font-bold">¥100</p><p class="text-sm opacity-80">满1000元可用</p></div><div class="text-right"><p class="font-semibold">已使用</p><p class="text-xs opacity-70 mt-2">使用日期 2025-07-15</p></div></div></div></div></div>
+                               <div id="settings-view" class="user-center-view hidden"><div class="bg-white p-8 rounded-xl shadow-sm"><h1 class="text-3xl font-bold mb-8">账户设置</h1><div class="max-w-md"><h3 class="text-xl font-semibold mb-4">个人资料</h3><form class="space-y-4"><div><label class="block text-sm font-medium text-slate-700">昵称</label><input type="text" value="李婷" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm"></div><div><label class="block text-sm font-medium text-slate-700">联系电话</label><input type="text" value="138****1234" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm"></div><button type="submit" class="btn-primary text-white px-5 py-2 rounded-lg font-semibold">保存</button></form><div class="border-t border-slate-200 my-8"></div><h3 class="text-xl font-semibold mb-4">修改密码</h3><form class="space-y-4"><div><label class="block text-sm font-medium text-slate-700">当前密码</label><input type="password" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm"></div><div><label class="block text-sm font-medium text-slate-700">新密码</label><input type="password" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm"></div><div><label class="block text-sm font-medium text-slate-700">确认新密码</label><input type="password" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm"></div><button type="submit" class="btn-primary text-white px-5 py-2 rounded-lg font-semibold">确认修改</button></form></div></div></div>
+                                 <div id="order-detail-view" class="user-center-view hidden">
+                                     <div class="bg-white p-8 rounded-xl shadow-sm">
+                                         <div id="order-detail-breadcrumb" class="text-sm text-slate-500 mb-4"></div>
+                                         <h1 id="order-detail-title" class="text-3xl font-bold mb-8">订单详情</h1>
+                                         <div class="grid lg:grid-cols-3 gap-12">
+                                             <div class="lg:col-span-1">
+                                                 <h3 class="font-semibold mb-6">订单状态</h3>
+                                                 <div id="order-timeline" class="space-y-8"></div>
+                                             </div>
+                                             <div class="lg:col-span-2">
+                                                 <div id="contextual-action-box" class="bg-blue-50 p-6 rounded-xl mb-8"></div>
+                                                 <div id="order-detail-info">
+                                                     <!-- Order details will be rendered here -->
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                               <div id="after-sales-view" class="user-center-view hidden">
+                                   <div class="bg-white p-8 rounded-xl shadow-sm">
+                                       <div class="flex justify-between items-center mb-6">
+                                           <h1 class="text-3xl font-bold">售后处理</h1>
+                                           <button onclick="openAfterSalesModal()" class="btn-primary text-white px-5 py-2 rounded-lg font-semibold flex items-center space-x-2"><i data-lucide="plus" class="w-4 h-4"></i><span>申请售后</span></button>
+                                       </div>
+                                       <div class="border-b border-slate-200">
+                                           <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                               <button onclick="switchTab(this, 'as-processing')" class="tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">处理中</button>
+                                               <button onclick="switchTab(this, 'as-completed')" class="tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">已完成</button>
+                                           </nav>
+                                       </div>
+                                       <div id="as-processing" class="tab-content mt-6">
+                                           <div class="overflow-x-auto">
+                                               <table class="w-full text-left">
+                                                   <thead class="bg-slate-50 text-sm text-slate-600"><tr><th class="p-4 font-semibold">售后单号</th><th class="p-4 font-semibold">关联订单</th><th class="p-4 font-semibold">问题类型</th><th class="p-4 font-semibold">申请时间</th><th class="p-4 font-semibold">状态</th><th class="p-4 font-semibold"></th></tr></thead>
+                                                   <tbody>
+                                                       <tr class="border-b border-slate-200"><td class="p-4">SH20250722001</td><td class="p-4">#...001</td><td class="p-4">质量问题</td><td class="p-4">2025-07-22</td><td class="p-4"><span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">待审核</span></td><td class="p-4"><a href="#" class="font-semibold text-blue-600">查看详情</a></td></tr>
+                                                   </tbody>
+                                               </table>
+                                           </div>
+                                       </div>
+                                       <div id="as-completed" class="tab-content hidden mt-6">
+                                           <div class="text-center py-12 text-slate-500">
+                                               <i data-lucide="inbox" class="w-12 h-12 mx-auto"></i>
+                                               <p class="mt-2">暂无已完成的售后记录</p>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </main>
+                      </div>
+                 </div>
+            </div>
+
+            <div id="product-center-page" class="page hidden">
+                <div class="bg-white"><div class="container mx-auto px-8 md:px-16 py-12"><h1 class="text-5xl font-extrabold text-center mb-4 tracking-tight">开启您的包装定制之旅</h1><p class="text-center text-slate-600 max-w-2xl mx-auto" style="line-height: 1.7;">请根据您的产品需求，通过筛选或直接浏览，选择最合适的包装结构开始您的定制之旅。</p></div></div>
+                <div class="container mx-auto px-8 md:px-16 py-12">
+                    <div class="grid lg:grid-cols-4 gap-8">
+                        <aside class="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm h-fit sticky top-28">
+                            <h3 class="text-xl font-semibold mb-6">筛选产品</h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <h4 class="font-semibold mb-3">P - 包装域</h4>
+                                    <div class="space-y-2 text-sm">
+                                        <label class="flex items-center"><input type="radio" name="domain-filter" class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500" checked> <span class="ml-2 text-slate-700">P1. 纸质包装</span></label>
+                                        <label class="flex items-center"><input type="radio" name="domain-filter" class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500" disabled> <span class="ml-2 text-slate-400">P2. 塑料包装</span></label>
+                                        <label class="flex items-center"><input type="radio" name="domain-filter" class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500" disabled> <span class="ml-2 text-slate-400">P3. 金属包装</span></label>
+                                        <label class="flex items-center"><input type="radio" name="domain-filter" class="h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500" disabled> <span class="ml-2 text-slate-400">P4. 复合/其它包装</span></label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-3">包装类型</h4>
+                                    <div id="style-filter-group" class="space-y-2 text-sm">
+                                        <label class="flex items-center"><input type="checkbox" name="style-filter" value="折叠纸盒" class="h-4 w-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500" checked> <span class="ml-2 text-slate-700">折叠纸盒</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="style-filter" value="精品盒" class="h-4 w-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500" checked> <span class="ml-2 text-slate-700">精品盒</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="style-filter" value="瓦楞盒" class="h-4 w-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500" checked> <span class="ml-2 text-slate-700">瓦楞盒</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="style-filter" value="纸袋" class="h-4 w-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500" checked> <span class="ml-2 text-slate-700">纸袋</span></label>
+                                        <label class="flex items-center"><input type="checkbox" name="style-filter" value="纸管" class="h-4 w-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500" checked> <span class="ml-2 text-slate-700">纸管</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </aside>
+
+                        <main class="lg:col-span-3">
+                            <div class="space-y-20">
+                                <div class="product-category-section" data-category="折叠纸盒">
+                                    <h2 class="text-3xl font-semibold mb-8">折叠纸盒 / Folding Carton</h2>
+                                    <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                                        <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all" onclick="goToCustomization('双插盒', 'Tuck End Box | 上下盖均为插入式，组装便捷，是最常见的卡盒结构。', 'https://placehold.co/400x300/E2E8F0/4A5568?text=双插盒')"><div class="image-container bg-slate-100"><img class="img-3d w-full h-48 object-contain" src="https://placehold.co/400x300/E2E8F0/4A5568?text=双插盒" alt="双插盒 3D图"><img class="img-2d w-full h-48 object-contain p-4" src="https://placehold.co/400x300/ffffff/4A5568?text=2D展开图" alt="双插盒 2D图"></div><div class="p-5"><h3 class="text-lg font-bold">双插盒</h3><p class="text-xs text-slate-500 mt-1">Tuck End Box</p><button class="mt-4 w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button></div></div>
+                                        <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all" onclick="goToCustomization('锁底盒', 'Auto Lock Bottom Box | 底部为自动锁紧结构，承重能力强，适合稍有重量的产品。', 'https://placehold.co/400x300/E2E8F0/4A5568?text=锁底盒')"><div class="image-container bg-slate-100"><img class="img-3d w-full h-48 object-contain" src="https://placehold.co/400x300/E2E8F0/4A5568?text=锁底盒" alt="锁底盒 3D图"><img class="img-2d w-full h-48 object-contain p-4" src="https://placehold.co/400x300/ffffff/4A5568?text=2D展开图" alt="锁底盒 2D图"></div><div class="p-5"><h3 class="text-lg font-bold">锁底盒</h3><p class="text-xs text-slate-500 mt-1">Auto Lock Bottom Box</p><button class="mt-4 w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button></div></div>
+                                        <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all" onclick="goToCustomization('飞机盒', 'Mailer Box | 一体成型，无需胶带封箱，是电商发货最受欢迎的盒型之一。', 'https://placehold.co/400x300/E2E8F0/4A5568?text=飞机盒')"><div class="image-container bg-slate-100"><img class="img-3d w-full h-48 object-contain" src="https://placehold.co/400x300/E2E8F0/4A5568?text=飞机盒" alt="飞机盒 3D图"><img class="img-2d w-full h-48 object-contain p-4" src="https://placehold.co/400x300/ffffff/4A5568?text=2D展开图" alt="飞机盒 2D图"></div><div class="p-5"><h3 class="text-lg font-bold">飞机盒</h3><p class="text-xs text-slate-500 mt-1">Mailer Box</p><button class="mt-4 w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button></div></div>
+                                    </div>
+                                </div>
+                                <div class="product-category-section" data-category="精品盒">
+                                    <h2 class="text-3xl font-semibold mb-8">精品盒 / Rigid Box</h2>
+                                    <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                                         <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all" onclick="goToCustomization('天地盖盒', 'Lid and Base Box | 盒盖与盒身分离，档次高，是高端礼品、电子产品的常用选择。', 'https://placehold.co/400x300/E2E8F0/4A5568?text=天地盖盒')"><div class="image-container bg-slate-100"><img class="img-3d w-full h-48 object-contain" src="https://placehold.co/400x300/E2E8F0/4A5568?text=天地盖盒" alt="天地盖盒 3D图"><img class="img-2d w-full h-48 object-contain p-4" src="https://placehold.co/400x300/ffffff/4A5568?text=2D展开图" alt="天地盖盒 2D图"></div><div class="p-5"><h3 class="text-lg font-bold">天地盖盒</h3><p class="text-xs text-slate-500 mt-1">Lid and Base Box</p><button class="mt-4 w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button></div></div>
+                                         <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all" onclick="goToCustomization('抽屉盒', 'Drawer Box | 抽拉式开启，富有仪式感，适合珠宝、茶叶等精致礼品。', 'https://placehold.co/400x300/E2E8F0/4A5568?text=抽屉盒')"><div class="image-container bg-slate-100"><img class="img-3d w-full h-48 object-contain" src="https://placehold.co/400x300/E2E8F0/4A5568?text=抽屉盒" alt="抽屉盒 3D图"><img class="img-2d w-full h-48 object-contain p-4" src="https://placehold.co/400x300/ffffff/4A5568?text=2D展开图" alt="抽屉盒 2D图"></div><div class="p-5"><h3 class="text-lg font-bold">抽屉盒</h3><p class="text-xs text-slate-500 mt-1">Drawer Box</p><button class="mt-4 w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button></div></div>
+                                         <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all" onclick="goToCustomization('翻盖书型盒', 'Book-style Box | 如书本般翻开，常带磁铁吸附，体验感佳，应用广泛。', 'https://placehold.co/400x300/E2E8F0/4A5568?text=书型盒')"><div class="image-container bg-slate-100"><img class="img-3d w-full h-48 object-contain" src="https://placehold.co/400x300/E2E8F0/4A5568?text=书型盒" alt="书型盒 3D图"><img class="img-2d w-full h-48 object-contain p-4" src="https://placehold.co/400x300/ffffff/4A5568?text=2D展开图" alt="书型盒 2D图"></div><div class="p-5"><h3 class="text-lg font-bold">翻盖书型盒</h3><p class="text-xs text-slate-500 mt-1">Book-style Box</p><button class="mt-4 w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button></div></div>
+                                    </div>
+                                </div>
+                                <div class="product-category-section" data-category="瓦楞盒">
+                                    <h2 class="text-3xl font-semibold mb-8">瓦楞盒 / Corrugated Box</h2>
+                                    <div class="text-center py-12 bg-slate-100 rounded-lg"><p class="text-slate-500">此类产品即将上线，敬请期待！</p></div>
+                                </div>
+                                <div class="product-category-section" data-category="纸袋">
+                                    <h2 class="text-3xl font-semibold mb-8">纸袋 / Paper Bag</h2>
+                                    <div class="text-center py-12 bg-slate-100 rounded-lg"><p class="text-slate-500">此类产品即将上线，敬请期待！</p></div>
+                                </div>
+                                <div class="product-category-section" data-category="纸管">
+                                    <h2 class="text-3xl font-semibold mb-8">纸管 / Paper Tube</h2>
+                                    <div class="text-center py-12 bg-slate-100 rounded-lg"><p class="text-slate-500">此类产品即将上线，敬请期待！</p></div>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="solutions-page" class="page hidden">
+                <div class="bg-white"><div class="container mx-auto px-8 md:px-16 py-20 text-center"><h1 class="text-5xl font-extrabold text-slate-900 tracking-tight">端到端包装解决方案，为您的业务赋能</h1><p class="mt-6 text-lg text-slate-600 max-w-3xl mx-auto" style="line-height: 1.7;">我们不仅仅是一个交易平台，而是您业务增长的技术合作伙伴。智盒工坊通过四大核心支柱，重塑包装定制流程，助您降本增效，提升品牌价值。</p></div></div>
+                <div class="container mx-auto px-8 md:px-16 py-24">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
+                        <div><div class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto"><i data-lucide="cpu"></i></div><h3 class="text-2xl font-bold mt-6 mb-3">技术驱动</h3><p class="text-slate-500" style="line-height: 1.7;">从智能报价引擎到自动化派单，我们用技术替代繁琐的人工流程，实现秒级响应和最优的供应链匹配。</p></div>
+                        <div><div class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto"><i data-lucide="users"></i></div><h3 class="text-2xl font-bold mt-6 mb-3">服务核心</h3><p class="text-slate-500" style="line-height: 1.7;">专业的印前工程师团队为您审核稿件，确保您的创意100%符合生产标准，杜绝后顾之忧。</p></div>
+                        <div><div class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto"><i data-lucide="link"></i></div><h3 class="text-2xl font-bold mt-6 mb-3">供应链协同</h3><p class="text-slate-500" style="line-height: 1.7;">我们整合并认证数百家优质供应商，通过数字化协同门户，实现生产过程的透明化管理与高效交付。</p></div>
+                        <div><div class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto"><i data-lucide="database"></i></div><h3 class="text-2xl font-bold mt-6 mb-3">数据智能</h3><p class="text-slate-500" style="line-height: 1.7;">基于海量订单数据，我们能为您提供行业趋势分析与成本优化建议，让您的决策更科学。</p></div>
+                    </div>
+                    <div class="mt-24 bg-white p-12 rounded-2xl shadow-sm">
+                        <h2 class="text-4xl font-bold text-center text-slate-900 mb-12">为不同规模的企业量身定制</h2>
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <div class="border border-slate-200 p-8 rounded-xl"><h4 class="text-xl font-semibold mb-4">新消费品牌</h4><p class="text-slate-500" style="line-height: 1.7;">小批量起订，快速响应，助您以最低的试错成本，快速验证产品，抢占市场先机。</p></div>
+                            <div class="border border-slate-200 p-8 rounded-xl"><h4 class="text-xl font-semibold mb-4">电商卖家</h4><p class="text-slate-500" style="line-height: 1.7;">提供坚固可靠的快递包装方案，支持多地址发货，简化您的供应链管理，让您专注于销售。</p></div>
+                            <div class="border border-slate-200 p-8 rounded-xl"><h4 class="text-xl font-semibold mb-4">成熟企业</h4><p class="text-slate-500" style="line-height: 1.7;">提供标准化的采购流程、稳定的品质控制和透明的价格体系，成为您降本增效的可靠伙伴。</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="help-center-page" class="page hidden">
+                <div class="bg-white"><div class="container mx-auto px-8 md:px-16 py-20 text-center"><h1 class="text-5xl font-extrabold text-slate-900 tracking-tight">帮助中心</h1><p class="mt-6 text-lg text-slate-600 max-w-3xl mx-auto">我们在这里解答您的任何疑问。您可以通过搜索或分类查找快速找到答案。</p><div class="mt-8 max-w-lg mx-auto"><div class="relative"><input type="search" placeholder="例如：如何上传设计文件？" class="w-full p-4 pr-12 text-lg border-slate-300 rounded-full shadow-sm focus:ring-blue-500 focus:border-blue-500"><div class="absolute inset-y-0 right-0 flex py-1.5 pr-1.5"><button type="submit" class="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold text-white btn-primary"><i data-lucide="search" class="w-5 h-5"></i></button></div></div></div></div></div>
+                <div class="container mx-auto px-8 md:px-16 py-24">
+                    <div class="grid lg:grid-cols-4 gap-12">
+                        <div class="lg:col-span-1">
+                            <h2 class="text-2xl font-bold mb-6">问题分类</h2>
+                            <ul class="space-y-2">
+                                <li><a href="#faq-ordering" class="font-semibold text-blue-600">订购流程</a></li>
+                                <li><a href="#faq-design" class="font-semibold text-slate-600 hover:text-blue-600">设计与文件</a></li>
+                                <li><a href="#faq-production" class="font-semibold text-slate-600 hover:text-blue-600">生产与配送</a></li>
+                                <li><a href="#faq-account" class="font-semibold text-slate-600 hover:text-blue-600">账户与支付</a></li>
+                            </ul>
+                        </div>
+                        <div class="lg:col-span-3 space-y-16">
+                            <section id="faq-ordering">
+                                <h3 class="text-3xl font-bold mb-8 border-l-4 border-blue-600 pl-4">订购流程</h3>
+                                <div class="space-y-4">
+                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold">如何获取报价？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-500" style="line-height: 1.7;">在我们的“在线定制”页面，选择您需要的盒型，输入尺寸、材料、工艺和数量，系统将立即为您生成实时、透明的报价。</div></details></div>
+                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold">最小起订量是多少？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-500" style="line-height: 1.7;">我们支持小批量定制，大部分产品的最小起订量为100个。具体起订量会因产品类型和工艺复杂程度而异，您可以在定制页面看到具体的起订要求。</div></details></div>
+                                </div>
+                            </section>
+                             <section id="faq-design">
+                                <h3 class="text-3xl font-bold mb-8 border-l-4 border-blue-600 pl-4">设计与文件</h3>
+                                <div class="space-y-4">
+                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold">我应该上传什么格式的设计文件？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-500" style="line-height: 1.7;">我们建议您上传矢量格式的文件，如 Adobe Illustrator (.ai)、.pdf 或 .eps 格式，以确保最佳的印刷质量。对于位图文件，请确保分辨率至少为300 DPI。</div></details></div>
+                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold">你们提供设计服务吗？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-500" style="line-height: 1.7;">目前我们不直接提供创意设计服务，但我们专业的印前工程师团队会为您提供“文件规范化”服务。他们会检查您的设计稿，确保其符合生产标准，并进行专业的印前处理，如色彩模式转换（RGB转CMYK）、出血设置和拼版等。</div></details></div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="bg-white border-t border-slate-200 mt-16">
+            <div class="container mx-auto px-8 md:px-16 py-8"><div class="grid md:grid-cols-4 gap-8"><div><h3 class="font-semibold text-slate-800">智盒工坊</h3><p class="text-sm text-slate-600 mt-2">重塑包装定制行业</p></div><div><h4 class="font-semibold text-slate-500">导航</h4><ul class="mt-2 space-y-2 text-sm"><li><a href="#" onclick="showPage('product-center-page')" class="text-slate-600 hover:text-blue-600">在线定制</a></li><li><a href="#" onclick="showPage('solutions-page')" class="text-slate-600 hover:text-blue-600">解决方案</a></li><li><a href="#" onclick="showPage('help-center-page')" class="text-slate-600 hover:text-blue-600">帮助中心</a></li></ul></div><div><h4 class="font-semibold text-slate-500">支持</h4><ul class="mt-2 space-y-2 text-sm"><li><a href="#" onclick="showPage('help-center-page')" class="text-slate-600 hover:text-blue-600">帮助中心</a></li><li><a href="#" onclick="showPage('help-center-page')" class="text-slate-600 hover:text-blue-600">联系我们</a></li><li><a href="#" class="text-slate-600 hover:text-blue-600">服务条款</a></li></ul></div></div><div class="mt-8 border-t border-slate-200 pt-6 text-center text-sm text-slate-500">&copy; 2025 智盒工坊 (iboxify). All Rights Reserved.</div></div>
+        </footer>
+
+    </div>
+
+    <div id="address-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50"><div class="bg-white rounded-xl shadow-2xl w-full max-w-lg"><div class="flex justify-between items-center p-6 border-b border-slate-200"><h3 id="address-modal-title" class="text-xl font-semibold">新增收货地址</h3><button onclick="closeAddressModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button></div><div class="p-6"><form class="space-y-4"><div><label for="recipient-name" class="block text-sm font-medium text-slate-700">收货人姓名</label><input type="text" id="recipient-name" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></div><div><label for="recipient-phone" class="block text-sm font-medium text-slate-700">手机号码</label><input type="text" id="recipient-phone" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></div><div><label for="recipient-region" class="block text-sm font-medium text-slate-700">所在地区</label><input type="text" id="recipient-region" placeholder="例如：上海市 浦东新区" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></div><div><label for="recipient-address" class="block text-sm font-medium text-slate-700">详细地址</label><textarea id="recipient-address" rows="3" placeholder="街道、楼牌号等" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea></div><div class="flex items-center"><input id="set-default" name="set-default" type="checkbox" class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"><label for="set-default" class="ml-2 block text-sm text-slate-900">设为默认收货地址</label></div></form></div><div class="px-6 py-4 bg-slate-50 flex justify-end space-x-4 rounded-b-xl"><button onclick="closeAddressModal()" class="bg-white border border-slate-300 px-5 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50">取消</button><button onclick="closeAddressModal()" class="btn-primary text-white px-5 py-2 rounded-lg text-sm font-semibold">保存</button></div></div></div>
+    <div id="invoice-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50"><div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl"><div class="flex justify-between items-center p-6 border-b border-slate-200"><h3 class="text-xl font-semibold">申请开票</h3><button onclick="closeInvoiceModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button></div><div class="p-6"><p class="text-sm mb-4">请选择需要开具发票的订单（仅支持已完成的订单）。</p><div class="max-h-64 overflow-y-auto space-y-3 pr-2">
+        <label class="flex items-start p-4 border rounded-lg cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input type="checkbox" class="mt-1 h-4 w-4 rounded text-blue-600 border-slate-300"><div class="ml-3 flex-grow"><p class="font-semibold">订单 #...752</p><p class="text-xs text-slate-500">下单日期: 2025-07-15 | 金额: ¥880.00</p></div></label>
+        <label class="flex items-start p-4 border rounded-lg cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input type="checkbox" class="mt-1 h-4 w-4 rounded text-blue-600 border-slate-300"><div class="ml-3 flex-grow"><p class="font-semibold">订单 #...641</p><p class="text-xs text-slate-500">下单日期: 2025-06-28 | 金额: ¥1,500.00</p></div></label>
+    </div><div class="mt-4 border-t border-slate-200 pt-4 flex justify-between items-center"><p class="text-lg font-semibold">合计开票金额: <span class="text-blue-600">¥880.00</span></p></div></div><div class="px-6 py-4 bg-slate-50 flex justify-end"><button onclick="closeInvoiceModal()" class="btn-primary text-white px-5 py-2 rounded-lg text-sm font-semibold">提交申请</button></div></div></div>
+    <div id="after-sales-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50"><div class="bg-white rounded-xl shadow-2xl w-full max-w-lg"><div class="flex justify-between items-center p-6 border-b border-slate-200"><h3 class="text-xl font-semibold">申请售后</h3><button onclick="closeAfterSalesModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button></div><div class="p-6"><form class="space-y-4"><div><label class="block text-sm font-medium text-slate-700">选择订单</label><select class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"><option>订单 #...001 (双插盒)</option><option>订单 #...985 (飞机盒)</option></select></div><div><label class="block text-sm font-medium text-slate-700">问题类型</label><select class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"><option>质量问题</option><option>物流破损</option><option>数量短缺</option><option>其它</option></select></div><div><label class="block text-sm font-medium text-slate-700">问题描述</label><textarea rows="4" placeholder="请详细描述您遇到的问题..." class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea></div><div><label class="block text-sm font-medium text-slate-700">上传凭证</label><div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-md"><div class="space-y-1 text-center"><i data-lucide="image" class="mx-auto h-12 w-12 text-slate-400"></i><div class="flex text-sm text-slate-600"><label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none"><span>上传文件</span><input id="file-upload" name="file-upload" type="file" class="sr-only"></label><p class="pl-1">或拖拽到此处</p></div><p class="text-xs text-slate-500">支持 PNG, JPG, GIF, 不超过10MB</p></div></div></div></form></div><div class="px-6 py-4 bg-slate-50 flex justify-end"><button onclick="closeAfterSalesModal()" class="btn-primary text-white px-5 py-2 rounded-lg text-sm font-semibold">提交申请</button></div></div></div>
+    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">欢迎来到智盒工坊</h2>
+                    <button onclick="closeLoginModal()" class="text-slate-400 hover:text-slate-600">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <div class="border-b border-slate-200 mb-6">
+                    <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                        <button onclick="switchAuthTab(this, 'login-form')" class="auth-tab-button active whitespace-nowrap pb-3 px-1 border-b-2 font-semibold text-sm">登录</button>
+                        <button onclick="switchAuthTab(this, 'register-form')" class="auth-tab-button text-slate-500 hover:text-slate-700 hover:border-transparent whitespace-nowrap pb-3 px-1 border-b-2 font-medium text-sm">企业注册</button>
+                    </nav>
+                </div>
+                <div id="login-form" class="auth-tab-content">
+                    <form class="space-y-6">
+                        <div><label for="login-email" class="block text-sm font-medium text-slate-700">邮箱/手机号</label><input type="text" id="login-email" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3"></div>
+                        <div><label for="login-password" class="block text-sm font-medium text-slate-700">密码</label><input type="password" id="login-password" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3"></div>
+                        <div class="flex items-center justify-between"><a href="#" class="text-sm text-blue-600 hover:underline">忘记密码?</a></div>
+                        <button type="button" onclick="handleLogin()" class="w-full btn-primary text-white py-3 rounded-lg font-bold text-base">登录</button>
+                    </form>
+                </div>
+                <div id="register-form" class="auth-tab-content hidden">
+                    <p class="text-sm text-center text-slate-500 mb-4">仅支持企业用户注册</p>
+                    <form class="space-y-4">
+                        <div><label for="reg-company-name" class="block text-sm font-medium text-slate-700">公司全称</label><input type="text" id="reg-company-name" placeholder="请输入工商注册的全称" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3"></div>
+                        <div><label for="reg-contact-name" class="block text-sm font-medium text-slate-700">联系人</label><input type="text" id="reg-contact-name" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3"></div>
+                        <div><label for="reg-email" class="block text-sm font-medium text-slate-700">联系邮箱/手机号</label><input type="text" id="reg-email" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3"></div>
+                        <div><label for="reg-password" class="block text-sm font-medium text-slate-700">设置密码</label><input type="password" id="reg-password" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3"></div>
+                        <div><label for="reg-confirm-password" class="block text-sm font-medium text-slate-700">确认密码</label><input type="password" id="reg-confirm-password" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3"></div>
+                        <button type="button" onclick="handleRegister()" class="w-full btn-primary text-white py-3 rounded-lg font-bold text-base mt-6">同意协议并注册</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="order-success-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm text-center p-8">
+            <i data-lucide="check-circle-2" class="w-20 h-20 mx-auto text-green-500"></i>
+            <h2 class="text-2xl font-bold mt-6">订单提交成功!</h2>
+            <p class="text-slate-500 mt-2">为确保生产顺利，请前往订单详情页上传生产文件及商标授权文件。</p>
+            <button onclick="closeOrderSuccessModalAndGoToUpload()" class="mt-6 w-full btn-primary text-white py-3 rounded-lg font-bold text-base">前往上传文件</button>
+        </div>
+    </div>
+    <div id="payment-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm">
+            <div class="flex justify-between items-center p-6 border-b border-slate-200">
+                <h3 class="text-xl font-semibold">请支付订单</h3>
+                <button onclick="closePaymentModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="p-8 text-center">
+                <p class="text-slate-600">支付金额</p>
+                <p class="text-4xl font-bold my-2"><span id="payment-amount"></span></p>
+                <img src="https://placehold.co/250x250/E2E8F0/4A5568?text=模拟支付二维码" alt="QR Code" class="mx-auto rounded-lg mt-4">
+                <p class="text-sm text-slate-500 mt-4">请使用支付宝或微信扫码支付</p>
+            </div>
+            <div class="px-6 py-4 bg-slate-50 flex flex-col space-y-3 rounded-b-xl">
+                 <button onclick="confirmPayment()" class="w-full btn-primary text-white py-3 rounded-lg font-bold text-base">我已完成支付</button>
+                 <button onclick="closePaymentModal()" class="w-full bg-transparent text-sm text-slate-600 hover:underline">取消支付</button>
+            </div>
+        </div>
+    </div>
+    <div id="withdrawal-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+             <div class="flex justify-between items-center p-6 border-b border-slate-200">
+                <h3 class="text-xl font-semibold">申请提现</h3>
+                <button onclick="closeWithdrawalModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="p-8">
+                <form id="withdrawal-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">可提现金额</label>
+                        <p class="text-2xl font-bold mt-1 text-green-600" id="withdrawal-modal-amount">¥0.00</p>
+                    </div>
+                     <div>
+                        <label for="withdrawal-amount-input" class="block text-sm font-medium text-slate-700">提现金额</label>
+                        <input type="number" id="withdrawal-amount-input" placeholder="请输入提现金额" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">提现账户</label>
+                        <div id="withdrawal-account-list" class="mt-1 space-y-2">
+                           <!-- Account will be rendered here -->
+                        </div>
+                        <div id="add-account-form" class="hidden mt-4 p-4 border border-slate-200 rounded-lg space-y-3">
+                            <h4 class="font-semibold text-sm">新增提现账户</h4>
+                            <div><label for="bank-name" class="block text-xs font-medium text-slate-600">银行名称</label><input type="text" id="bank-name" placeholder="例如：中国工商银行" class="mt-1 block w-full text-sm border-slate-300 rounded-md shadow-sm p-2"></div>
+                            <div><label for="branch-name" class="block text-xs font-medium text-slate-600">支行名称</label><input type="text" id="branch-name" placeholder="例如：上海浦东分行" class="mt-1 block w-full text-sm border-slate-300 rounded-md shadow-sm p-2"></div>
+                            <div><label for="account-number" class="block text-xs font-medium text-slate-600">银行账号</label><input type="text" id="account-number" class="mt-1 block w-full text-sm border-slate-300 rounded-md shadow-sm p-2"></div>
+                            <div class="text-right">
+                                <button type="button" onclick="saveWithdrawalAccount()" class="bg-blue-100 text-blue-700 px-3 py-1 rounded-md text-xs font-semibold hover:bg-blue-200">保存账户</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="mt-6 p-4 bg-slate-50 rounded-lg text-sm text-slate-600">
+                    <h4 class="font-semibold mb-2">提现须知</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>每月15日结算上月已完成订单的佣金。</li>
+                        <li>最低提现金额为 100.00 元。</li>
+                        <li>提现申请将在3-5个工作日内处理。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-slate-50 flex justify-end rounded-b-xl">
+                 <button onclick="handleWithdrawal()" class="btn-primary text-white px-5 py-2 rounded-lg text-sm font-semibold">确认提现</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- 全局状态和数据 ---
+        let cart = [];
+        let lastOrderId = null;
+        let distributionStatus = 'none'; // 'none', 'pending', 'approved'
+        let withdrawalAccounts = []; // To store saved bank accounts
+
+        const userAddresses = [
+            { id: 1, name: '李婷', phone: '138****1234', address: '上海市 浦东新区 世纪大道100号 东方明珠大厦 88层', isDefault: true },
+            { id: 2, name: '王经理', phone: '159****5678', address: '江苏省 苏州市 工业园区 星湖街328号 创意产业园 A栋 201室', isDefault: false },
+        ];
+        let orders = [
+            { id: '20250720001', date: '2025-07-20', total: 1250.00, status: '文件处理中', statusId: 'processing', items: [{name: '飞机盒', specs: '200x150x50mm | E瓦楞 | 哑光覆膜', quantity: 500, imageUrl: 'https://placehold.co/100x100/E2E8F0/4A5568?text=飞机盒'}] },
+            { id: '20250718985', date: '2025-07-18', total: 3500.00, status: '已发货', statusId: 'shipped', items: [{name: '双插盒', specs: '100x80x40mm | 350g白卡纸 | 烫金', quantity: 1000, imageUrl: 'https://placehold.co/100x100/E2E8F0/4A5568?text=双插盒'}] },
+            { id: '20250715752', date: '2025-07-15', total: 880.00, status: '已完成', statusId: 'completed', items: [{name: '抽屉盒', specs: '120x120x60mm | 精品灰板 | 无工艺', quantity: 200, imageUrl: 'https://placehold.co/100x100/E2E8F0/4A5568?text=抽屉盒'}] },
+        ];
+        const distributionData = {
+            stats: {
+                level: "青铜分销员",
+                commissionRate: "10%"
+            },
+            orders: [
+                { id: 'D-001', customer: '张三', date: '2025-07-25', total: 550.00, commission: 55.00, status: '已结算' },
+                { id: 'D-002', customer: '王五', date: '2025-07-24', total: 1200.00, commission: 120.00, status: '已结算' },
+                { id: 'D-003', customer: '赵六', date: '2025-07-22', total: 300.00, commission: 30.00, status: '待结算' }
+            ],
+            customers: [
+                { name: '张三', joinDate: '2025-07-25', totalSpent: 550.00, lastOrderDate: '2025-07-25' },
+                { name: '王五', joinDate: '2025-07-24', totalSpent: 1200.00, lastOrderDate: '2025-07-24' },
+                { name: '赵六', joinDate: '2025-07-22', totalSpent: 300.00, lastOrderDate: '2025-07-22' }
+            ],
+            withdrawals: [
+                { id: 'W-001', date: '2025-07-20', amount: 150.00, status: '已完成' }
+            ],
+            monthlyEarnings: [
+                { month: '3月', earnings: 80 },
+                { month: '4月', earnings: 150 },
+                { month: '5月', earnings: 120 },
+                { month: '6月', earnings: 200 },
+                { month: '7月', earnings: 175 },
+                { month: '8月', earnings: 250 },
+            ]
+        };
+        
+        const materialData = {
+            "白卡纸": { "priceFactor": 1.0, "desc": "挺度好，印刷效果佳", "thicknesses": {
+                "0.45mm": [ 
+                    { "value": "305g", "factor": 1.0, "isDefault": true }, 
+                    { "value": "325g", "factor": 1.1 }, 
+                    { "value": "350g", "factor": 1.2 } 
+                ],
+                "0.55mm": [
+                    { "value": "345g", "factor": 1.05 }, 
+                    { "value": "365g", "factor": 1.1 }, 
+                    { "value": "400g", "factor": 1.2 } 
+                ]
+            }},
+            "粉灰纸": { "priceFactor": 0.9, "desc": "一面白一面灰，性价比高", "thicknesses": {
+                 "0.55mm": [
+                    { "value": "350g", "factor": 1.0, "isDefault": true }, 
+                    { "value": "400g", "factor": 1.1 } 
+                ]
+            }},
+        };
+        
+        // --- 辅助函数 ---
+        function renderIcons() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        // --- 页面导航逻辑 ---
+        const pages = document.querySelectorAll('.page');
+        const userCenterViews = document.querySelectorAll('.user-center-view');
+        
+        const sidebarTemplate = [
+            { id: 'dashboard-view', icon: 'layout-dashboard', text: '账户总览' },
+            { id: 'orders-view', icon: 'package', text: '我的订单' },
+            { id: 'order-detail-view', icon: 'file-search', text: '订单详情', isHidden: true },
+            { id: 'address-view', icon: 'map-pin', text: '地址管理' },
+            { id: 'invoice-view', icon: 'file-text', text: '发票管理' },
+            { id: 'after-sales-view', icon: 'wrench', text: '售后处理' },
+            { id: 'distribution-view', icon: 'share-2', text: '分销管理' },
+            { id: 'coupons-view', icon: 'ticket', text: '我的优惠券' },
+            { id: 'settings-view', icon: 'user-cog', text: '账户设置' },
+        ];
+
+        function showPage(pageId, context) {
+            pages.forEach(p => p.classList.add('hidden'));
+            const activePage = document.getElementById(pageId);
+            if (activePage) activePage.classList.remove('hidden');
+            
+            if (pageId === 'user-center-page') {
+                const viewId = context?.viewId || 'dashboard-view';
+                showUserCenterView(viewId, context);
+            } else if (pageId === 'shopping-cart-page') {
+                renderCart();
+            } else if (pageId === 'checkout-page') {
+                renderCheckoutPage();
+            } else if (pageId === 'customization-page') {
+                renderMaterialOptions();
+                renderSpecialProcesses();
+            }
+            
+            window.scrollTo(0, 0);
+            renderIcons();
+        }
+
+        function showUserCenterView(viewId, context) {
+            userCenterViews.forEach(v => v.classList.add('hidden'));
+            const activeView = document.getElementById(viewId);
+            if (activeView) activeView.classList.remove('hidden');
+            buildSidebar(document.getElementById('user-center-sidebar'), viewId);
+            
+            if (viewId === 'orders-view') {
+                renderOrdersPage();
+            } else if (viewId === 'order-detail-view') {
+                renderOrderDetailPage(context?.orderId);
+            } else if (viewId === 'distribution-view') {
+                renderDistributionParentView();
+            }
+            renderIcons();
+        }
+
+        function buildSidebar(container, activeViewId) {
+            if (!container) return;
+            container.innerHTML = '';
+            sidebarTemplate.forEach(item => {
+                if (item.isHidden) return;
+                const link = document.createElement('a');
+                link.href = '#';
+                link.className = `sidebar-link flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg ${item.id === activeViewId ? 'active' : ''}`;
+                link.onclick = (e) => { e.preventDefault(); showUserCenterView(item.id); };
+                link.innerHTML = `<i data-lucide="${item.icon}" class="w-5 h-5 mr-3"></i> ${item.text}`;
+                container.appendChild(link);
+            });
+            const logoutLink = document.createElement('a');
+            logoutLink.href = '#';
+            logoutLink.className = 'flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg mt-4 border-t border-slate-200';
+            logoutLink.onclick = (e) => { e.preventDefault(); showPage('homepage'); };
+            logoutLink.innerHTML = `<i data-lucide="log-out" class="w-5 h-5 mr-3"></i> 退出登录`;
+            container.appendChild(logoutLink);
+        }
+
+        // --- Modals Logic ---
+        const addressModal = document.getElementById('address-modal');
+        const invoiceModal = document.getElementById('invoice-modal');
+        const afterSalesModal = document.getElementById('after-sales-modal');
+        const loginModal = document.getElementById('login-modal');
+        const orderSuccessModal = document.getElementById('order-success-modal');
+        const paymentModal = document.getElementById('payment-modal');
+        const withdrawalModal = document.getElementById('withdrawal-modal');
+
+        function openAddressModal() { addressModal.classList.remove('hidden'); renderIcons(); }
+        function closeAddressModal() { addressModal.classList.add('hidden'); }
+        function openInvoiceModal() { invoiceModal.classList.remove('hidden'); renderIcons(); }
+        function closeInvoiceModal() { invoiceModal.classList.add('hidden'); }
+        function openAfterSalesModal() { afterSalesModal.classList.remove('hidden'); renderIcons(); }
+        function closeAfterSalesModal() { afterSalesModal.classList.add('hidden'); }
+        function openLoginModal() { loginModal.classList.remove('hidden'); renderIcons(); }
+        function closeLoginModal() { loginModal.classList.add('hidden'); }
+        function openOrderSuccessModal() { orderSuccessModal.classList.remove('hidden'); renderIcons(); }
+        function closeOrderSuccessModalAndGoToUpload() {
+            orderSuccessModal.classList.add('hidden');
+            showPage('user-center-page', { viewId: 'order-detail-view', orderId: lastOrderId });
+        }
+        function openPaymentModal(total) {
+            document.getElementById('payment-amount').textContent = `¥ ${total.toFixed(2)}`;
+            paymentModal.classList.remove('hidden'); 
+            renderIcons();
+        }
+        function closePaymentModal() { paymentModal.classList.add('hidden'); }
+        function openWithdrawalModal() { 
+            const withdrawableAmount = parseFloat(document.getElementById('dist-withdrawable-commission').textContent.replace('¥', ''));
+            document.getElementById('withdrawal-modal-amount').textContent = `¥${withdrawableAmount.toFixed(2)}`;
+            renderWithdrawalAccounts();
+            withdrawalModal.classList.remove('hidden');
+            renderIcons();
+        }
+        function closeWithdrawalModal() { 
+            withdrawalModal.classList.add('hidden'); 
+            document.getElementById('add-account-form').classList.add('hidden');
+        }
+
+        function renderWithdrawalAccounts() {
+            const container = document.getElementById('withdrawal-account-list');
+            if (withdrawalAccounts.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-4 bg-slate-50 rounded-lg">
+                        <p class="text-sm text-slate-500">暂无提现账户</p>
+                        <button type="button" onclick="showAddAccountForm()" class="mt-2 text-sm font-semibold text-blue-600 hover:underline">新增账户</button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = withdrawalAccounts.map((acc, index) => `
+                    <label class="block border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500">
+                        <input type="radio" name="withdrawal-account" value="${acc.id}" class="sr-only" ${index === 0 ? 'checked' : ''}>
+                        <p class="font-semibold text-sm">${acc.bankName}</p>
+                        <p class="text-xs text-slate-500 mt-1">${acc.branchName}</p>
+                        <p class="text-sm text-slate-600 mt-1 font-mono">**** **** **** ${acc.accountNumber.slice(-4)}</p>
+                    </label>
+                `).join('') + `<button type="button" onclick="showAddAccountForm()" class="mt-2 text-sm font-semibold text-blue-600 hover:underline">+ 新增其他账户</button>`;
+            }
+        }
+
+        function showAddAccountForm() {
+            document.getElementById('add-account-form').classList.remove('hidden');
+        }
+
+        function saveWithdrawalAccount() {
+            const bankName = document.getElementById('bank-name').value;
+            const branchName = document.getElementById('branch-name').value;
+            const accountNumber = document.getElementById('account-number').value;
+
+            if (!bankName || !branchName || !accountNumber) {
+                alert('请填写完整的账户信息');
+                return;
+            }
+
+            withdrawalAccounts.push({
+                id: `acc-${Date.now()}`,
+                bankName,
+                branchName,
+                accountNumber
+            });
+
+            document.getElementById('add-account-form').classList.add('hidden');
+            document.getElementById('bank-name').value = '';
+            document.getElementById('branch-name').value = '';
+            document.getElementById('account-number').value = '';
+            
+            renderWithdrawalAccounts();
+        }
+
+        function handleWithdrawal() {
+            if (withdrawalAccounts.length === 0) {
+                alert('请先添加一个提现账户');
+                return;
+            }
+            if (!document.querySelector('input[name="withdrawal-account"]:checked')) {
+                alert('请选择一个提现账户');
+                return;
+            }
+            const amount = document.getElementById('withdrawal-amount-input').value;
+            if (!amount || parseFloat(amount) <= 0) {
+                 alert('请输入有效的提现金额');
+                return;
+            }
+            alert('提现申请已提交！');
+            closeWithdrawalModal();
+        }
+
+        // --- Auth Modal Logic ---
+        function switchAuthTab(button, tabId) {
+            const parent = button.closest('.bg-white');
+            parent.querySelectorAll('.auth-tab-button').forEach(btn => btn.classList.remove('active', 'text-slate-900', 'border-blue-600'));
+            parent.querySelectorAll('.auth-tab-button').forEach(btn => btn.classList.add('text-slate-500', 'border-transparent'));
+            button.classList.add('active', 'text-slate-900', 'border-blue-600');
+            button.classList.remove('text-slate-500', 'border-transparent');
+            
+            parent.querySelectorAll('.auth-tab-content').forEach(content => content.classList.add('hidden'));
+            parent.querySelector(`#${tabId}`).classList.remove('hidden');
+        }
+        function handleLogin() {
+            closeLoginModal();
+            showPage('user-center-page');
+        }
+        function handleRegister() {
+            closeLoginModal();
+            showPage('user-center-page');
+        }
+
+        // --- Tab Switching Logic ---
+        function switchTab(button, tabId) {
+            const parent = button.closest('.bg-white, .user-center-view');
+            parent.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            parent.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+            parent.querySelector(`#${tabId}`).classList.remove('hidden');
+        }
+        
+        function switchOrderTab(button, status) {
+            const parent = button.closest('.bg-white');
+            parent.querySelectorAll('.order-tab-button').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            renderOrdersPage(status);
+        }
+
+        // --- 购物车与结算逻辑 ---
+        function updateCartIcon() {
+            const badge = document.getElementById('cart-badge');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (totalItems > 0) {
+                badge.textContent = totalItems;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function handleAddToCart() {
+            const name = document.getElementById('customization-title').textContent;
+            const length = document.getElementById('length').value;
+            const width = document.getElementById('width').value;
+            const height = document.getElementById('height').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const material = document.querySelector('input[name="material"]:checked')?.value || 'N/A';
+            const grammageValue = document.querySelector('input[name="grammage"]:checked')?.value || 'N/A';
+            const surfaceTreatment = document.querySelector('input[name="surface-treatment"]:checked')?.value || 'N/A';
+            
+            let printingSpec = [];
+            const printingMethod = document.querySelector('input[name="printing-method"]:checked').value;
+            
+            if (printingMethod === 'none') {
+                printingSpec.push('不印刷');
+            } else if (printingMethod === 'digital') {
+                printingSpec.push('精美数码印刷');
+            } else if (printingMethod === 'offset') {
+                const specParts = ['胶印方式 (CMYK'];
+                const spotColorCount = document.querySelector('input[name="printing-spot-color"]:checked').value;
+                if (spotColorCount > 0) {
+                    specParts.push(` + ${spotColorCount}个专色`);
+                }
+                specParts.push(')');
+                printingSpec.push(specParts.join(''));
+            }
+
+            // Collect special processes details
+            const specialProcesses = getSelectedProcessesDetails();
+            
+            const accessories = Array.from(document.querySelectorAll('input[name="accessories"]:checked')).map(el => el.value);
+            const services = Array.from(document.querySelectorAll('input[name="services"]:checked')).map(el => el.value);
+            const samplingServices = Array.from(document.querySelectorAll('input[name="sampling-service"]:checked')).map(el => el.value);
+            const unitPrice = parseFloat(document.getElementById('unit-price').textContent.replace('¥ ', ''));
+            const imageUrl = document.getElementById('customization-preview-img').src;
+
+            if (isNaN(quantity) || quantity <= 0) {
+                alert('请输入有效的数量');
+                return;
+            }
+
+            const specsArray = [
+                `${length}x${width}x${height}mm`,
+                `${material} ${grammageValue}`,
+                surfaceTreatment,
+                printingSpec.join(' + '),
+                ...specialProcesses,
+                ...accessories,
+                ...services,
+                ...samplingServices
+            ].filter(s => s && s !== '不处理' && s !== 'N/A' && s.trim() !== '');
+
+            const newItem = {
+                id: Date.now().toString(), // Use timestamp for unique ID
+                name: name,
+                imageUrl: imageUrl.replace('800x600', '100x100'),
+                specs: specsArray.join(' | '),
+                quantity: quantity,
+                unitPrice: unitPrice,
+            };
+
+            cart.push(newItem);
+
+            updateCartIcon();
+            
+            const cartIconContainer = document.getElementById('cart-icon-container');
+            cartIconContainer.classList.add('cart-shake-animation');
+            setTimeout(() => {
+                cartIconContainer.classList.remove('cart-shake-animation');
+            }, 400);
+
+            showPage('shopping-cart-page');
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            if (!container) return;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-xl shadow-sm p-12 text-center">
+                        <i data-lucide="shopping-cart" class="w-16 h-16 mx-auto text-slate-300"></i>
+                        <h2 class="mt-4 text-2xl font-semibold">您的购物车是空的</h2>
+                        <p class="mt-2 text-slate-500">快去“在线定制”页面，添加一些商品吧！</p>
+                        <button onclick="showPage('product-center-page')" class="mt-6 btn-primary text-white px-6 py-2 rounded-lg font-semibold">
+                            去定制
+                        </button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = cart.map(item => `
+                    <div class="bg-white rounded-xl shadow-sm p-6 flex items-start space-x-6">
+                        <img src="${item.imageUrl}" alt="${item.name}" class="w-24 h-24 rounded-md object-cover border">
+                        <div class="flex-grow">
+                            <h3 class="text-lg font-semibold">${item.name}</h3>
+                            <p class="text-sm text-slate-500 mt-1">${item.specs}</p>
+                            <p class="text-sm text-slate-500 mt-2">单价: ¥${item.unitPrice.toFixed(2)}</p>
+                        </div>
+                        <div class="flex-shrink-0 w-48 flex flex-col items-end justify-between h-full">
+                            <p class="text-lg font-bold text-slate-800">¥${(item.quantity * item.unitPrice).toFixed(2)}</p>
+                            <div class="flex items-center border border-slate-200 rounded-md mt-2">
+                                <button onclick="updateCartItemQuantity('${item.id}', -1)" class="px-3 py-1 text-slate-500 hover:bg-slate-100 rounded-l-md">-</button>
+                                <input type="text" value="${item.quantity}" class="w-12 text-center border-l border-r border-slate-200 focus:outline-none" readonly>
+                                <button onclick="updateCartItemQuantity('${item.id}', 1)" class="px-3 py-1 text-slate-500 hover:bg-slate-100 rounded-r-md">+</button>
+                            </div>
+                             <button onclick="removeCartItem('${item.id}')" class="mt-2 text-xs text-red-500 hover:underline">删除</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            calculateCartTotals();
+            renderIcons();
+        }
+        
+        function calculateCartTotals() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+            const shipping = subtotal > 0 ? 15.00 : 0;
+            const total = subtotal + shipping;
+
+            document.getElementById('cart-subtotal').textContent = `¥ ${subtotal.toFixed(2)}`;
+            document.getElementById('cart-shipping').textContent = `¥ ${shipping.toFixed(2)}`;
+            document.getElementById('cart-total').textContent = `¥ ${total.toFixed(2)}`;
+        }
+
+        function updateCartItemQuantity(itemId, change) {
+            const item = cart.find(i => i.id === itemId);
+            if (item) {
+                const newQuantity = item.quantity + change;
+                if (newQuantity > 0) item.quantity = newQuantity;
+                else removeCartItem(itemId);
+            }
+            renderCart();
+            updateCartIcon();
+        }
+
+        function removeCartItem(itemId) {
+            cart = cart.filter(i => i.id !== itemId);
+            renderCart();
+            updateCartIcon();
+        }
+
+        function handleCheckout() {
+            if (cart.length === 0) {
+                alert('您的购物车是空的！');
+                return;
+            }
+            showPage('checkout-page');
+        }
+
+        function renderCheckoutPage() {
+            const addressContainer = document.getElementById('checkout-address-container');
+            const itemsContainer = document.getElementById('checkout-items-container');
+
+            addressContainer.innerHTML = userAddresses.map(addr => `
+                <label class="border rounded-xl p-4 cursor-pointer has-[:checked]:border-blue-500 has-[:checked]:ring-2 has-[:checked]:ring-blue-200">
+                    <input type="radio" name="address" value="${addr.id}" class="sr-only" ${addr.isDefault ? 'checked' : ''}>
+                    <div class="flex justify-between items-start">
+                        <p class="font-semibold">${addr.name} ${addr.isDefault ? '<span class="ml-2 text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">默认</span>' : ''}</p>
+                        <p class="text-sm text-slate-500">${addr.phone}</p>
+                    </div>
+                    <p class="text-sm text-slate-600 mt-2">${addr.address}</p>
+                </label>
+            `).join('');
+
+            itemsContainer.innerHTML = cart.map(item => `
+                <div class="flex items-start space-x-4 py-4 border-b border-slate-200 last:border-b-0">
+                    <img src="${item.imageUrl}" alt="${item.name}" class="w-16 h-16 rounded-md object-cover border">
+                    <div class="flex-grow">
+                        <p class="font-semibold">${item.name}</p>
+                        <p class="text-xs text-slate-500 mt-1">${item.specs}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-semibold">¥${(item.quantity * item.unitPrice).toFixed(2)}</p>
+                        <p class="text-sm text-slate-500">x${item.quantity}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+            const shipping = subtotal > 0 ? 15.00 : 0;
+            const total = subtotal + shipping;
+            document.getElementById('checkout-subtotal').textContent = `¥ ${subtotal.toFixed(2)}`;
+            document.getElementById('checkout-shipping').textContent = `¥ ${shipping.toFixed(2)}`;
+            document.getElementById('checkout-total').textContent = `¥ ${total.toFixed(2)}`;
+        }
+
+        function handlePayment() {
+            if (cart.length === 0) return;
+            const subtotal = cart.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+            const total = subtotal + (subtotal > 0 ? 15.00 : 0);
+            openPaymentModal(total);
+        }
+
+        function confirmPayment() {
+            closePaymentModal();
+            
+            const subtotal = cart.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+            const total = subtotal + (subtotal > 0 ? 15.00 : 0);
+            
+            const newOrder = {
+                id: `20250726${Math.floor(Math.random() * 1000)}`,
+                date: new Date().toLocaleDateString('zh-CN').replace(/\//g, '-'),
+                total: total,
+                status: '文件待上传',
+                statusId: 'placed',
+                items: JSON.parse(JSON.stringify(cart)) // Deep copy
+            };
+
+            orders.unshift(newOrder);
+            lastOrderId = newOrder.id;
+
+            openOrderSuccessModal();
+            cart = [];
+            updateCartIcon();
+        }
+
+        // --- 订单页面逻辑 ---
+        function renderOrdersPage(filterStatus = 'all') {
+            const container = document.getElementById('orders-list-container');
+            if (!container) return;
+            
+            const filteredOrders = orders.filter(order => {
+                if (filterStatus === 'all') return true;
+                if (filterStatus === 'in-production') return ['placed', 'processing', 'confirming', 'production'].includes(order.statusId);
+                return order.statusId === filterStatus;
+            });
+
+            if (filteredOrders.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="inbox" class="w-12 h-12 mx-auto"></i><p class="mt-2">暂无相关订单</p></div>`;
+            } else {
+                container.innerHTML = filteredOrders.map(order => {
+                    const firstItem = order.items[0];
+                    return `
+                    <div class="order-card border border-slate-200 rounded-lg">
+                        <div class="bg-slate-50 px-6 py-3 flex justify-between items-center text-sm rounded-t-lg">
+                            <div><span class="font-semibold">订单号:</span> <span class="text-slate-600">${order.id}</span></div>
+                            <div><span class="font-semibold">下单时间:</span> <span class="text-slate-600">${order.date}</span></div>
+                            <div class="font-semibold text-blue-600">${order.status}</div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-start space-x-6">
+                                <img src="${firstItem.imageUrl}" alt="${firstItem.name}" class="w-24 h-24 rounded-md object-cover">
+                                <div class="flex-grow">
+                                    <h4 class="font-semibold">${firstItem.name} ${order.items.length > 1 ? `等 ${order.items.length} 件商品` : ''}</h4>
+                                    <p class="text-sm text-slate-500 mt-1">${firstItem.specs}</p>
+                                    <p class="text-sm text-slate-500">数量: ${firstItem.quantity}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-lg font-bold">¥${order.total.toFixed(2)}</p>
+                                </div>
+                            </div>
+                            <div class="border-t border-slate-200 mt-4 pt-4 flex justify-end space-x-3">
+                                <button onclick="showUserCenterView('order-detail-view', { orderId: '${order.id}' })" class="bg-white border border-slate-300 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50">查看详情</button>
+                                <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">再次购买</button>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            }
+            renderIcons();
+        }
+        
+        // --- 订单详情页逻辑 ---
+        const orderStates = [ 
+            { id: 'placed', name: '已下单', icon: 'shopping-cart' }, 
+            { id: 'processing', name: '文件处理中', icon: 'file-cog' }, 
+            { id: 'confirming', name: '待用户确认', icon: 'user-check' }, 
+            { id: 'production', name: '生产中', icon: 'factory' }, 
+            { id: 'shipped', name: '已发货', icon: 'truck' }, 
+            { id: 'completed', name: '已完成', icon: 'check-circle-2' },
+        ];
+
+        function renderOrderDetailPage(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) {
+                document.getElementById('order-detail-view').innerHTML = `<p>订单不存在</p>`;
+                return;
+            }
+
+            document.getElementById('order-detail-breadcrumb').innerHTML = `
+                <a href="#" onclick="showUserCenterView('dashboard-view')" class="hover:underline">我的账户</a> &gt; 
+                <a href="#" onclick="showUserCenterView('orders-view')" class="hover:underline">我的订单</a> &gt; 
+                <span>订单 #${order.id}</span>
+            `;
+            document.getElementById('order-detail-title').textContent = `订单详情`;
+
+            const timelineContainer = document.getElementById('order-timeline');
+            const currentStatusIndex = orderStates.findIndex(s => s.id === order.statusId);
+            timelineContainer.innerHTML = orderStates.map((state, index) => {
+                const isActive = index <= currentStatusIndex;
+                return `
+                <div class="relative flex items-start timeline-item ${isActive ? 'active' : ''}">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-4 ${isActive ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-500'}">
+                        <i data-lucide="${state.icon}" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold ${isActive ? 'text-slate-800' : 'text-slate-500'}">${state.name}</p>
+                        ${isActive ? `<p class="text-xs text-slate-500 mt-1">${index === currentStatusIndex ? '进行中...' : '已完成'}</p>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+
+            const infoContainer = document.getElementById('order-detail-info');
+            const address = userAddresses.find(a => a.isDefault);
+            infoContainer.innerHTML = `
+                <h3 class="text-xl font-semibold mb-4">订单信息</h3>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-semibold text-slate-800 mb-3">收货信息</h4>
+                        <p class="text-slate-600">${address.name}</p>
+                        <p class="text-slate-600">${address.phone}</p>
+                        <p class="text-slate-600">${address.address}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800 mb-3">产品列表</h4>
+                        <ul class="space-y-2 text-sm text-slate-600">
+                            ${order.items.map(item => `<li><strong>${item.name} (x${item.quantity})</strong>: ${item.specs}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+                <div class="border-t border-slate-200 my-6"></div>
+                <div class="text-right">
+                    <p class="text-slate-600">商品总价: <span class="font-semibold text-slate-800">¥${(order.total - 15).toFixed(2)}</span></p>
+                    <p class="text-slate-600">运费: <span class="font-semibold text-slate-800">¥15.00</span></p>
+                    <p class="mt-2 text-lg">实付款: <span class="font-bold text-2xl text-red-600">¥${order.total.toFixed(2)}</span></p>
+                </div>`;
+
+            updateContextualBox(order);
+        }
+
+        function updateContextualBox(order) {
+            const contextualBox = document.getElementById('contextual-action-box');
+            let content = '';
+            switch(order.statusId) {
+                case 'placed': 
+                    content = `
+                    <h4 class="font-semibold text-lg mb-3">待处理任务：上传生产文件</h4>
+                    <p class="text-sm text-slate-600 mb-6">为确保生产顺利，请上传符合我们规范的设计文件及相关的商标授权文件。</p>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">1. 生产文件 (AI, PDF, EPS)</label>
+                            <button class="w-full bg-white border border-slate-300 px-4 py-2 rounded-lg font-semibold flex items-center justify-center space-x-2 hover:bg-slate-50">
+                                <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                                <span>点击上传</span>
+                            </button>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">2. 商标授权文件 (PDF, JPG)</label>
+                             <button class="w-full bg-white border border-slate-300 px-4 py-2 rounded-lg font-semibold flex items-center justify-center space-x-2 hover:bg-slate-50">
+                                <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                                <span>点击上传</span>
+                            </button>
+                        </div>
+                    </div>
+                    <button onclick="updateOrderStatus('${order.id}', 'processing')" class="mt-6 w-full btn-primary text-white py-2 rounded-lg font-semibold">确认提交文件</button>
+                    `; 
+                    break;
+                case 'processing': content = `<h4 class="font-semibold text-lg mb-3">文件处理中</h4><p class="text-sm text-slate-600">我们的工程师正在审核您的文件，通常需要1个工作日。审核通过后，我们将通知您确认。</p>`; break;
+                // ... other cases
+                default: content = `<h4 class="font-semibold text-lg mb-3">订单进行中</h4><p class="text-sm text-slate-600">您的订单正在处理中，请耐心等待状态更新。</p>`;
+            }
+            contextualBox.innerHTML = content;
+            renderIcons();
+        }
+        
+        function updateOrderStatus(orderId, newStatusId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.statusId = newStatusId;
+                const state = orderStates.find(s => s.id === newStatusId);
+                order.status = state ? state.name : '';
+                renderOrderDetailPage(orderId);
+            }
+        }
+        
+        // --- Distribution Logic ---
+        function renderDistributionParentView() {
+            const applyView = document.getElementById('distribution-apply-view');
+            const pendingView = document.getElementById('distribution-pending-view');
+            const dashboardView = document.getElementById('distribution-dashboard-view');
+
+            applyView.classList.add('hidden');
+            pendingView.classList.add('hidden');
+            dashboardView.classList.add('hidden');
+
+            if (distributionStatus === 'none') {
+                applyView.classList.remove('hidden');
+            } else if (distributionStatus === 'pending') {
+                pendingView.classList.remove('hidden');
+            } else if (distributionStatus === 'approved') {
+                dashboardView.classList.remove('hidden');
+                renderDistributionDashboard();
+            }
+            renderIcons();
+        }
+
+        function handleDistributionApply() {
+            distributionStatus = 'pending';
+            renderDistributionParentView();
+        }
+
+        function simulateApproval() {
+            distributionStatus = 'approved';
+            renderDistributionParentView();
+        }
+
+        function renderDistributionDashboard() {
+            const totalCommission = distributionData.orders.reduce((sum, order) => sum + order.commission, 0);
+            const withdrawnAmount = distributionData.withdrawals.reduce((sum, w) => sum + w.amount, 0);
+            const settledCommission = distributionData.orders
+                .filter(o => o.status === '已结算')
+                .reduce((sum, order) => sum + order.commission, 0);
+            const withdrawableCommission = settledCommission - withdrawnAmount;
+
+            document.getElementById('dist-total-commission').textContent = `¥${totalCommission.toFixed(2)}`;
+            document.getElementById('dist-withdrawable-commission').textContent = `¥${withdrawableCommission.toFixed(2)}`;
+            document.getElementById('dist-customer-count').textContent = distributionData.customers.length;
+            document.getElementById('dist-level').textContent = distributionData.stats.level;
+            document.getElementById('dist-rate').textContent = `/ ${distributionData.stats.commissionRate}`;
+
+            const referralLink = document.getElementById('referral-link').value;
+            document.getElementById('referral-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=96x96&data=${encodeURIComponent(referralLink)}`;
+
+            // Render Earnings Chart
+            const chartContainer = document.getElementById('earnings-chart');
+            const maxEarning = Math.max(...distributionData.monthlyEarnings.map(e => e.earnings), 1); // Avoid division by zero
+            chartContainer.innerHTML = distributionData.monthlyEarnings.map(item => `
+                <div class="flex-1 flex flex-col items-center justify-end" title="${item.month}: ¥${item.earnings.toFixed(2)}">
+                    <div class="w-full bg-blue-200 rounded-t-sm hover:bg-blue-400 transition-colors" style="height: ${ (item.earnings / maxEarning) * 100 }%;"></div>
+                    <p class="text-xs text-slate-500 mt-1">${item.month}</p>
+                </div>
+            `).join('');
+
+            // Render Tables
+            const ordersBody = document.getElementById('dist-orders-table-body');
+            ordersBody.innerHTML = distributionData.orders.map(o => `
+                <tr class="border-b border-slate-200">
+                    <td class="p-4 text-sm">${o.id}</td>
+                    <td class="p-4 text-sm">${o.customer}</td>
+                    <td class="p-4 text-sm">${o.date}</td>
+                    <td class="p-4 text-sm">¥${o.total.toFixed(2)}</td>
+                    <td class="p-4 text-sm font-semibold text-green-600">+¥${o.commission.toFixed(2)}</td>
+                    <td class="p-4 text-sm">${o.status === '已结算' ? `<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>` : `<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>`}</td>
+                </tr>
+            `).join('');
+
+             const customersBody = document.getElementById('dist-customers-table-body');
+            customersBody.innerHTML = distributionData.customers.map(c => `
+                <tr class="border-b border-slate-200">
+                    <td class="p-4 text-sm">${c.name}</td>
+                    <td class="p-4 text-sm">${c.joinDate}</td>
+                    <td class="p-4 text-sm">¥${c.totalSpent.toFixed(2)}</td>
+                    <td class="p-4 text-sm">${c.lastOrderDate}</td>
+                </tr>
+            `).join('');
+
+            const withdrawalsBody = document.getElementById('dist-withdrawals-table-body');
+            withdrawalsBody.innerHTML = distributionData.withdrawals.map(w => `
+                <tr class="border-b border-slate-200">
+                    <td class="p-4 text-sm">${w.id}</td>
+                    <td class="p-4 text-sm">${w.date}</td>
+                    <td class="p-4 text-sm">¥${w.amount.toFixed(2)}</td>
+                    <td class="p-4 text-sm"><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">${w.status}</span></td>
+                </tr>
+            `).join('');
+
+             if (withdrawalsBody.innerHTML === '') {
+                withdrawalsBody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-slate-500">暂无提现记录</td></tr>`;
+            }
+        }
+
+        function copyReferralLink(button) {
+            const linkInput = document.getElementById('referral-link');
+            navigator.clipboard.writeText(linkInput.value).then(() => {
+                const copyText = button.querySelector('span');
+                copyText.textContent = '已复制!';
+                setTimeout(() => {
+                    copyText.textContent = '复制';
+                }, 2000);
+            });
+        }
+
+
+        // --- Customization & Product Logic ---
+        function goToCustomization(name, description, imageUrl) {
+            document.getElementById('customization-title').textContent = name;
+            document.getElementById('customization-header').textContent = `${name} 定制`;
+            document.getElementById('customization-desc').textContent = description;
+            document.getElementById('customization-preview-img').src = imageUrl.replace('400x300', '800x600');
+            document.getElementById('customization-preview-img').alt = name;
+            showPage('customization-page');
+        }
+
+        function toggleSpotColorOptions(method) {
+            const spotColorDiv = document.getElementById('spot-color-options');
+            const offsetOptionDiv = document.getElementById('offset-printing-option');
+
+            if (method === 'offset') {
+                spotColorDiv.classList.remove('hidden');
+                offsetOptionDiv.classList.add('bg-blue-50', 'border-blue-500');
+
+            } else {
+                spotColorDiv.classList.add('hidden');
+                offsetOptionDiv.classList.remove('bg-blue-50', 'border-blue-500');
+                // Reset spot color options when not in offset mode
+                document.querySelector('input[name="printing-spot-color"][value="0"]').checked = true;
+            }
+            updateQuote();
+        }
+        
+        function applyFilters() {
+            const selectedStyles = Array.from(document.querySelectorAll('input[name="style-filter"]:checked')).map(cb => cb.value);
+            document.querySelectorAll('.product-category-section').forEach(section => {
+                const category = section.dataset.category;
+                section.style.display = (selectedStyles.length === 0 || selectedStyles.includes(category)) ? 'block' : 'none';
+            });
+        }
+        
+        function renderMaterialOptions() {
+            const container = document.getElementById('material-type-options');
+            container.innerHTML = Object.keys(materialData).map((key, index) => `
+                <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex flex-col text-center items-center">
+                    <input type="radio" name="material" value="${key}" data-price-factor="${materialData[key].priceFactor}" onchange="renderGrammageOptions(this.value); updateQuote();" class="sr-only" ${index === 0 ? 'checked' : ''}>
+                    <img src="https://placehold.co/80x50/F1F5F9/94A3B8?text=${encodeURIComponent(key)}" alt="${key}" class="w-20 h-12 object-cover rounded-sm mb-2">
+                    <span class="font-semibold text-sm">${key}</span>
+                    <p class="text-xs text-slate-500 mt-1">${materialData[key].desc}</p>
+                </label>
+            `).join('');
+            renderGrammageOptions(Object.keys(materialData)[0]);
+        }
+
+        function renderGrammageOptions(materialType) {
+            const container = document.getElementById('grammage-options-container');
+            const materialInfo = materialData[materialType];
+            let html = '';
+            
+            const thicknessContainerId = `thickness-options-${materialType}`;
+            html += `<div class="w-full mt-4"><label class="block text-sm font-medium text-slate-700 mb-2">纸张厚度</label><div id="${thicknessContainerId}" class="flex flex-wrap gap-2">`;
+            
+            Object.keys(materialInfo.thicknesses).forEach((thickness, index) => {
+                html += `
+                    <label class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm">
+                        <input type="radio" name="thickness" value="${thickness}" onchange="renderGrammageForThickness('${materialType}', this.value)" class="sr-only" ${index === 0 ? 'checked' : ''}>
+                        ${thickness}
+                    </label>
+                `;
+            });
+            html += `</div></div>`;
+            
+            html += `<div id="grammage-selection-container" class="w-full mt-4"></div>`;
+            container.innerHTML = html;
+
+            const defaultThickness = Object.keys(materialInfo.thicknesses)[0];
+            renderGrammageForThickness(materialType, defaultThickness);
+        }
+
+        function renderGrammageForThickness(materialType, thickness) {
+            const container = document.getElementById('grammage-selection-container');
+            const grammages = materialData[materialType].thicknesses[thickness];
+            let html = `<label class="block text-sm font-medium text-slate-700 mb-2">纸张克重</label><div class="flex flex-wrap gap-2">`;
+
+            grammages.forEach(g => {
+                html += `
+                    <label class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm relative">
+                        <input type="radio" name="grammage" value="${g.value} (${thickness})" data-price-factor="${g.factor}" onchange="updateQuote()" class="sr-only" ${g.isDefault ? 'checked' : ''}>
+                        ${g.value}
+                        ${g.isDefault ? '<span class="absolute -top-2 -right-2 text-xs bg-yellow-400 text-yellow-900 px-1.5 py-0.5 rounded-full font-semibold">常用</span>' : ''}
+                    </label>
+                `;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+            updateQuote();
+        }
+        
+        // --- Special Processes Logic (Optimized) ---
+        const specialProcessesConfig = {
+            hotStamping: { name: '烫金', max: 2, pricePerSqMm: 0.005, pricePerSqMm3D: 0.008 },
+            embossing: { name: '击凸/压凹', max: 2, pricePerSqMm: 0.003 },
+            screenPrinting: { name: '丝网印刷', max: 2, pricePerSqMm: 0.008 },
+            windowing: { name: '开窗/贴窗', max: 2, pricePerSqMm: 0.002 },
+        };
+
+        function renderSpecialProcesses() {
+            const container = document.getElementById('special-processes-container');
+            container.innerHTML = `
+                ${createProcessHTML('hotStamping', '烫金 (标准/立体)', `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600">烫金类型</label>
+                            <select onchange="updateQuote()" class="process-input mt-1 w-full p-2 border-slate-300 rounded-md text-sm" data-param="type">
+                                <option value="标准烫金">标准烫金</option>
+                                <option value="立体烫金">立体烫金</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600">烫金颜色</label>
+                            <select onchange="updateQuote()" class="process-input mt-1 w-full p-2 border-slate-300 rounded-md text-sm" data-param="color">
+                                <option value="亮金色">亮金色</option>
+                                <option value="浅金色">浅金色</option>
+                                <option value="哑金色">哑金色</option>
+                                <option value="亮银色">亮银色</option>
+                                <option value="哑银色">哑银色</option>
+                                <option value="镭射银">镭射银</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-xs font-medium text-slate-600">烫金尺寸 (mm)</label>
+                        <div class="flex items-center gap-2 mt-1">
+                            <input type="number" placeholder="L" oninput="updateQuote()" class="process-input w-full p-2 border-slate-300 rounded-md text-sm" data-param="width">
+                            <span class="text-slate-400">×</span>
+                            <input type="number" placeholder="W" oninput="updateQuote()" class="process-input w-full p-2 border-slate-300 rounded-md text-sm" data-param="height">
+                        </div>
+                    </div>
+                `)}
+                ${createProcessHTML('embossing', '击凸 / 压凹', `
+                    <div class="grid grid-cols-2 gap-4">
+                         <div>
+                            <label class="block text-xs font-medium text-slate-600">工艺类型</label>
+                            <select onchange="updateQuote()" class="process-input mt-1 w-full p-2 border-slate-300 rounded-md text-sm" data-param="type">
+                                <option>击凸</option>
+                                <option>压凹</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600">深度/层次</label>
+                            <select onchange="updateQuote()" class="process-input mt-1 w-full p-2 border-slate-300 rounded-md text-sm" data-param="depth">
+                                <option>标准</option>
+                                <option>浮雕</option>
+                            </select>
+                        </div>
+                    </div>
+                     <div class="mt-4">
+                        <label class="block text-xs font-medium text-slate-600">尺寸 (mm)</label>
+                        <div class="flex items-center gap-2 mt-1">
+                            <input type="number" placeholder="L" oninput="updateQuote()" class="process-input w-full p-2 border-slate-300 rounded-md text-sm" data-param="width">
+                            <span class="text-slate-400">×</span>
+                            <input type="number" placeholder="W" oninput="updateQuote()" class="process-input w-full p-2 border-slate-300 rounded-md text-sm" data-param="height">
+                        </div>
+                    </div>
+                `)}
+                 ${createProcessHTML('screenPrinting', '丝网印刷', `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600">印刷尺寸 (mm)</label>
+                            <div class="flex items-center gap-2 mt-1">
+                                <input type="number" placeholder="L" oninput="updateQuote()" class="process-input w-full p-2 border-slate-300 rounded-md text-sm" data-param="width">
+                                <span class="text-slate-400">×</span>
+                                <input type="number" placeholder="W" oninput="updateQuote()" class="process-input w-full p-2 border-slate-300 rounded-md text-sm" data-param="height">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600">颜色</label>
+                            <select onchange="updateQuote()" class="process-input mt-1 w-full p-2 border-slate-300 rounded-md text-sm" data-param="color">
+                                <option>透明UV</option>
+                                <option>黑色</option>
+                                <option>白色</option>
+                            </select>
+                        </div>
+                    </div>
+                `)}
+                 ${createProcessHTML('windowing', '开窗 / 贴窗', `
+                    <div class="grid grid-cols-2 gap-4">
+                         <div>
+                            <label class="block text-xs font-medium text-slate-600">工艺类型</label>
+                            <select onchange="toggleWindowFilm(this); updateQuote();" class="process-input mt-1 w-full p-2 border-slate-300 rounded-md text-sm" data-param="type">
+                                <option value="开窗">开窗 (无膜片)</option>
+                                <option value="贴窗">贴窗 (有膜片)</option>
+                            </select>
+                        </div>
+                        <div class="window-film-option hidden">
+                            <label class="block text-xs font-medium text-slate-600">膜片材质</label>
+                            <select onchange="updateQuote()" class="process-input mt-1 w-full p-2 border-slate-300 rounded-md text-sm" data-param="film">
+                                <option>环保透明膜片 (0.15mm)</option>
+                            </select>
+                        </div>
+                    </div>
+                     <div class="mt-4">
+                        <label class="block text-xs font-medium text-slate-600">窗口尺寸 (mm)</label>
+                        <div class="flex items-center gap-2 mt-1">
+                            <input type="number" placeholder="L" oninput="updateQuote()" class="process-input w-full p-2 border-slate-300 rounded-md text-sm" data-param="width">
+                            <span class="text-slate-400">×</span>
+                            <input type="number" placeholder="W" oninput="updateQuote()" class="process-input w-full p-2 border-slate-300 rounded-md text-sm" data-param="height">
+                        </div>
+                    </div>
+                `)}
+            `;
+            renderIcons();
+        }
+
+        function createProcessHTML(key, name, content) {
+            const config = specialProcessesConfig[key];
+            return `
+                <div class="process-item bg-slate-50/50 p-4 border rounded-lg" id="${key}-process">
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center font-semibold text-slate-800">
+                            <input type="checkbox" onchange="toggleProcessDetails(this, '${key}')" class="h-4 w-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500 mr-3">
+                            ${name}
+                        </label>
+                    </div>
+                    <div id="${key}-details" class="hidden mt-4 pl-7 space-y-4">
+                        <div class="process-instances-container space-y-4">
+                           ${createProcessInstanceHTML(key, content, 0)}
+                        </div>
+                        ${config.max > 1 ? `<button onclick="addProcessInstance(this, '${key}')" class="text-sm font-semibold text-blue-600 hover:underline flex items-center"><i data-lucide="plus" class="w-4 h-4 mr-1"></i>增加一处</button>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function createProcessInstanceHTML(key, content, index) {
+            return `
+                 <div class="process-instance border-t border-slate-200 pt-4" data-index="${index}">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-sm font-semibold text-slate-500">位置 #${index + 1}</p>
+                        ${index > 0 ? `<button onclick="removeProcessInstance(this)" class="text-xs text-red-500 hover:underline">移除</button>` : ''}
+                    </div>
+                    ${content}
+                </div>
+            `;
+        }
+        
+        function toggleProcessDetails(checkbox, key) {
+            const detailsDiv = document.getElementById(`${key}-details`);
+            detailsDiv.classList.toggle('hidden', !checkbox.checked);
+            updateQuote();
+        }
+
+        function addProcessInstance(button, key) {
+            const config = specialProcessesConfig[key];
+            const container = button.previousElementSibling;
+            if (container.children.length >= config.max) return;
+
+            const template = document.querySelector(`#${key}-process .process-instance`).innerHTML;
+            const newIndex = container.children.length;
+            const newInstance = document.createElement('div');
+            newInstance.innerHTML = createProcessInstanceHTML(key, template, newIndex);
+            
+            container.appendChild(newInstance.firstElementChild);
+
+            if (container.children.length >= config.max) {
+                button.classList.add('hidden');
+            }
+            renderIcons();
+            updateQuote();
+        }
+        
+        function removeProcessInstance(button) {
+            const instanceDiv = button.closest('.process-instance');
+            const container = instanceDiv.parentElement;
+            const addButton = container.nextElementSibling;
+            instanceDiv.remove();
+            if (addButton) addButton.classList.remove('hidden');
+            updateQuote();
+        }
+
+        function toggleWindowFilm(selectElement) {
+            const instanceDiv = selectElement.closest('.process-instance');
+            const filmOptionDiv = instanceDiv.querySelector('.window-film-option');
+            filmOptionDiv.classList.toggle('hidden', selectElement.value !== '贴窗');
+        }
+
+        function getSelectedProcessesDetails() {
+            const details = [];
+            document.querySelectorAll('.process-item').forEach(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                if (!checkbox.checked) return;
+
+                const processKey = item.id.replace('-process', '');
+                const processName = specialProcessesConfig[processKey].name;
+
+                item.querySelectorAll('.process-instance').forEach((instance, index) => {
+                    const instanceDetails = [];
+                    const typeInput = instance.querySelector('[data-param="type"]');
+                    if (typeInput) {
+                        instanceDetails.push(typeInput.value);
+                    } else {
+                        instanceDetails.push(processName);
+                    }
+                    
+                    const inputs = instance.querySelectorAll('.process-input');
+                    let size = [];
+                    inputs.forEach(input => {
+                        const param = input.dataset.param;
+                        if(param === 'type') return;
+
+                        if (param === 'width' || param === 'height') {
+                            if(input.value) size.push(input.value);
+                        } else {
+                            if(input.value) instanceDetails.push(`${input.value}`);
+                        }
+                    });
+                    if (size.length === 2) {
+                        instanceDetails.push(`(${size.join('x')}mm)`);
+                    }
+                    details.push(instanceDetails.join(' '));
+                });
+            });
+            return details;
+        }
+
+        function updateQuote() {
+            const length = parseFloat(document.getElementById('length').value) || 0;
+            const width = parseFloat(document.getElementById('width').value) || 0;
+            const height = parseFloat(document.getElementById('height').value) || 0;
+            const quantity = parseInt(document.getElementById('quantity').value) || 0;
+            
+            if (!document.querySelector('input[name="material"]:checked') || !document.querySelector('input[name="grammage"]:checked')) return;
+
+            let baseFactor = 1.0;
+            let additionalCost = 0;
+
+            baseFactor *= parseFloat(document.querySelector('input[name="material"]:checked').dataset.priceFactor);
+            baseFactor *= parseFloat(document.querySelector('input[name="grammage"]:checked').dataset.priceFactor);
+            baseFactor *= parseFloat(document.querySelector('input[name="surface-treatment"]:checked').dataset.priceFactor);
+
+            const printingMethod = document.querySelector('input[name="printing-method"]:checked').value;
+
+            if (printingMethod === 'none') {
+                baseFactor *= 0.8; // Discount for no printing
+            } else if (printingMethod === 'digital') {
+                baseFactor *= 1.2; // Different base cost for digital
+            } else if (printingMethod === 'offset') {
+                baseFactor *= 1.0; // Offset is standard
+                const spotColorFactor = parseFloat(document.querySelector('input[name="printing-spot-color"]:checked').dataset.priceFactor);
+                additionalCost += spotColorFactor * quantity * 10; // Spot color cost
+            }
+
+            // Calculate special processes cost
+            document.querySelectorAll('.process-item').forEach(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                if (!checkbox.checked) return;
+                
+                const processKey = item.id.replace('-process', '');
+                const config = specialProcessesConfig[processKey];
+
+                item.querySelectorAll('.process-instance').forEach(instance => {
+                    const widthInput = instance.querySelector('[data-param="width"]');
+                    const heightInput = instance.querySelector('[data-param="height"]');
+                    const w = parseFloat(widthInput?.value) || 0;
+                    const h = parseFloat(heightInput?.value) || 0;
+
+                    if (w > 0 && h > 0) {
+                        let pricePerSqMm = config.pricePerSqMm;
+                        // Special handling for hot stamping type
+                        if (processKey === 'hotStamping') {
+                            const typeInput = instance.querySelector('[data-param="type"]');
+                            if (typeInput && typeInput.value === '立体烫金') {
+                                pricePerSqMm = config.pricePerSqMm3D;
+                            }
+                        }
+                        additionalCost += (w * h * pricePerSqMm) * quantity;
+                    }
+                });
+            });
+
+            document.querySelectorAll('input[name="accessories"]:checked').forEach(el => {
+                additionalCost += parseFloat(el.dataset.priceFactor) * quantity;
+            });
+            document.querySelectorAll('input[name="services"]:checked').forEach(el => {
+                additionalCost += parseFloat(el.dataset.priceFactor);
+            });
+             document.querySelectorAll('input[name="sampling-service"]:checked').forEach(el => {
+                additionalCost += parseFloat(el.dataset.priceFactor); // Fixed cost, not per quantity
+            });
+
+            if (length > 0 && width > 0 && height > 0 && quantity > 0) {
+                const area = (length * width + length * height * 2 + width * height * 2) / 100000;
+                const basePrice = area * 5; // Base material and printing cost
+                const unitPrice = basePrice * baseFactor;
+                const subtotal = (unitPrice * quantity) + additionalCost;
+                const finalUnitPrice = subtotal / quantity;
+                const logisticsFee = quantity * 0.02 + 12;
+
+                document.getElementById('unit-price').textContent = `¥ ${finalUnitPrice.toFixed(2)}`;
+                document.getElementById('subtotal-price').textContent = `¥ ${subtotal.toFixed(2)}`;
+                document.getElementById('logistics-fee').textContent = `¥ ${logisticsFee.toFixed(2)}`;
+                document.getElementById('total-price').textContent = `¥ ${(subtotal + logisticsFee).toFixed(2)}`;
+
+                const leadTime = 7 + Math.ceil(quantity / 2000) + (additionalCost > 0 ? 2 : 0);
+                const deliveryDate = new Date();
+                deliveryDate.setDate(deliveryDate.getDate() + leadTime);
+                document.getElementById('lead-time').textContent = deliveryDate.toLocaleDateString('zh-CN');
+            } else {
+                document.getElementById('unit-price').textContent = '¥ 0.00';
+                document.getElementById('subtotal-price').textContent = '¥ 0.00';
+                document.getElementById('logistics-fee').textContent = '¥ 0.00';
+                document.getElementById('total-price').textContent = '¥ 0.00';
+                document.getElementById('lead-time').textContent = '-';
+            }
+        }
+
+        // --- 初始化 ---
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('homepage');
+            updateCartIcon();
+            const styleFilters = document.querySelectorAll('input[name="style-filter"]');
+            styleFilters.forEach(filter => { filter.addEventListener('change', applyFilters); });
+            applyFilters();
+            renderIcons();
+        });
+    </script>
+</body>
+</html>
+
