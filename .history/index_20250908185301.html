@@ -1027,7 +1027,7 @@
             <div class="p-8 text-center">
                 <p class="text-slate-600">支付金额</p>
                 <p class="text-4xl font-bold my-2"><span id="payment-amount"></span></p>
-                <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=250&q=80" alt="QR Code" class="mx-auto rounded-lg mt-4">
+                <img src="https://placehold.co/250x250/E2E8F0/4A5568?text=模拟支付二维码" alt="QR Code" class="mx-auto rounded-lg mt-4">
                 <p class="text-sm text-slate-500 mt-4">请使用支付宝或微信扫码支付</p>
             </div>
             <div class="px-6 py-4 bg-slate-50 flex flex-col space-y-3 rounded-b-xl">
@@ -1096,9 +1096,9 @@
             { id: 2, name: '王经理', phone: '159****5678', address: '江苏省 苏州市 工业园区 星湖街328号 创意产业园 A栋 201室', isDefault: false },
         ];
         let orders = [
-            { id: '20250720001', date: '2025-07-20', total: 1250.00, status: '文件处理中', statusId: 'processing', items: [{name: '飞机盒', specs: '200x150x50mm | E瓦楞 | 哑光覆膜', quantity: 500, imageUrl: 'https://images.unsplash.com/photo-1607083206325-caf1edba7a0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80'}] },
-            { id: '20250718985', date: '2025-07-18', total: 3500.00, status: '已发货', statusId: 'shipped', items: [{name: '双插盒', specs: '100x80x40mm | 350g白卡纸 | 烫金', quantity: 1000, imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80'}] },
-            { id: '20250715752', date: '2025-07-15', total: 880.00, status: '已完成', statusId: 'completed', items: [{name: '抽屉盒', specs: '120x120x60mm | 精品灰板 | 无工艺', quantity: 200, imageUrl: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80'}] },
+            { id: '20250720001', date: '2025-07-20', total: 1250.00, status: '文件处理中', statusId: 'processing', items: [{name: '飞机盒', specs: '200x150x50mm | E瓦楞 | 哑光覆膜', quantity: 500, imageUrl: 'https://placehold.co/100x100/E2E8F0/4A5568?text=飞机盒'}] },
+            { id: '20250718985', date: '2025-07-18', total: 3500.00, status: '已发货', statusId: 'shipped', items: [{name: '双插盒', specs: '100x80x40mm | 350g白卡纸 | 烫金', quantity: 1000, imageUrl: 'https://placehold.co/100x100/E2E8F0/4A5568?text=双插盒'}] },
+            { id: '20250715752', date: '2025-07-15', total: 880.00, status: '已完成', statusId: 'completed', items: [{name: '抽屉盒', specs: '120x120x60mm | 精品灰板 | 无工艺', quantity: 200, imageUrl: 'https://placehold.co/100x100/E2E8F0/4A5568?text=抽屉盒'}] },
         ];
         const distributionData = {
             stats: {
@@ -1910,7 +1910,7 @@
             container.innerHTML = Object.keys(materialData).map((key, index) => `
                 <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex flex-col text-center items-center">
                     <input type="radio" name="material" value="${key}" data-price-factor="${materialData[key].priceFactor}" onchange="renderGrammageOptions(this.value); updateQuote();" class="sr-only" ${index === 0 ? 'checked' : ''}>
-                    <img src="https://images.unsplash.com/photo-1586953208448-b95a79798f07?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=80&q=80" alt="${key}" class="w-20 h-12 object-cover rounded-sm mb-2">
+                    <img src="https://placehold.co/80x50/F1F5F9/94A3B8?text=${encodeURIComponent(key)}" alt="${key}" class="w-20 h-12 object-cover rounded-sm mb-2">
                     <span class="font-semibold text-sm">${key}</span>
                     <p class="text-xs text-slate-500 mt-1">${materialData[key].desc}</p>
                 </label>
