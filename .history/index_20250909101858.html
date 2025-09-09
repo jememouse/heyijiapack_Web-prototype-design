@@ -1808,89 +1808,6 @@
             showPage('customization-page');
         }
 
-        // Mobile Filter Functions
-        function toggleMobileFilter() {
-            const sidebar = document.getElementById('filter-sidebar');
-            const chevron = document.getElementById('filter-chevron');
-            const isHidden = sidebar.classList.contains('hidden');
-
-            if (isHidden) {
-                sidebar.classList.remove('hidden');
-                chevron.style.transform = 'rotate(180deg)';
-            } else {
-                sidebar.classList.add('hidden');
-                chevron.style.transform = 'rotate(0deg)';
-            }
-        }
-
-        function clearAllFilters() {
-            // Clear domain filters
-            document.querySelectorAll('input[name="domain-filter"]').forEach(input => {
-                input.checked = input.value === '纸质包装';
-            });
-
-            // Clear style filters
-            document.querySelectorAll('input[name="style-filter"]').forEach(input => {
-                input.checked = true;
-            });
-
-            updateActiveFiltersCount();
-            applyFilters();
-        }
-
-        function applyFiltersAndClose() {
-            applyFilters();
-            // Close mobile filter on mobile
-            if (window.innerWidth < 1024) {
-                document.getElementById('filter-sidebar').classList.add('hidden');
-                document.getElementById('filter-chevron').style.transform = 'rotate(0deg)';
-            }
-        }
-
-        function updateActiveFiltersCount() {
-            const domainFilters = document.querySelectorAll('input[name="domain-filter"]:checked');
-            const styleFilters = document.querySelectorAll('input[name="style-filter"]:checked');
-            const totalActive = domainFilters.length + styleFilters.length;
-
-            const countBadge = document.getElementById('active-filters-count');
-            if (totalActive > 0) {
-                countBadge.textContent = totalActive;
-                countBadge.classList.remove('hidden');
-            } else {
-                countBadge.classList.add('hidden');
-            }
-        }
-
-        function applyFilters() {
-            const selectedStyles = Array.from(document.querySelectorAll('input[name="style-filter"]:checked'))
-                .map(input => input.value);
-
-            // Show/hide product sections based on selected filters
-            document.querySelectorAll('.product-category-section').forEach(section => {
-                const category = section.getAttribute('data-category');
-                if (selectedStyles.includes(category)) {
-                    section.style.display = 'block';
-                } else {
-                    section.style.display = 'none';
-                }
-            });
-        }
-
-        // Initialize filters on page load
-        function initializeFilters() {
-            // Add event listeners to filter inputs
-            document.querySelectorAll('input[name="domain-filter"], input[name="style-filter"]').forEach(input => {
-                input.addEventListener('change', () => {
-                    updateActiveFiltersCount();
-                    applyFilters();
-                });
-            });
-
-            // Initialize count
-            updateActiveFiltersCount();
-            applyFilters();
-        }
-
         function buildSidebar(container, activeViewId) {
             if (!container) return;
             container.innerHTML = '';
@@ -2579,7 +2496,13 @@
             updateQuote();
         }
         
-
+        function applyFilters() {
+            const selectedStyles = Array.from(document.querySelectorAll('input[name="style-filter"]:checked')).map(cb => cb.value);
+            document.querySelectorAll('.product-category-section').forEach(section => {
+                const category = section.dataset.category;
+                section.style.display = (selectedStyles.length === 0 || selectedStyles.includes(category)) ? 'block' : 'none';
+            });
+        }
         
         function renderMaterialOptions() {
             const container = document.getElementById('material-type-options');
@@ -2962,20 +2885,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             showPage('homepage');
             updateCartIcon();
-            initializeFilters();
+            const styleFilters = document.querySelectorAll('input[name="style-filter"]');
+            styleFilters.forEach(filter => { filter.addEventListener('change', applyFilters); });
+            applyFilters();
             renderIcons();
-
-            // Handle window resize for mobile filter
-            window.addEventListener('resize', () => {
-                if (window.innerWidth >= 1024) {
-                    // Show sidebar on desktop
-                    document.getElementById('filter-sidebar').classList.remove('hidden');
-                } else {
-                    // Hide sidebar on mobile by default
-                    document.getElementById('filter-sidebar').classList.add('hidden');
-                    document.getElementById('filter-chevron').style.transform = 'rotate(0deg)';
-                }
-            });
         });
     </script>
 </body>

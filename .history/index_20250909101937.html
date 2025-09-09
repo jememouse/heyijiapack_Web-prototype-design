@@ -2579,7 +2579,13 @@
             updateQuote();
         }
         
-
+        function applyFilters() {
+            const selectedStyles = Array.from(document.querySelectorAll('input[name="style-filter"]:checked')).map(cb => cb.value);
+            document.querySelectorAll('.product-category-section').forEach(section => {
+                const category = section.dataset.category;
+                section.style.display = (selectedStyles.length === 0 || selectedStyles.includes(category)) ? 'block' : 'none';
+            });
+        }
         
         function renderMaterialOptions() {
             const container = document.getElementById('material-type-options');
