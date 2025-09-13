@@ -777,7 +777,235 @@
                                     <div>
                                         <h3 class="text-lg font-semibold mb-3">7. 配件</h3>
                                         <div class="space-y-3">
-                                            <p class="text-sm text-slate-500 italic">暂无配件选项</p>
+                                            <!-- 内托选项 -->
+                                            <label
+                                                class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                                <div>
+                                                    <span class="font-semibold text-sm">内托</span>
+                                                    <p class="text-xs text-slate-500 mt-1">为产品提供固定和保护，提升包装档次</p>
+                                                </div>
+                                                <input type="checkbox" name="accessories" value="内托"
+                                                    data-price-factor="0.8"
+                                                    onchange="toggleInnerTrayOptions(this); updateQuote()"
+                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                            </label>
+
+                                            <!-- 内托详细选项 (条件显示) -->
+                                            <div id="inner-tray-options"
+                                                class="hidden ml-4 pl-4 border-l-2 border-blue-200 space-y-3">
+                                                <div>
+                                                    <label
+                                                        class="block text-sm font-medium text-slate-700 mb-2">内托材质</label>
+                                                    <div class="space-y-2">
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>EVA泡棉</span>
+                                                            <input type="radio" name="inner-tray-material" value="EVA泡棉"
+                                                                data-price-factor="0"
+                                                                onchange="toggleInnerTrayMaterialOptions(this.value)"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                                                                checked>
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>纸质内托</span>
+                                                            <input type="radio" name="inner-tray-material" value="纸质内托"
+                                                                data-price-factor="0.2"
+                                                                onchange="toggleInnerTrayMaterialOptions(this.value)"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>吸塑内托</span>
+                                                            <input type="radio" name="inner-tray-material" value="吸塑内托"
+                                                                data-price-factor="0.5"
+                                                                onchange="toggleInnerTrayMaterialOptions(this.value)"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <!-- 纸质内托详细选项 -->
+                                                <div id="paper-tray-options" class="hidden space-y-3">
+                                                    <label
+                                                        class="block text-sm font-medium text-slate-700 mb-2">纸张类型</label>
+                                                    <div class="space-y-2">
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>白卡纸</span>
+                                                            <input type="radio" name="paper-tray-type" value="白卡纸"
+                                                                data-price-factor="0"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                                                                checked>
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>瓦楞纸</span>
+                                                            <input type="radio" name="paper-tray-type" value="瓦楞纸"
+                                                                data-price-factor="0.1"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>牛皮纸</span>
+                                                            <input type="radio" name="paper-tray-type" value="牛皮纸"
+                                                                data-price-factor="0.05"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>灰板纸</span>
+                                                            <input type="radio" name="paper-tray-type" value="灰板纸"
+                                                                data-price-factor="0.08"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                    </div>
+                                                    <div>
+                                                        <label
+                                                            class="block text-sm font-medium text-slate-700 mb-2">纸张厚度</label>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="paper-tray-thickness"
+                                                                    value="250g" class="sr-only" checked>
+                                                                250g
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="paper-tray-thickness"
+                                                                    value="300g" class="sr-only">
+                                                                300g
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="paper-tray-thickness"
+                                                                    value="350g" class="sr-only">
+                                                                350g
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="paper-tray-thickness"
+                                                                    value="400g" class="sr-only">
+                                                                400g
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- 吸塑内托详细选项 -->
+                                                <div id="plastic-tray-options" class="hidden space-y-3">
+                                                    <label
+                                                        class="block text-sm font-medium text-slate-700 mb-2">塑料材质</label>
+                                                    <div class="space-y-2">
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>PET (环保)</span>
+                                                            <input type="radio" name="plastic-tray-type" value="PET"
+                                                                data-price-factor="0"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                                                                checked>
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>PVC (透明度高)</span>
+                                                            <input type="radio" name="plastic-tray-type" value="PVC"
+                                                                data-price-factor="0.1"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>PS (成本经济)</span>
+                                                            <input type="radio" name="plastic-tray-type" value="PS"
+                                                                data-price-factor="-0.05"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                    </div>
+                                                    <div>
+                                                        <label
+                                                            class="block text-sm font-medium text-slate-700 mb-2">厚度规格</label>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="plastic-tray-thickness"
+                                                                    value="0.3mm" class="sr-only" checked>
+                                                                0.3mm
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="plastic-tray-thickness"
+                                                                    value="0.5mm" class="sr-only">
+                                                                0.5mm
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="plastic-tray-thickness"
+                                                                    value="0.8mm" class="sr-only">
+                                                                0.8mm
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        class="block text-sm font-medium text-slate-700 mb-2">内托颜色</label>
+                                                    <div class="flex flex-wrap gap-2">
+                                                        <label
+                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                            <input type="radio" name="inner-tray-color" value="黑色"
+                                                                class="sr-only" checked>
+                                                            黑色
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                            <input type="radio" name="inner-tray-color" value="白色"
+                                                                class="sr-only">
+                                                            白色
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                            <input type="radio" name="inner-tray-color" value="灰色"
+                                                                class="sr-only">
+                                                            灰色
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                            <input type="radio" name="inner-tray-color" value="定制色"
+                                                                class="sr-only">
+                                                            定制色
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="bg-blue-50 rounded-lg p-3">
+                                                    <div class="text-xs text-blue-700">
+                                                        <p class="font-medium mb-1">内托说明</p>
+                                                        <p>内托可以有效固定产品位置，防止运输过程中的碰撞损坏，同时提升开箱体验和产品档次。我们会根据您的产品尺寸进行定制设计。
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- 其他配件选项 -->
+                                            <label
+                                                class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                                <div>
+                                                    <span class="font-semibold text-sm">手提绳</span>
+                                                    <p class="text-xs text-slate-500 mt-1">方便携带，提升用户体验</p>
+                                                </div>
+                                                <input type="checkbox" name="accessories" value="手提绳"
+                                                    data-price-factor="0.3" onchange="updateQuote()"
+                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                            </label>
+
+                                            <label
+                                                class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                                <div>
+                                                    <span class="font-semibold text-sm">封口贴</span>
+                                                    <p class="text-xs text-slate-500 mt-1">防拆封，增强产品安全性</p>
+                                                </div>
+                                                <input type="checkbox" name="accessories" value="封口贴"
+                                                    data-price-factor="0.2" onchange="updateQuote()"
+                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                            </label>
                                         </div>
                                     </div>
                                     <div>
@@ -3719,7 +3947,32 @@
             // Collect special processes details
             const specialProcesses = getSelectedProcessesDetails();
 
-            const accessories = Array.from(document.querySelectorAll('input[name="accessories"]:checked')).map(el => el.value);
+            // Collect accessories with detailed info
+            const accessories = [];
+            document.querySelectorAll('input[name="accessories"]:checked').forEach(el => {
+                if (el.value === '内托') {
+                    // Get inner tray details
+                    const material = document.querySelector('input[name="inner-tray-material"]:checked')?.value || 'EVA泡棉';
+                    const color = document.querySelector('input[name="inner-tray-color"]:checked')?.value || '黑色';
+
+                    let materialDetails = '';
+                    if (material === '纸质内托') {
+                        const paperType = document.querySelector('input[name="paper-tray-type"]:checked')?.value || '白卡纸';
+                        const paperThickness = document.querySelector('input[name="paper-tray-thickness"]:checked')?.value || '250g';
+                        materialDetails = `${paperType} ${paperThickness}`;
+                    } else if (material === '吸塑内托') {
+                        const plasticType = document.querySelector('input[name="plastic-tray-type"]:checked')?.value || 'PET';
+                        const plasticThickness = document.querySelector('input[name="plastic-tray-thickness"]:checked')?.value || '0.3mm';
+                        materialDetails = `${plasticType} ${plasticThickness}`;
+                    } else {
+                        materialDetails = material;
+                    }
+
+                    accessories.push(`内托 (${materialDetails}, ${color})`);
+                } else {
+                    accessories.push(el.value);
+                }
+            });
             const services = Array.from(document.querySelectorAll('input[name="services"]:checked')).map(el => el.value);
             const samplingServices = Array.from(document.querySelectorAll('input[name="sampling-service"]:checked')).map(el => el.value);
             const unitPrice = parseFloat(document.getElementById('unit-price').textContent.replace('¥ ', ''));
@@ -4349,6 +4602,38 @@
             updateQuote();
         }
 
+        function toggleInnerTrayOptions(checkbox) {
+            const innerTrayDiv = document.getElementById('inner-tray-options');
+
+            if (checkbox.checked) {
+                innerTrayDiv.classList.remove('hidden');
+                // Show default material options
+                toggleInnerTrayMaterialOptions('EVA泡棉');
+            } else {
+                innerTrayDiv.classList.add('hidden');
+            }
+
+            updateQuote();
+        }
+
+        function toggleInnerTrayMaterialOptions(materialType) {
+            const paperOptions = document.getElementById('paper-tray-options');
+            const plasticOptions = document.getElementById('plastic-tray-options');
+
+            // Hide all material-specific options first
+            paperOptions.classList.add('hidden');
+            plasticOptions.classList.add('hidden');
+
+            // Show relevant options based on material type
+            if (materialType === '纸质内托') {
+                paperOptions.classList.remove('hidden');
+            } else if (materialType === '吸塑内托') {
+                plasticOptions.classList.remove('hidden');
+            }
+
+            updateQuote();
+        }
+
 
 
         function renderMaterialOptions() {
@@ -4719,7 +5004,25 @@
             });
 
             document.querySelectorAll('input[name="accessories"]:checked').forEach(el => {
-                additionalCost += parseFloat(el.dataset.priceFactor) * quantity;
+                let accessoryPrice = parseFloat(el.dataset.priceFactor);
+
+                // Add inner tray material and detail price differences
+                if (el.value === '内托') {
+                    const materialPriceFactor = parseFloat(document.querySelector('input[name="inner-tray-material"]:checked')?.dataset.priceFactor || 0);
+                    accessoryPrice += materialPriceFactor;
+
+                    // Add material-specific price factors
+                    const material = document.querySelector('input[name="inner-tray-material"]:checked')?.value;
+                    if (material === '纸质内托') {
+                        const paperTypeFactor = parseFloat(document.querySelector('input[name="paper-tray-type"]:checked')?.dataset.priceFactor || 0);
+                        accessoryPrice += paperTypeFactor;
+                    } else if (material === '吸塑内托') {
+                        const plasticTypeFactor = parseFloat(document.querySelector('input[name="plastic-tray-type"]:checked')?.dataset.priceFactor || 0);
+                        accessoryPrice += plasticTypeFactor;
+                    }
+                }
+
+                additionalCost += accessoryPrice * quantity;
             });
             document.querySelectorAll('input[name="services"]:checked').forEach(el => {
                 additionalCost += parseFloat(el.dataset.priceFactor);
