@@ -101,6 +101,68 @@
             -moz-appearance: textfield;
         }
 
+        /* 优化输入框和选择框样式 */
+        .process-input {
+            background-color: white !important;
+            border: 2px solid #94a3b8 !important;
+            /* slate-400 */
+            border-radius: 0.5rem !important;
+            /* rounded-lg */
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+            /* shadow-sm */
+            font-weight: 500 !important;
+            color: #0f172a !important;
+            /* text-slate-900 */
+            transition: all 0.2s ease-in-out !important;
+        }
+
+        .process-input:hover {
+            border-color: #64748b !important;
+            /* slate-500 */
+        }
+
+        .process-input:focus {
+            outline: none !important;
+            border-color: #3b82f6 !important;
+            /* blue-500 */
+            box-shadow: 0 0 0 2px rgb(59 130 246 / 0.5) !important;
+            /* focus:ring-2 focus:ring-blue-500 */
+        }
+
+        /* 优化所有带有border-slate-300的输入框 */
+        input.border-slate-300,
+        select.border-slate-300,
+        textarea.border-slate-300 {
+            background-color: white !important;
+            border: 2px solid #94a3b8 !important;
+            /* slate-400 */
+            border-radius: 0.5rem !important;
+            /* rounded-lg */
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+            /* shadow-sm */
+            font-weight: 500 !important;
+            color: #0f172a !important;
+            /* text-slate-900 */
+            transition: all 0.2s ease-in-out !important;
+        }
+
+        input.border-slate-300:hover,
+        select.border-slate-300:hover,
+        textarea.border-slate-300:hover {
+            border-color: #64748b !important;
+            /* slate-500 */
+        }
+
+        input.border-slate-300:focus,
+        select.border-slate-300:focus,
+        textarea.border-slate-300:focus {
+            outline: none !important;
+            border-color: #3b82f6 !important;
+            /* blue-500 */
+            box-shadow: 0 0 0 2px rgb(59 130 246 / 0.5) !important;
+            /* focus:ring-2 focus:ring-blue-500 */
+        }
+
         /* 导航激活状态 */
         .sidebar-link.active {
             background-color: #EFF6FF;
@@ -471,10 +533,10 @@
                                                 (L)</label>
                                             <div class="mt-1 relative rounded-md shadow-sm"><input type="number"
                                                     name="length" id="length" value="200" oninput="updateQuote()"
-                                                    class="w-full p-2 border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                                                    class="w-full p-3 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors font-medium text-slate-900">
                                                 <div
                                                     class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                                    <span class="text-slate-500 sm:text-sm">mm</span>
+                                                    <span class="text-slate-600 font-medium text-sm">mm</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -482,10 +544,10 @@
                                                 (W)</label>
                                             <div class="mt-1 relative rounded-md shadow-sm"><input type="number"
                                                     name="width" id="width" value="150" oninput="updateQuote()"
-                                                    class="w-full p-2 border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                                                    class="w-full p-3 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors font-medium text-slate-900">
                                                 <div
                                                     class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                                    <span class="text-slate-500 sm:text-sm">mm</span>
+                                                    <span class="text-slate-600 font-medium text-sm">mm</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -493,10 +555,10 @@
                                                 (H)</label>
                                             <div class="mt-1 relative rounded-md shadow-sm"><input type="number"
                                                     name="height" id="height" value="50" oninput="updateQuote()"
-                                                    class="w-full p-2 border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                                                    class="w-full p-3 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors font-medium text-slate-900">
                                                 <div
                                                     class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                                    <span class="text-slate-500 sm:text-sm">mm</span>
+                                                    <span class="text-slate-600 font-medium text-sm">mm</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -521,80 +583,86 @@
                                 <div>
                                     <h3 class="text-lg font-semibold mb-3">3. 图案印制方式</h3>
                                     <div class="space-y-3">
+                                        <!-- 精美数码印刷 -->
                                         <label
-                                            class="border-2 border-blue-500 bg-blue-50 rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 block relative">
-                                            <div class="flex items-center justify-between">
-                                                <div class="flex items-center">
-                                                    <span class="font-semibold text-sm text-blue-700">精美数码印刷</span>
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <div class="flex items-center mb-1">
+                                                    <span class="font-semibold text-sm">精美数码印刷</span>
                                                     <span
                                                         class="ml-2 px-2 py-1 bg-blue-600 text-white text-xs rounded-full font-medium">推荐</span>
                                                 </div>
-                                                <input type="radio" name="printing-method" value="digital"
-                                                    onchange="toggleSpotColorOptions(this.value)"
-                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                                <p class="text-xs text-slate-500 mt-1">适合小批量、色彩鲜艳的设计，无专色选项，成本适中</p>
                                             </div>
-                                            <p class="text-xs text-slate-600 mt-2">适合小批量、色彩鲜艳的设计，无专色选项，成本适中。</p>
+                                            <input type="radio" name="printing-method" value="digital"
+                                                onchange="toggleSpotColorOptions(this.value)"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
                                         </label>
 
+                                        <!-- 胶印方式 -->
                                         <label
-                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 block">
-                                            <div class="flex items-center justify-between">
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
                                                 <span class="font-semibold text-sm">胶印方式</span>
-                                                <input type="radio" name="printing-method" value="offset"
-                                                    onchange="toggleSpotColorOptions(this.value)"
-                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                                <p class="text-xs text-slate-500 mt-1">适合大批量生产，默认包含CMYK四色，可增加专色</p>
                                             </div>
-                                            <p class="text-xs text-slate-500 mt-1">适合大批量生产，默认包含CMYK，可增加专色。</p>
+                                            <input type="radio" name="printing-method" value="offset"
+                                                onchange="toggleSpotColorOptions(this.value)"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        </label>
 
-                                            <!-- Spot Color Options (conditionally shown) -->
-                                            <div id="spot-color-options"
-                                                class="hidden mt-3 pt-3 border-t border-slate-200 space-y-3">
-                                                <div>
-                                                    <label
-                                                        class="block text-sm font-medium text-slate-700 mb-2">专色数量</label>
-                                                    <div class="flex flex-wrap gap-2">
-                                                        <label
-                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm">
-                                                            <input type="radio" name="printing-spot-color" value="0"
-                                                                data-price-factor="0" onchange="updateQuote()"
-                                                                class="sr-only" checked>
-                                                            无
-                                                        </label>
-                                                        <label
-                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm">
-                                                            <input type="radio" name="printing-spot-color" value="1"
-                                                                data-price-factor="0.2" onchange="updateQuote()"
-                                                                class="sr-only">
-                                                            1个
-                                                        </label>
-                                                        <label
-                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm">
-                                                            <input type="radio" name="printing-spot-color" value="2"
-                                                                data-price-factor="0.4" onchange="updateQuote()"
-                                                                class="sr-only">
-                                                            2个
-                                                        </label>
-                                                        <label
-                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm">
-                                                            <input type="radio" name="printing-spot-color" value="3"
-                                                                data-price-factor="0.6" onchange="updateQuote()"
-                                                                class="sr-only">
-                                                            3个
-                                                        </label>
-                                                    </div>
+                                        <!-- 专色选项 (条件显示) -->
+                                        <div id="spot-color-options"
+                                            class="hidden ml-4 pl-4 border-l-2 border-blue-200 space-y-3">
+                                            <label class="block text-sm font-medium text-slate-700">专色数量</label>
+                                            <div class="flex flex-wrap gap-2">
+                                                <label
+                                                    class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                    <input type="radio" name="printing-spot-color" value="0"
+                                                        data-price-factor="0" onchange="updateQuote()" class="sr-only"
+                                                        checked>
+                                                    无专色
+                                                </label>
+                                                <label
+                                                    class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                    <input type="radio" name="printing-spot-color" value="1"
+                                                        data-price-factor="0.2" onchange="updateQuote()"
+                                                        class="sr-only">
+                                                    1个专色
+                                                </label>
+                                                <label
+                                                    class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                    <input type="radio" name="printing-spot-color" value="2"
+                                                        data-price-factor="0.4" onchange="updateQuote()"
+                                                        class="sr-only">
+                                                    2个专色
+                                                </label>
+                                                <label
+                                                    class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                    <input type="radio" name="printing-spot-color" value="3"
+                                                        data-price-factor="0.6" onchange="updateQuote()"
+                                                        class="sr-only">
+                                                    3个专色
+                                                </label>
+                                            </div>
+                                            <div class="bg-blue-50 rounded-lg p-3">
+                                                <div class="text-xs text-blue-700">
+                                                    <p class="font-medium mb-1">专色说明</p>
+                                                    <p>专色是指预先调配好的特定颜色油墨，可实现更精准的色彩表现，常用于品牌标准色、金属色等特殊效果。</p>
                                                 </div>
                                             </div>
-                                        </label>
+                                        </div>
 
+                                        <!-- 不印刷 -->
                                         <label
-                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-slate-100 has-[:checked]:border-slate-400 block">
-                                            <div class="flex items-center justify-between">
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-slate-50 has-[:checked]:border-slate-400 flex items-center justify-between">
+                                            <div>
                                                 <span class="font-semibold text-sm">不印刷</span>
-                                                <input type="radio" name="printing-method" value="none"
-                                                    onchange="toggleSpotColorOptions(this.value)"
-                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                                <p class="text-xs text-slate-500 mt-1">仅制作包装盒结构，不进行任何印刷，成本更低</p>
                                             </div>
-                                            <p class="text-xs text-slate-500 mt-1">仅制作包装盒，不进行任何印刷。</p>
+                                            <input type="radio" name="printing-method" value="none"
+                                                onchange="toggleSpotColorOptions(this.value)"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500">
                                         </label>
                                     </div>
                                 </div>
@@ -788,10 +856,10 @@
                                     <div class="relative">
                                         <input type="number" name="quantity" id="quantity" value="1" min="1"
                                             oninput="updateQuote()"
-                                            class="w-full p-3 border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-lg">
+                                            class="w-full p-4 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors font-semibold text-lg text-slate-900">
                                         <div
-                                            class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                            <span class="text-slate-500 text-sm">个</span>
+                                            class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                            <span class="text-slate-600 font-medium text-sm">个</span>
                                         </div>
                                     </div>
                                     <p class="text-xs text-slate-500 mt-2">最小起订量：1个，无需担心库存压力</p>
@@ -4269,18 +4337,15 @@
 
         function toggleSpotColorOptions(method) {
             const spotColorDiv = document.getElementById('spot-color-options');
-            const offsetOptionDiv = document.getElementById('offset-printing-option');
 
             if (method === 'offset') {
                 spotColorDiv.classList.remove('hidden');
-                offsetOptionDiv.classList.add('bg-blue-50', 'border-blue-500');
-
             } else {
                 spotColorDiv.classList.add('hidden');
-                offsetOptionDiv.classList.remove('bg-blue-50', 'border-blue-500');
                 // Reset spot color options when not in offset mode
                 document.querySelector('input[name="printing-spot-color"][value="0"]').checked = true;
             }
+
             updateQuote();
         }
 
@@ -4289,13 +4354,12 @@
         function renderMaterialOptions() {
             const container = document.getElementById('material-type-options');
             container.innerHTML = Object.keys(materialData).map((key, index) => `
-                <label class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex flex-col text-center items-center hover:shadow-md transition-all">
+                <label class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 hover:shadow-md transition-all block">
                     <input type="radio" name="material" value="${key}" data-price-factor="${materialData[key].priceFactor}" onchange="renderGrammageOptions(this.value); updateQuote();" class="sr-only" ${index === 0 ? 'checked' : ''}>
-                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mb-3">
-                        <span class="text-white font-bold text-lg">${key.charAt(0)}</span>
+                    <div class="text-center">
+                        <span class="font-semibold text-base text-slate-800 mb-2 block">${key}</span>
+                        <p class="text-sm text-slate-600 leading-relaxed">${materialData[key].desc}</p>
                     </div>
-                    <span class="font-semibold text-base text-slate-800 mb-1">${key}</span>
-                    <p class="text-xs text-slate-500 leading-relaxed">${materialData[key].desc}</p>
                 </label>
             `).join('');
             renderGrammageOptions(Object.keys(materialData)[0]);
@@ -4361,14 +4425,14 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-medium text-slate-600">烫金类型</label>
-                            <select onchange="updateQuote()" class="process-input mt-1 w-full p-2 border-slate-300 rounded-md text-sm" data-param="type">
+                            <select onchange="updateQuote()" class="process-input mt-1 w-full p-2 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors text-sm font-medium text-slate-900" data-param="type">
                                 <option value="标准烫金">标准烫金</option>
                                 <option value="立体烫金">立体烫金</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-600">烫金颜色</label>
-                            <select onchange="updateQuote()" class="process-input mt-1 w-full p-2 border-slate-300 rounded-md text-sm" data-param="color">
+                            <select onchange="updateQuote()" class="process-input mt-1 w-full p-2 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors text-sm font-medium text-slate-900" data-param="color">
                                 <option value="亮金色">亮金色</option>
                                 <option value="浅金色">浅金色</option>
                                 <option value="哑金色">哑金色</option>
@@ -4486,14 +4550,15 @@
         function createProcessHTML(key, name, content) {
             const config = specialProcessesConfig[key];
             return `
-                <div class="process-item bg-slate-50/50 p-4 border rounded-lg" id="${key}-process">
-                    <div class="flex items-center justify-between">
-                        <label class="flex items-center font-semibold text-slate-800">
-                            <input type="checkbox" onchange="toggleProcessDetails(this, '${key}')" class="h-4 w-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500 mr-3">
-                            ${name}
-                        </label>
-                    </div>
-                    <div id="${key}-details" class="hidden mt-4 pl-7 space-y-4">
+                <div class="process-item" id="${key}-process">
+                    <label class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                        <div>
+                            <span class="font-semibold text-sm">${name}</span>
+                            <p class="text-xs text-slate-500 mt-1">点击选择此装饰工艺，可进行详细配置</p>
+                        </div>
+                        <input type="checkbox" onchange="toggleProcessDetails(this, '${key}')" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                    </label>
+                    <div id="${key}-details" class="hidden mt-3 ml-4 pl-4 border-l-2 border-blue-200 space-y-4">
                         <div class="process-instances-container space-y-4">
                            ${createProcessInstanceHTML(key, content, 0)}
                         </div>
