@@ -101,16 +101,16 @@
             </a>
             <div class="hidden md:flex items-center space-x-8">
                 <a href="index.html" class="text-slate-600 hover:text-blue-600">首页</a>
-                <a href="index.html#product-center" class="text-slate-600 hover:text-blue-600">在线定制</a>
+                <a href="index.html" onclick="localStorage.setItem('targetPage', 'product-center-page')" class="text-slate-600 hover:text-blue-600">在线定制</a>
                 <a href="smart-matcher.html" class="text-slate-600 hover:text-blue-600">智能包装方案匹配器</a>
                 <a href="smart-design.html" class="text-blue-600 font-semibold">智能包装设计及打样服务</a>
-                <a href="index.html#user-center" class="text-slate-600 hover:text-blue-600">个人中心</a>
-                <a href="index.html#solutions" class="text-slate-600 hover:text-blue-600">解决方案</a>
-                <a href="index.html#help-center" class="text-slate-600 hover:text-blue-600">帮助中心</a>
+                <a href="index.html" onclick="localStorage.setItem('targetPage', 'user-center-page')" class="text-slate-600 hover:text-blue-600">个人中心</a>
+                <a href="index.html" onclick="localStorage.setItem('targetPage', 'solutions-page')" class="text-slate-600 hover:text-blue-600">解决方案</a>
+                <a href="index.html" onclick="localStorage.setItem('targetPage', 'help-center-page')" class="text-slate-600 hover:text-blue-600">帮助中心</a>
             </div>
             <div class="flex items-center space-x-4">
                 <a href="index.html" class="text-slate-600 hover:text-blue-600 text-sm">登录/注册</a>
-                <a href="index.html#shopping-cart" class="relative flex items-center text-slate-600 hover:text-blue-600 transition-colors font-medium">
+                <a href="index.html" onclick="localStorage.setItem('targetPage', 'shopping-cart-page')" class="relative flex items-center text-slate-600 hover:text-blue-600 transition-colors font-medium">
                     <i data-lucide="shopping-cart" class="w-5 h-5 mr-1"></i>
                     <span>我的购物车</span>
                 </a>
