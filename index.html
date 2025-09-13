@@ -226,6 +226,8 @@
                     <a href="#" onclick="showPage('homepage')" class="text-slate-600 hover:text-blue-600">首页</a>
                     <a href="#" onclick="showPage('product-center-page')"
                         class="text-slate-600 hover:text-blue-600">在线定制</a>
+                    <a href="smart-matcher.html" class="text-slate-600 hover:text-blue-600">智能包装方案匹配器</a>
+                    <a href="smart-design.html" class="text-slate-600 hover:text-blue-600">智能包装设计及打样服务</a>
                     <a href="#" onclick="showPage('user-center-page')"
                         class="text-slate-600 hover:text-blue-600">个人中心</a>
                     <a href="#" onclick="showPage('solutions-page')" class="text-slate-600 hover:text-blue-600">解决方案</a>
@@ -472,7 +474,8 @@
                                                     class="w-full p-2 border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                                                 <div
                                                     class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                                    <span class="text-slate-500 sm:text-sm">mm</span></div>
+                                                    <span class="text-slate-500 sm:text-sm">mm</span>
+                                                </div>
                                             </div>
                                         </div>
                                         <div><label for="width" class="block text-sm font-medium text-slate-700">宽
@@ -482,7 +485,8 @@
                                                     class="w-full p-2 border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                                                 <div
                                                     class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                                    <span class="text-slate-500 sm:text-sm">mm</span></div>
+                                                    <span class="text-slate-500 sm:text-sm">mm</span>
+                                                </div>
                                             </div>
                                         </div>
                                         <div><label for="height" class="block text-sm font-medium text-slate-700">高
@@ -492,7 +496,8 @@
                                                     class="w-full p-2 border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                                                 <div
                                                     class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                                    <span class="text-slate-500 sm:text-sm">mm</span></div>
+                                                    <span class="text-slate-500 sm:text-sm">mm</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -2473,7 +2478,8 @@
                         <div>
                             <div
                                 class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
-                                <i data-lucide="cpu"></i></div>
+                                <i data-lucide="cpu"></i>
+                            </div>
                             <h3 class="text-2xl font-bold mt-6 mb-3">技术驱动</h3>
                             <p class="text-slate-500" style="line-height: 1.7;">
                                 从智能报价引擎到自动化派单，我们用技术替代繁琐的人工流程，实现秒级响应和最优的供应链匹配。</p>
@@ -2481,7 +2487,8 @@
                         <div>
                             <div
                                 class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
-                                <i data-lucide="users"></i></div>
+                                <i data-lucide="users"></i>
+                            </div>
                             <h3 class="text-2xl font-bold mt-6 mb-3">服务核心</h3>
                             <p class="text-slate-500" style="line-height: 1.7;">
                                 专业的印前工程师团队为您审核稿件，确保您的创意100%符合生产标准，杜绝后顾之忧。</p>
@@ -2489,7 +2496,8 @@
                         <div>
                             <div
                                 class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
-                                <i data-lucide="link"></i></div>
+                                <i data-lucide="link"></i>
+                            </div>
                             <h3 class="text-2xl font-bold mt-6 mb-3">供应链协同</h3>
                             <p class="text-slate-500" style="line-height: 1.7;">
                                 我们整合并认证数百家优质供应商，通过数字化协同门户，实现生产过程的透明化管理与高效交付。</p>
@@ -2497,7 +2505,8 @@
                         <div>
                             <div
                                 class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
-                                <i data-lucide="database"></i></div>
+                                <i data-lucide="database"></i>
+                            </div>
                             <h3 class="text-2xl font-bold mt-6 mb-3">数据智能</h3>
                             <p class="text-slate-500" style="line-height: 1.7;">基于海量订单数据，我们能为您提供行业趋势分析与成本优化建议，让您的决策更科学。
                             </p>
@@ -4128,6 +4137,7 @@
             embossing: { name: '击凸/压凹', max: 2, pricePerSqMm: 0.003 },
             screenPrinting: { name: '丝网印刷', max: 2, pricePerSqMm: 0.008 },
             windowing: { name: '开窗/贴窗', max: 2, pricePerSqMm: 0.002 },
+            embossedTexture: { name: '压纹工艺', max: 1, pricePerSqMm: 0.004 },
         };
 
         function renderSpecialProcesses() {
@@ -4213,7 +4223,7 @@
                     <div class="grid grid-cols-2 gap-4">
                          <div>
                             <label class="block text-xs font-medium text-slate-600">工艺类型</label>
-                            <select onchange="toggleWindowFilm(this); updateQuote();" class="process-input mt-1 w-full p-2 border-slate-300 rounded-md text-sm" data-param="type">
+                            <select onchange="toggleWindowOptions(this); updateQuote();" class="process-input mt-1 w-full p-2 border-slate-300 rounded-md text-sm" data-param="type">
                                 <option value="开窗">开窗 (无膜片)</option>
                                 <option value="贴窗">贴窗 (有膜片)</option>
                             </select>
@@ -4225,6 +4235,14 @@
                             </select>
                         </div>
                     </div>
+                    <div class="window-type-option hidden mt-4">
+                        <label class="block text-xs font-medium text-slate-600">贴窗类型</label>
+                        <select onchange="updateQuote()" class="process-input mt-1 w-full p-2 border-slate-300 rounded-md text-sm" data-param="windowType">
+                            <option value="单面贴窗">单面贴窗</option>
+                            <option value="跨面贴窗">跨面贴窗</option>
+                        </select>
+                        <p class="text-xs text-slate-500 mt-1">单面贴窗：膜片贴在单个面上；跨面贴窗：膜片跨越多个面</p>
+                    </div>
                      <div class="mt-4">
                         <label class="block text-xs font-medium text-slate-600">窗口尺寸 (mm)</label>
                         <div class="flex items-center gap-2 mt-1">
@@ -4232,6 +4250,19 @@
                             <span class="text-slate-400">×</span>
                             <input type="number" placeholder="W" oninput="updateQuote()" class="process-input w-full p-2 border-slate-300 rounded-md text-sm" data-param="height">
                         </div>
+                    </div>
+                `)}
+                ${createProcessHTML('embossedTexture', '压纹工艺', `
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600">压纹类型</label>
+                        <select onchange="updateQuote()" class="process-input mt-1 w-full p-2 border-slate-300 rounded-md text-sm" data-param="type">
+                            <option value="细纹">细纹</option>
+                            <option value="粗纹">粗纹</option>
+                            <option value="皮纹">皮纹</option>
+                            <option value="布纹">布纹</option>
+                            <option value="木纹">木纹</option>
+                        </select>
+                        <p class="text-xs text-slate-500 mt-2">压纹工艺为整版处理，无需设置尺寸</p>
                     </div>
                 `)}
             `;
@@ -4304,10 +4335,14 @@
             updateQuote();
         }
 
-        function toggleWindowFilm(selectElement) {
+        function toggleWindowOptions(selectElement) {
             const instanceDiv = selectElement.closest('.process-instance');
             const filmOptionDiv = instanceDiv.querySelector('.window-film-option');
-            filmOptionDiv.classList.toggle('hidden', selectElement.value !== '贴窗');
+            const windowTypeDiv = instanceDiv.querySelector('.window-type-option');
+
+            const isWindow = selectElement.value === '贴窗';
+            filmOptionDiv.classList.toggle('hidden', !isWindow);
+            windowTypeDiv.classList.toggle('hidden', !isWindow);
         }
 
         function getSelectedProcessesDetails() {

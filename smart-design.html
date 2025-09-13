@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能包装设计及打样服务 - 智盒工坊 (iboxify)</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="智盒工坊智能包装设计及打样服务，AI辅助设计，专业设计师团队，快速打样，为您的产品提供专业的包装设计解决方案。">
+    <meta name="keywords" content="智能包装设计, AI设计, 包装打样, 设计服务, 包装设计师, 快速打样">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .hero-section {
+            background: linear-gradient(45deg, rgba(30, 64, 175, 0.9), rgba(59, 130, 246, 0.9)), url('https://images.pexels.com/photos/5412433/pexels-photo-5412433.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') no-repeat center center;
+            background-size: cover;
+        }
+        .ai-tool-panel {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .faq-item details > summary { list-style: none; }
+        .faq-item details > summary::-webkit-details-marker { display: none; }
+        .faq-item details > summary .icon { transition: transform 0.2s; }
+        .faq-item details[open] > summary .icon { transform: rotate(45deg); }
+        .box-type-radio:checked + label, .proofing-mode-radio:checked + label {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 0 0 2px #bfdbfe;
+        }
+        .inner-tray-radio:checked + label {
+             border-color: #3b82f6;
+             background-color: #eff6ff;
+        }
+        #manual-specs-container.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        @keyframes pulse-animation {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        .button-pulse {
+            animation: pulse-animation 2s infinite;
+        }
+        .toast-notification {
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: #1e293b;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 8px 12px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+            line-height: 1.5;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-200">
+        <nav class="container mx-auto px-8 md:px-16 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <svg width="32" height="32" viewBox="0 0 24 24" class="text-blue-600">
+                    <path fill="currentColor"
+                        d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 15h-2v-5h-4v5H9V9h2v4h2V9h2v8z">
+                    </path>
+                </svg>
+                <span class="text-xl font-bold text-slate-900">智盒工坊</span>
+            </a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-slate-600 hover:text-blue-600">首页</a>
+                <a href="index.html#product-center" class="text-slate-600 hover:text-blue-600">在线定制</a>
+                <a href="smart-matcher.html" class="text-slate-600 hover:text-blue-600">智能包装方案匹配器</a>
+                <a href="smart-design.html" class="text-blue-600 font-semibold">智能包装设计及打样服务</a>
+                <a href="index.html#user-center" class="text-slate-600 hover:text-blue-600">个人中心</a>
+                <a href="index.html#solutions" class="text-slate-600 hover:text-blue-600">解决方案</a>
+                <a href="index.html#help-center" class="text-slate-600 hover:text-blue-600">帮助中心</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="text-slate-600 hover:text-blue-600 text-sm">登录/注册</a>
+                <a href="index.html#shopping-cart" class="relative flex items-center text-slate-600 hover:text-blue-600 transition-colors font-medium">
+                    <i data-lucide="shopping-cart" class="w-5 h-5 mr-1"></i>
+                    <span>我的购物车</span>
+                </a>
+                <a href="index.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-500 transition-colors">
+                    返回首页
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-white py-20 md:py-32">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight">AI赋能，让包装创意三秒实现</h1>
+            <p class="mt-6 text-lg sm:text-xl text-blue-100 max-w-3xl mx-auto">
+                上传您的Logo，输入产品信息，AI即刻为您生成无限包装设计方案，并提供在线3D预览。
+            </p>
+            <div class="mt-4 text-sm text-blue-200">已有 <span class="font-bold">1,500+</span> 新消费品牌通过AI创造了他们的爆款包装</div>
+            <a href="#ai-tool" class="mt-8 inline-block bg-white text-blue-600 font-bold py-3 px-8 rounded-full text-lg hover:bg-slate-100 transition-colors shadow-lg">
+                立即开启AI设计之旅
+            </a>
+        </div>
+    </section>
+
+    <!-- 工作流程 -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-slate-900">只需四步，创意轻松落地</h2>
+                <p class="mt-3 text-slate-500">我们用AI技术简化了繁琐的设计流程。</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
+                <div class="text-center">
+                    <div class="bg-blue-100 text-blue-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-sm">
+                        <i data-lucide="upload-cloud" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mt-6">1. 上传品牌素材</h3>
+                    <p class="mt-2 text-slate-500">只需上传您的Logo、Slogan或品牌主视觉。</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-blue-100 text-blue-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-sm">
+                        <i data-lucide="pencil-ruler" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mt-6">2. 描述您的产品</h3>
+                    <p class="mt-2 text-slate-500">告诉AI您的产品类型、尺寸和目标风格。</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-blue-100 text-blue-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-sm">
+                        <i data-lucide="sparkles" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mt-6">3. AI生成无限方案</h3>
+                    <p class="mt-2 text-slate-500">AI设计引擎为您创造海量设计，供您挑选。</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-blue-100 text-blue-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-sm">
+                        <i data-lucide="box-select" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mt-6">4. 在线3D预览与调整</h3>
+                    <p class="mt-2 text-slate-500">实时预览3D效果，在线微调，直到您满意为止。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI设计工具原型 -->
+    <section id="ai-tool" class="py-20 bg-slate-100">
+        <div class="container mx-auto px-6">
+             <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-slate-900">即刻体验AI设计</h2>
+                <p class="mt-3 text-slate-500">输入您的产品信息，看看AI能为您带来什么惊喜。</p>
+            </div>
+            <div class="bg-white/70 ai-tool-panel rounded-2xl shadow-xl p-4 md:p-6 border border-slate-200">
+                <div class="grid lg:grid-cols-12 gap-8">
+                    <!-- 左侧：输入面板 -->
+                    <div class="lg:col-span-4 bg-white p-6 rounded-xl shadow-lg">
+                        <div class="space-y-6">
+                            <div>
+                                <label class="font-semibold block mb-2">1. 上传您的Logo</label>
+                                <button class="w-full flex items-center justify-center space-x-2 border-2 border-dashed border-slate-300 rounded-lg p-6 text-slate-500 hover:border-blue-500 hover:text-blue-500 transition-colors">
+                                    <i data-lucide="image-up"></i>
+                                    <span>点击或拖拽Logo文件</span>
+                                </button>
+                            </div>
+                            <div>
+                                <label for="product-name" class="font-semibold block mb-2">2. 您的产品名称</label>
+                                <input type="text" id="product-name" placeholder="例如：玫瑰精华面霜" class="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-300 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <h3 class="font-semibold mb-3">3. 选择盒型</h3>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <input type="radio" name="box-type" id="box-type-1" class="hidden box-type-radio" checked>
+                                    <label for="box-type-1" class="relative border-2 border-slate-200 rounded-lg p-2 text-center cursor-pointer">
+                                        <span class="absolute top-1 right-1 text-xs font-bold text-white bg-amber-500 px-1.5 py-0.5 rounded-full">推荐</span>
+                                        <svg viewBox="0 0 24 24" fill="none" class="mx-auto w-10 h-10"><rect x="3" y="11" width="18" height="9" rx="1" stroke="currentColor" stroke-width="1.5"></rect><path d="M4 11V9a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="1.5"></path></svg>
+                                        <span class="text-xs font-medium">天地盖盒</span>
+                                    </label>
+                                    <input type="radio" name="box-type" id="box-type-2" class="hidden box-type-radio">
+                                    <label for="box-type-2" class="border-2 border-slate-200 rounded-lg p-2 text-center cursor-pointer">
+                                        <svg viewBox="0 0 24 24" fill="none" class="mx-auto w-10 h-10"><path d="M22 17.5H2l-1.5-3.3A.5.5 0 0 1 1 14V5a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v9a.5.5 0 0 1-.5.5Z" stroke="currentColor" stroke-width="1.5"></path><path d="M14 17.5V3" stroke="currentColor" stroke-width="1.5"></path></svg>
+                                        <span class="text-xs font-medium">飞机盒</span>
+                                    </label>
+                                    <input type="radio" name="box-type" id="box-type-3" class="hidden box-type-radio">
+                                    <label for="box-type-3" class="border-2 border-slate-200 rounded-lg p-2 text-center cursor-pointer">
+                                        <svg viewBox="0 0 24 24" fill="none" class="mx-auto w-10 h-10"><path d="M8 18a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H9.25a2 2 0 0 0-1.9 1.4L6 9Z" stroke="currentColor" stroke-width="1.5"></path><path d="M14 6V5a2 2 0 0 0-2-2h-1a2 2 0 0 0-2 2v1" stroke="currentColor" stroke-width="1.5"></path></svg>
+                                        <span class="text-xs font-medium">手提袋</span>
+                                    </label>
+                                    <input type="radio" name="box-type" id="box-type-4" class="hidden box-type-radio">
+                                    <label for="box-type-4" class="border-2 border-slate-200 rounded-lg p-2 text-center cursor-pointer">
+                                        <svg viewBox="0 0 24 24" fill="none" class="mx-auto w-10 h-10"><rect x="2" y="9" width="20" height="8" rx="1" stroke="currentColor" stroke-width="1.5"></rect><rect x="5" y="9" width="12" height="8" rx="0" stroke="currentColor" stroke-width="1.5"></rect><line x1="11" y1="13" x2="13" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line></svg>
+                                        <span class="text-xs font-medium">抽屉盒</span>
+                                    </label>
+                                     <input type="radio" name="box-type" id="box-type-5" class="hidden box-type-radio">
+                                    <label for="box-type-5" class="border-2 border-slate-200 rounded-lg p-2 text-center cursor-pointer">
+                                        <svg viewBox="0 0 24 24" fill="none" class="mx-auto w-10 h-10"><rect x="4" y="8" width="16" height="13" rx="1" stroke="currentColor" stroke-width="1.5"></rect><path d="M4 8L8 4h8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                        <span class="text-xs font-medium">双插盒</span>
+                                    </label>
+                                     <input type="radio" name="box-type" id="box-type-6" class="hidden box-type-radio">
+                                    <label for="box-type-6" class="border-2 border-slate-200 rounded-lg p-2 text-center cursor-pointer">
+                                        <svg viewBox="0 0 24 24" fill="none" class="mx-auto w-10 h-10"><rect x="4" y="3" width="16" height="18" rx="1" stroke="currentColor" stroke-width="1.5"></rect><path d="M9 21L4 16h16l-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M4 8h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+                                        <span class="text-xs font-medium">锁底盒</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="style-keywords" class="font-semibold block mb-2">4. 设计风格关键词</label>
+                                <input type="text" id="style-keywords" placeholder="例如：简约, 科技感, 国潮风" class="w-full border border-slate-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-300 focus:border-blue-500">
+                            </div>
+                             <div>
+                                <label for="main-color" class="font-semibold block mb-2">5. 选择主色调</label>
+                                <input type="color" id="main-color" value="#3b82f6" class="w-full h-12 border border-slate-300 rounded-lg cursor-pointer">
+                            </div>
+                            <button id="generate-btn" class="w-full bg-blue-600 text-white font-bold py-4 px-8 rounded-lg text-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2">
+                                <i data-lucide="wand-2"></i>
+                                <span>生成设计方案</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- 右侧：结果画廊 -->
+                    <div class="lg:col-span-8">
+                        <div id="ai-results-gallery" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                           <!-- 初始提示 -->
+                           <div id="initial-prompt" class="col-span-full h-full flex flex-col items-center justify-center text-center p-10 bg-slate-200/50 rounded-xl">
+                               <i data-lucide="layout-grid" class="w-16 h-16 text-slate-400"></i>
+                               <h3 class="mt-4 text-xl font-semibold">您的AI设计将在此呈现</h3>
+                               <p class="mt-2 text-slate-500">请在左侧面板输入信息，然后点击“生成”按钮。</p>
+                           </div>
+                           <!-- AI生成结果将动态插入此处 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 服务与定价 -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-slate-900">选择适合您的方案</h2>
+                <p class="mt-3 text-slate-500">从免费体验到企业级定制，我们满足您不同阶段的需求。</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="border border-slate-200 rounded-2xl p-8 flex flex-col">
+                    <h3 class="text-2xl font-bold">免费体验</h3>
+                    <p class="mt-2 text-slate-500">快速感受AI设计的魅力</p>
+                    <p class="my-8 text-5xl font-extrabold">¥0</p>
+                    <ul class="space-y-4 text-slate-600 flex-grow">
+                        <li class="flex items-start"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-1"></i><span>每日3次免费生成</span></li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-1"></i><span>标准盒型选择</span></li>
+                        <li class="flex items-start"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-1"></i><span>带水印3D预览 <br><span class="text-xs text-slate-400">（专业版可去除并导出高清文件）</span></span></li>
+                    </ul>
+                    <a href="#ai-tool" class="mt-8 w-full text-center bg-slate-100 text-slate-800 font-bold py-3 px-6 rounded-lg hover:bg-slate-200 transition-colors">立即体验</a>
+                </div>
+                <div class="border-2 border-blue-600 rounded-2xl p-8 flex flex-col shadow-2xl relative">
+                    <span class="absolute top-0 -translate-y-1/2 bg-blue-600 text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">最受欢迎</span>
+                    <h3 class="text-2xl font-bold">专业版</h3>
+                    <p class="mt-2 text-blue-600">解锁全部AI创意能力</p>
+                    <p class="my-8 text-5xl font-extrabold">¥199<span class="text-lg font-medium text-slate-500">/月</span></p>
+                    <ul class="space-y-4 text-slate-600 flex-grow">
+                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>无限次数生成</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>全品类盒型支持</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>高清无水印预览</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>导出刀线与生产文件</li>
+                    </ul>
+                    <a href="#" class="mt-8 w-full text-center bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">选择专业版</a>
+                </div>
+                <div class="border border-slate-200 rounded-2xl p-8 flex flex-col">
+                    <h3 class="text-2xl font-bold">企业版</h3>
+                    <p class="mt-2 text-slate-500">您的专属品牌设计引擎</p>
+                    <p class="my-8 text-4xl font-extrabold">联系我们</p>
+                    <ul class="space-y-4 text-slate-600 flex-grow">
+                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>包含专业版所有功能</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>专属AI模型训练</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>API接口集成</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-3"></i>实物打样与寄送服务</li>
+                    </ul>
+                    <a href="#" class="mt-8 w-full text-center bg-slate-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-slate-900 transition-colors">商务洽谈</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 bg-slate-100">
+        <div class="container mx-auto px-6 max-w-4xl">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-slate-900">常见问题解答</h2>
+            </div>
+            <div class="space-y-4">
+                <div class="faq-item bg-white p-6 rounded-lg shadow-sm"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold text-lg">AI生成的设计版权归谁？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-600" style="line-height: 1.7;">对于专业版和企业版用户，一旦您选择并确认了最终方案，该设计的完整商业使用权即归您所有。免费版生成的设计仅供预览，不可用于商业目的。</div></details></div>
+                <div class="faq-item bg-white p-6 rounded-lg shadow-sm"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold text-lg">我可以上传自己的设计稿进行3D打样吗？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-600" style="line-height: 1.7;">当然可以！此工具主要用于创意生成，但您也可以在我们的“在线定制”平台直接上传您的成品文件，进行在线3D预览和生产咨询。</div></details></div>
+                <div class="faq-item bg-white p-6 rounded-lg shadow-sm"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold text-lg">3D预览和真实样品有多大差别？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-600" style="line-height: 1.7;">我们的3D渲染引擎高度模拟真实材质与工艺，相似度可达95%以上。对于颜色、烫金等特殊工艺，我们建议您订购我们的实物打样服务，以确保最终效果符合您的预期。</div></details></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+     <section class="py-20">
+        <div class="container mx-auto px-6 text-center">
+             <h2 class="text-4xl font-bold text-slate-900">还在为包装设计烦恼吗？</h2>
+             <p class="mt-3 text-slate-500 max-w-2xl mx-auto">让AI成为您的7x24小时专属设计师。立即开始，释放您的品牌潜力。</p>
+             <a href="#ai-tool" class="mt-8 inline-block bg-blue-600 text-white font-bold py-4 px-10 rounded-full text-lg hover:bg-blue-700 transition-colors shadow-lg">
+                免费试用AI设计
+            </a>
+        </div>
+    </section>
+
+    <footer class="bg-white border-t border-slate-200">
+         <div class="container mx-auto px-6 py-8 text-center text-sm text-slate-500">
+             &copy; 2025 智盒工坊 (iboxify). All Rights Reserved.
+         </div>
+    </footer>
+
+    <!-- 打样与微调模态框 -->
+    <div id="proofing-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl h-[90vh] flex flex-col">
+            <div class="flex-shrink-0 flex justify-between items-center p-4 border-b border-slate-200">
+                <h2 class="text-xl font-bold">设定样品规格并下单</h2>
+                <button id="close-proofing-modal" class="text-slate-500 hover:text-slate-800">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="flex-grow flex flex-col lg:flex-row gap-4 p-4 overflow-y-auto lg:overflow-hidden">
+                <!-- 左侧: 3D预览 -->
+                <div class="lg:w-8/12 bg-slate-100 rounded-lg flex flex-col p-4 max-h-[50vh] lg:max-h-none">
+                    <div id="modal-3d-viewer" class="flex-grow bg-white rounded-md flex items-center justify-center relative min-h-0">
+                        <img id="modal-design-image" src="" alt="Selected Design" class="max-w-full max-h-full object-contain">
+                        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center space-x-2 bg-black/20 text-white p-2 rounded-full backdrop-blur-sm">
+                            <button class="p-2 hover:bg-white/20 rounded-full"><i data-lucide="rotate-ccw"></i></button>
+                            <button class="p-2 hover:bg-white/20 rounded-full"><i data-lucide="zoom-in"></i></button>
+                            <button class="p-2 hover:bg-white/20 rounded-full"><i data-lucide="zoom-out"></i></button>
+                            <button class="p-2 hover:bg-white/20 rounded-full"><i data-lucide="move-3d"></i></button>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0 mt-4 flex justify-between items-center">
+                         <p class="text-sm text-slate-500">实时3D预览，所见即所得</p>
+                         <button class="flex items-center space-x-2 bg-white border border-slate-300 font-semibold text-sm py-2 px-4 rounded-lg hover:bg-slate-50">
+                             <i data-lucide="share-2" class="w-4 h-4"></i>
+                             <span>分享3D预览</span>
+                         </button>
+                    </div>
+                </div>
+                <!-- 右侧: 选项与下单 -->
+                <div class="lg:w-4/12 flex flex-col lg:overflow-hidden">
+                    <div class="flex-grow lg:overflow-y-auto pr-2 space-y-4 min-h-0">
+                        <!-- 打样模式选择 -->
+                        <div class="bg-white border border-slate-200 rounded-lg p-4">
+                            <h3 class="font-bold mb-3 text-lg">请选择打样模式</h3>
+                            <div class="grid grid-cols-1 gap-3 text-sm">
+                                <input type="radio" name="proofing-mode" id="proofing-mode-manual" value="manual" class="hidden proofing-mode-radio" checked>
+                                <label for="proofing-mode-manual" class="border-2 border-slate-200 rounded-lg p-3 cursor-pointer">
+                                    <span class="font-semibold block">手动配置规格</span>
+                                    <span class="text-xs text-slate-500">由您亲自设定样品的各项参数</span>
+                                </label>
+                                
+                                <input type="radio" name="proofing-mode" id="proofing-mode-expert" value="expert" class="hidden proofing-mode-radio">
+                                <label for="proofing-mode-expert" class="border-2 border-slate-200 rounded-lg p-3 cursor-pointer">
+                                     <div class="flex justify-between items-center">
+                                        <span class="font-semibold">省心优选</span>
+                                        <span class="text-xs font-bold text-white bg-amber-500 px-2 py-0.5 rounded-full">专家推荐</span>
+                                     </div>
+                                    <span class="text-xs text-slate-500">由包装专家为您匹配最佳工艺与材质</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 规格与服务容器 -->
+                        <div id="specs-options-container-wrapper">
+                             <div id="manual-specs-container">
+                                <!-- 步骤1: 确认规格 -->
+                                <div class="bg-white border border-slate-200 rounded-lg p-4">
+                                    <h3 class="font-bold mb-3 text-lg">1. 设定样品规格</h3>
+                                    <div class="space-y-4 text-sm">
+                                         <div>
+                                            <label for="box-type-select" class="font-medium text-slate-700 block mb-1">盒型结构</label>
+                                            <select id="box-type-select" class="w-full border-slate-300 rounded-md p-2">
+                                                <option>天地盖盒</option>
+                                                <option>飞机盒</option>
+                                                <option>手提袋</option>
+                                                <option>抽屉盒</option>
+                                                <option>双插盒</option>
+                                                <option>锁底盒</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="font-medium text-slate-700 block mb-1">尺寸 (mm)</label>
+                                            <div class="grid grid-cols-3 gap-2">
+                                                <input type="number" placeholder="长" value="120" class="w-full border-slate-300 rounded-md p-2">
+                                                <input type="number" placeholder="宽" value="80" class="w-full border-slate-300 rounded-md p-2">
+                                                <input type="number" placeholder="高" value="40" class="w-full border-slate-300 rounded-md p-2">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="material-select" class="font-medium text-slate-700 block mb-1">纸张材质</label>
+                                            <select id="material-select" class="w-full border-slate-300 rounded-md p-2">
+                                                <option>350g C1S 白卡纸</option>
+                                                <option>120g 特种纸裱 2.0mm 灰板</option>
+                                                <option>E瓦楞 (三层)</option>
+                                            </select>
+                                        </div>
+                                         <div>
+                                            <label class="font-medium text-slate-700 block mb-1">追加工艺 (可选)</label>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <label class="flex items-center space-x-2 p-2 border border-slate-200 rounded-md">
+                                                    <input type="checkbox" name="finishing-option" value="50" class="h-4 w-4 rounded text-blue-600">
+                                                    <span>烫金</span>
+                                                </label>
+                                                 <label class="flex items-center space-x-2 p-2 border border-slate-200 rounded-md">
+                                                    <input type="checkbox" name="finishing-option" value="60" class="h-4 w-4 rounded text-blue-600">
+                                                    <span>击凸/压凹</span>
+                                                </label>
+                                                 <label class="flex items-center space-x-2 p-2 border border-slate-200 rounded-md">
+                                                    <input type="checkbox" name="finishing-option" value="20" class="h-4 w-4 rounded text-blue-600">
+                                                    <span>覆哑膜</span>
+                                                </label>
+                                                 <label class="flex items-center space-x-2 p-2 border border-slate-200 rounded-md">
+                                                    <input type="checkbox" name="finishing-option" value="40" class="h-4 w-4 rounded text-blue-600">
+                                                    <span>局部UV</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 步骤2: 增值服务 -->
+                                <div class="bg-white border border-slate-200 rounded-lg p-4 mt-4">
+                                    <h3 class="font-bold mb-3 text-lg">2. 增值服务 (可选)</h3>
+                                    <div class="space-y-4 text-sm">
+                                        <label class="flex items-center space-x-3 p-3 border border-slate-200 rounded-md has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+                                            <input type="checkbox" name="service-option" value="80" class="h-4 w-4 rounded text-blue-600">
+                                            <div>
+                                                <span class="font-semibold">适配产品</span>
+                                                <p class="text-xs text-slate-500">寄送您的产品，我们为您精准适配尺寸</p>
+                                            </div>
+                                        </label>
+                                        <div>
+                                            <label class="flex items-center space-x-3 p-3 border border-slate-200 rounded-md has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+                                                <input id="inner-tray-checkbox" type="checkbox" name="service-option" value="0" class="h-4 w-4 rounded text-blue-600">
+                                                <div>
+                                                    <span class="font-semibold">增加内托</span>
+                                                    <p class="text-xs text-slate-500">为您的产品提供额外固定与保护</p>
+                                                </div>
+                                            </label>
+                                            <div id="inner-tray-options" class="hidden mt-3 ml-4 pl-4 border-l-2 border-slate-200 space-y-2">
+                                                <p class="font-medium text-xs text-slate-600">请选择内托材质：</p>
+                                                 <input type="radio" name="inner-tray-material" id="tray-eva" value="120" class="hidden inner-tray-radio">
+                                                 <label for="tray-eva" class="block border rounded-md p-2 cursor-pointer">
+                                                    <span class="font-semibold text-sm">EVA内托</span>
+                                                    <p class="text-xs text-slate-500">保护性最佳，适用于贵重产品</p>
+                                                 </label>
+                                                 <input type="radio" name="inner-tray-material" id="tray-blister" value="70" class="hidden inner-tray-radio">
+                                                 <label for="tray-blister" class="block border rounded-md p-2 cursor-pointer">
+                                                    <span class="font-semibold text-sm">吸塑内托</span>
+                                                    <p class="text-xs text-slate-500">贴合产品轮廓，性价比高</p>
+                                                 </label>
+                                                 <input type="radio" name="inner-tray-material" id="tray-cardboard" value="40" class="hidden inner-tray-radio" checked>
+                                                 <label for="tray-cardboard" class="block border rounded-md p-2 cursor-pointer">
+                                                    <span class="font-semibold text-sm">卡纸内托</span>
+                                                    <p class="text-xs text-slate-500">环保轻便，适合规则形状产品</p>
+                                                 </label>
+                                            </div>
+                                        </div>
+                                         <div>
+                                            <label class="flex items-center space-x-3 p-3 border border-slate-200 rounded-md has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+                                                <input id="add-accessories-checkbox" type="checkbox" name="service-option" value="0" class="h-4 w-4 rounded text-blue-600">
+                                                <div>
+                                                    <span class="font-semibold">增加配件</span>
+                                                    <p class="text-xs text-slate-500">为包装增加丝带、贴纸等配件</p>
+                                                </div>
+                                            </label>
+                                            <div id="accessories-options" class="hidden mt-3 ml-4 pl-4 border-l-2 border-slate-200 space-y-3">
+                                                <p class="font-medium text-xs text-slate-600">标准配件 (可多选):</p>
+                                                <div class="grid grid-cols-2 gap-2">
+                                                    <label class="flex items-center space-x-2 p-2 border border-slate-200 rounded-md">
+                                                        <input type="checkbox" name="standard-accessory" value="15" class="h-4 w-4 rounded text-blue-600">
+                                                        <span class="text-sm">丝带</span>
+                                                    </label>
+                                                    <label class="flex items-center space-x-2 p-2 border border-slate-200 rounded-md">
+                                                        <input type="checkbox" name="standard-accessory" value="10" class="h-4 w-4 rounded text-blue-600">
+                                                        <span class="text-sm">贴纸</span>
+                                                    </label>
+                                                </div>
+                                                <p class="font-medium text-xs text-slate-600 pt-2">非标配件:</p>
+                                                <div>
+                                                    <textarea placeholder="请描述您需要的非标配件，我们的专家将与您联系并单独报价。" rows="3" class="w-full text-sm border-slate-300 rounded-md"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div> <!-- End of manual-specs-container -->
+                             <div class="bg-white border border-slate-200 rounded-lg p-4 mt-4">
+                                <h3 class="font-bold text-lg">打样数量</h3>
+                                <div>
+                                    <label for="proofing-quantity" class="font-medium text-slate-700 block mb-1 text-sm">请输入您需要的样品数量</label>
+                                    <input id="proofing-quantity" type="number" value="1" class="w-full border-slate-300 rounded-md p-2">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- 步骤3: 费用总览 -->
+                    <div class="flex-shrink-0 pt-4">
+                        <div class="bg-white border-2 border-slate-200 rounded-lg p-4">
+                            <h3 class="font-bold text-lg">费用总览</h3>
+                            <div class="mt-3 space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">基础打样费</span>
+                                    <span id="base-proofing-cost" class="font-medium">¥ 150.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">追加工艺费</span>
+                                    <span id="finishing-cost-summary" class="font-medium">¥ 0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-600">增值服务费</span>
+                                    <span id="service-cost-summary" class="font-medium">¥ 0.00</span>
+                                </div>
+                                <div id="expert-fee-row" class="hidden flex justify-between items-center">
+                                    <div class="flex items-center space-x-1">
+                                       <span class="text-slate-600 font-semibold">预付订金</span>
+                                       <div class="tooltip">
+                                            <i data-lucide="info" class="w-3 h-3 text-slate-400"></i>
+                                            <span class="tooltiptext">此为预付订金。我们的包装专家将与您联系，根据最终确认的方案进行尾款结算（多退少补）。</span>
+                                       </div>
+                                    </div>
+                                    <span id="expert-cost-summary" class="font-medium">¥ 100.00</span>
+                                </div>
+                                <div class="border-t border-slate-200 my-2"></div>
+                                <div class="flex justify-between items-center text-lg">
+                                    <span class="font-bold">合计</span>
+                                    <span id="total-cost-summary" class="font-bold text-blue-600 text-2xl">¥ 150.00</span>
+                                </div>
+                            </div>
+                             <button class="mt-4 w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                                加入购物车
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast-notification" class="toast-notification fixed bottom-5 right-5 bg-slate-900 text-white py-3 px-5 rounded-lg shadow-xl opacity-0 translate-y-10">
+        已将您的杰作收藏！
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+            const generateBtn = document.getElementById('generate-btn');
+            const gallery = document.getElementById('ai-results-gallery');
+            const initialPrompt = document.getElementById('initial-prompt');
+            const proofingModal = document.getElementById('proofing-modal');
+            const closeProofingModalBtn = document.getElementById('close-proofing-modal');
+            const modalDesignImage = document.getElementById('modal-design-image');
+            const toast = document.getElementById('toast-notification');
+            
+            const baseProofingCostEl = document.getElementById('base-proofing-cost');
+            const finishingCostEl = document.getElementById('finishing-cost-summary');
+            const serviceCostEl = document.getElementById('service-cost-summary');
+            const totalCostEl = document.getElementById('total-cost-summary');
+            const expertFeeRow = document.getElementById('expert-fee-row');
+            const expertCostSummary = document.getElementById('expert-cost-summary');
+
+            const innerTrayCheckbox = document.getElementById('inner-tray-checkbox');
+            const innerTrayOptions = document.getElementById('inner-tray-options');
+            const addAccessoriesCheckbox = document.getElementById('add-accessories-checkbox');
+            const accessoriesOptions = document.getElementById('accessories-options');
+
+            const proofingModeRadios = document.querySelectorAll('input[name="proofing-mode"]');
+            const manualSpecsContainer = document.getElementById('manual-specs-container');
+
+            const mockResults = [
+                { image: 'https://images.pexels.com/photos/7262900/pexels-photo-7262900.jpeg?auto=compress&cs=tinysrgb&w=400' },
+                { image: 'https://images.pexels.com/photos/7262995/pexels-photo-7262995.jpeg?auto=compress&cs=tinysrgb&w=400' },
+                { image: 'https://images.pexels.com/photos/7262990/pexels-photo-7262990.jpeg?auto=compress&cs=tinysrgb&w=400' },
+                { image: 'https://images.pexels.com/photos/7262890/pexels-photo-7262890.jpeg?auto=compress&cs=tinysrgb&w=400' },
+                { image: 'https://images.pexels.com/photos/7262817/pexels-photo-7262817.jpeg?auto=compress&cs=tinysrgb&w=400' },
+                { image: 'https://images.pexels.com/photos/7262779/pexels-photo-7262779.jpeg?auto=compress&cs=tinysrgb&w=400' },
+            ];
+            
+            // --- User Input Animation ---
+            const inputsForAnimation = [document.getElementById('product-name'), document.getElementById('style-keywords')];
+            inputsForAnimation.forEach(input => {
+                input.addEventListener('input', () => {
+                    if(input.value.length > 2) {
+                        generateBtn.classList.add('button-pulse');
+                    } else {
+                        generateBtn.classList.remove('button-pulse');
+                    }
+                });
+            });
+
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.remove('opacity-0', 'translate-y-10');
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', 'translate-y-10');
+                }, 2500);
+            }
+
+            function handleProofingModeChange() {
+                const selectedMode = document.querySelector('input[name="proofing-mode"]:checked').value;
+                if (selectedMode === 'expert') {
+                    manualSpecsContainer.classList.add('disabled');
+                    expertFeeRow.classList.remove('hidden');
+                    baseProofingCostEl.parentElement.classList.add('hidden');
+                    finishingCostEl.parentElement.classList.add('hidden');
+                    serviceCostEl.parentElement.classList.add('hidden');
+                } else {
+                    manualSpecsContainer.classList.remove('disabled');
+                    expertFeeRow.classList.add('hidden');
+                    baseProofingCostEl.parentElement.classList.remove('hidden');
+                    finishingCostEl.parentElement.classList.remove('hidden');
+                    serviceCostEl.parentElement.classList.remove('hidden');
+                }
+                updateCost();
+            }
+            
+            function addEventListenersForCostUpdate() {
+                proofingModeRadios.forEach(radio => radio.addEventListener('change', handleProofingModeChange));
+
+                const costInputs = [
+                    ...document.querySelectorAll('input[name="finishing-option"], input[name="service-option"], input[name="inner-tray-material"], input[name="standard-accessory"]'),
+                    document.getElementById('proofing-quantity')
+                ];
+
+                costInputs.forEach(el => {
+                    el.addEventListener('change', updateCost);
+                    el.addEventListener('input', updateCost); // for quantity
+                });
+
+                innerTrayCheckbox.addEventListener('change', () => {
+                    innerTrayOptions.classList.toggle('hidden', !innerTrayCheckbox.checked);
+                    updateCost();
+                });
+                
+                addAccessoriesCheckbox.addEventListener('change', () => {
+                    accessoriesOptions.classList.toggle('hidden', !addAccessoriesCheckbox.checked);
+                    updateCost();
+                });
+            }
+
+            function updateCost() {
+                const selectedMode = document.querySelector('input[name="proofing-mode"]:checked').value;
+                const quantity = parseInt(document.getElementById('proofing-quantity').value) || 1;
+
+                if (selectedMode === 'expert') {
+                    const depositPrice = 100.00;
+                    expertCostSummary.textContent = `¥ ${depositPrice.toFixed(2)}`;
+                    totalCostEl.textContent = `¥ ${depositPrice.toFixed(2)}`;
+                    return;
+                }
+
+                let finishingPrice = 0;
+                let servicePrice = 0;
+                const basePrice = 150.00; 
+
+                document.querySelectorAll('input[name="finishing-option"]:checked').forEach(checkbox => {
+                    finishingPrice += parseFloat(checkbox.value);
+                });
+
+                document.querySelectorAll('input[name="service-option"]:checked').forEach(checkbox => {
+                    const id = checkbox.id;
+                    if(id !== 'inner-tray-checkbox' && id !== 'add-accessories-checkbox') {
+                         servicePrice += parseFloat(checkbox.value);
+                    }
+                });
+
+                if (innerTrayCheckbox.checked) {
+                    const selectedTray = document.querySelector('input[name="inner-tray-material"]:checked');
+                    if(selectedTray) {
+                        servicePrice += parseFloat(selectedTray.value);
+                    }
+                }
+                
+                if (addAccessoriesCheckbox.checked) {
+                     document.querySelectorAll('input[name="standard-accessory"]:checked').forEach(checkbox => {
+                        servicePrice += parseFloat(checkbox.value);
+                    });
+                }
+                
+                const totalPerItemCost = basePrice + finishingPrice + servicePrice;
+                const totalPrice = totalPerItemCost * quantity;
+
+                baseProofingCostEl.textContent = `¥ ${(basePrice * quantity).toFixed(2)}`;
+                finishingCostEl.textContent = `¥ ${(finishingPrice * quantity).toFixed(2)}`;
+                serviceCostEl.textContent = `¥ ${(servicePrice * quantity).toFixed(2)}`;
+                totalCostEl.textContent = `¥ ${totalPrice.toFixed(2)}`;
+            }
+
+            function openProofingModal(imageUrl, boxType) {
+                modalDesignImage.src = imageUrl.replace('w=400', 'w=800');
+                
+                const boxTypeSelect = document.getElementById('box-type-select');
+                if (boxTypeSelect) {
+                    boxTypeSelect.value = boxType;
+                }
+                
+                document.getElementById('proofing-mode-manual').checked = true;
+                handleProofingModeChange();
+                
+                addEventListenersForCostUpdate();
+                updateCost();
+                proofingModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                if(window.lucide) lucide.createIcons();
+            }
+
+            function closeProofingModal() {
+                proofingModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+            
+            closeProofingModalBtn.addEventListener('click', closeProofingModal);
+            
+            proofingModal.addEventListener('click', (e) => {
+                if (e.target === proofingModal) {
+                    closeProofingModal();
+                }
+            });
+
+
+            generateBtn.addEventListener('click', () => {
+                const selectedBoxType = document.querySelector('input[name="box-type"]:checked + label .text-xs').textContent;
+                generateBtn.classList.remove('button-pulse');
+                
+                initialPrompt.classList.add('hidden');
+                gallery.innerHTML = `
+                    <div class="col-span-full h-full flex flex-col items-center justify-center text-center p-10">
+                        <i data-lucide="loader-2" class="w-16 h-16 text-blue-500 animate-spin"></i>
+                        <h3 class="mt-4 text-xl font-semibold">AI正在挥洒创意...</h3>
+                        <p class="mt-2 text-slate-500">通常需要10-30秒，请稍候。</p>
+                    </div>
+                `;
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+
+                setTimeout(() => {
+                    gallery.innerHTML = '';
+                    mockResults.sort(() => 0.5 - Math.random()).forEach(result => {
+                        const card = document.createElement('div');
+                        card.className = "group relative bg-white rounded-lg shadow-md overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1";
+                        card.innerHTML = `
+                            <img src="${result.image}" alt="AI generated packaging design" class="w-full h-64 object-cover" loading="lazy">
+                            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-4 translate-y-20 group-hover:translate-y-0 transition-transform duration-300">
+                                <div class="flex justify-center space-x-2">
+                                     <button class="bg-white/80 text-slate-900 p-2 rounded-full hover:bg-white backdrop-blur-sm" title="放大预览">
+                                        <i data-lucide="zoom-in" class="w-5 h-5"></i>
+                                    </button>
+                                    <button class="favorite-btn bg-white/80 text-slate-900 p-2 rounded-full hover:bg-white backdrop-blur-sm" title="收藏">
+                                        <i data-lucide="heart" class="w-5 h-5"></i>
+                                    </button>
+                                     <button data-image-url="${result.image}" data-box-type="${selectedBoxType}" class="select-design-btn flex-grow bg-blue-600/90 text-white font-semibold py-2 px-4 rounded-full hover:bg-blue-600 backdrop-blur-sm">
+                                        选择此方案
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        gallery.appendChild(card);
+                    });
+                     if (window.lucide) {
+                        lucide.createIcons();
+                    }
+                }, 2000);
+            });
+
+            gallery.addEventListener('click', (e) => {
+                const selectBtn = e.target.closest('.select-design-btn');
+                if (selectBtn) {
+                    const imageUrl = selectBtn.dataset.imageUrl;
+                    const boxType = selectBtn.dataset.boxType;
+                    openProofingModal(imageUrl, boxType);
+                    return;
+                }
+
+                const favoriteBtn = e.target.closest('.favorite-btn');
+                if (favoriteBtn) {
+                    const heartIcon = favoriteBtn.querySelector('i');
+                    heartIcon.style.fill = 'red';
+                    heartIcon.style.color = 'red';
+                    showToast('已将您的杰作收藏！');
+                }
+            });
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white py-12 mt-20">
+        <div class="container mx-auto px-8 md:px-16">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-2 mb-4">
+                    <svg width="32" height="32" viewBox="0 0 24 24" class="text-blue-400">
+                        <path fill="currentColor"
+                            d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 15h-2v-5h-4v5H9V9h2v4h2V9h2v8z">
+                        </path>
+                    </svg>
+                    <span class="text-xl font-bold">智盒工坊</span>
+                </div>
+                <p class="text-slate-400 mb-6">让包装定制变得简单 | AI设计，专业服务</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="index.html" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-500 transition-colors">
+                        返回首页
+                    </a>
+                    <a href="smart-matcher.html" class="border border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-slate-900 transition-colors">
+                        体验智能匹配器
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+
