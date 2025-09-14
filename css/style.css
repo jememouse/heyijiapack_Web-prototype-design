@@ -1,0 +1,231 @@
+/* 自定义样式 */
+body {
+    font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #F8FAFC;
+    color: #1E293B;
+}
+
+/* 订单状态时间轴的连接线样式 */
+.timeline-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    top: 2.5rem;
+    width: 2px;
+    height: calc(100% - 1.5rem);
+    background-color: #E2E8F0;
+    /* slate-200 */
+    z-index: -1;
+}
+
+.timeline-item.active:not(:last-child)::after {
+    background-color: #3b82f6;
+    /* blue-500 */
+}
+
+/* 产品卡片图片悬停效果 */
+.product-card .image-container {
+    position: relative;
+    cursor: pointer;
+}
+
+.product-card .img-3d,
+.product-card .img-2d {
+    transition: opacity 0.3s ease-in-out;
+    backface-visibility: hidden;
+}
+
+.product-card .img-2d {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+
+.product-card:hover .img-3d {
+    opacity: 0;
+}
+
+.product-card:hover .img-2d {
+    opacity: 1;
+}
+
+/* 隐藏数字输入框的默认箭头 */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type='number'] {
+    -moz-appearance: textfield;
+}
+
+/* 优化输入框和选择框样式 */
+.process-input {
+    background-color: white !important;
+    border: 2px solid #94a3b8 !important;
+    /* slate-400 */
+    border-radius: 0.5rem !important;
+    /* rounded-lg */
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+    /* shadow-sm */
+    font-weight: 500 !important;
+    color: #0f172a !important;
+    /* text-slate-900 */
+    transition: all 0.2s ease-in-out !important;
+}
+
+.process-input:hover {
+    border-color: #64748b !important;
+    /* slate-500 */
+}
+
+.process-input:focus {
+    outline: none !important;
+    border-color: #3b82f6 !important;
+    /* blue-500 */
+    box-shadow: 0 0 0 2px rgb(59 130 246 / 0.5) !important;
+    /* focus:ring-2 focus:ring-blue-500 */
+}
+
+/* 优化所有带有border-slate-300的输入框 */
+input.border-slate-300,
+select.border-slate-300,
+textarea.border-slate-300 {
+    background-color: white !important;
+    border: 2px solid #94a3b8 !important;
+    /* slate-400 */
+    border-radius: 0.5rem !important;
+    /* rounded-lg */
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+    /* shadow-sm */
+    font-weight: 500 !important;
+    color: #0f172a !important;
+    /* text-slate-900 */
+    transition: all 0.2s ease-in-out !important;
+}
+
+input.border-slate-300:hover,
+select.border-slate-300:hover,
+textarea.border-slate-300:hover {
+    border-color: #64748b !important;
+    /* slate-500 */
+}
+
+input.border-slate-300:focus,
+select.border-slate-300:focus,
+textarea.border-slate-300:focus {
+    outline: none !important;
+    border-color: #3b82f6 !important;
+    /* blue-500 */
+    box-shadow: 0 0 0 2px rgb(59 130 246 / 0.5) !important;
+    /* focus:ring-2 focus:ring-blue-500 */
+}
+
+/* 导航激活状态 */
+.sidebar-link.active {
+    background-color: #EFF6FF;
+    /* bg-blue-50 */
+    color: #2563EB;
+    /* text-blue-600 */
+    font-weight: 600;
+}
+
+/* Tab 激活状态 */
+.tab-button.active {
+    border-color: #2563EB;
+    color: #2563EB;
+    font-weight: 600;
+}
+
+.order-tab-button.active {
+    border-color: #2563EB;
+    color: #2563EB;
+    font-weight: 600;
+}
+
+.auth-tab-button.active {
+    border-color: #2563EB;
+    color: #1E293B;
+}
+
+/* 优化: 主按钮渐变效果 */
+.btn-primary {
+    background-image: linear-gradient(to bottom, #3B82F6, #2563EB);
+}
+
+.btn-primary:hover {
+    background-image: linear-gradient(to bottom, #2563EB, #1D4ED8);
+}
+
+/* FAQ 折叠面板 */
+.faq-item details>summary {
+    list-style: none;
+}
+
+.faq-item details>summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq-item details>summary .icon {
+    transition: transform 0.2s;
+}
+
+.faq-item details[open]>summary .icon {
+    transform: rotate(45deg);
+}
+
+/* 新增: 购物车图标晃动动画 */
+@keyframes cart-shake {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(-10deg);
+    }
+
+    75% {
+        transform: rotate(10deg);
+    }
+}
+
+.cart-shake-animation {
+    animation: cart-shake 0.4s ease-in-out;
+}
+
+/* Tooltip for customization options */
+.tooltip-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    width: 220px;
+    background-color: #1E293B;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 10;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -110px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
