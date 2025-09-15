@@ -104,6 +104,7 @@ function showPage(pageId, context) {
     } else if (pageId === 'customization-page') {
         renderMaterialOptions();
         renderSpecialProcesses();
+        initializeStepper();
     } else if (pageId === 'product-center-page') {
         initializeFilters();
     }
@@ -451,6 +452,55 @@ function renderProductCenter(filter) {
         container.innerHTML = html;
     }
     renderIcons();
+}
+
+function initializeStepper() {
+    const stepperContainer = document.getElementById('stepper-nav-container');
+    const sections = document.querySelectorAll('.customization-section');
+    if (!stepperContainer || sections.length === 0) return;
+
+    stepperContainer.innerHTML = ''; // Clear existing
+    const stepperUl = document.createElement('ul');
+    stepperUl.className = 'flex items-center space-x-2 overflow-x-auto whitespace-nowrap';
+
+    const sectionMap = new Map();
+
+    sections.forEach((section, index) => {
+        const titleElement = section.querySelector('h3');
+        const titleText = titleElement ? titleElement.textContent.split('.')[1]?.trim() || "步骤" : `步骤 ${index + 1}`;
+
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `#${section.id}`;
+        a.textContent = titleText;
+        a.className = 'stepper-link px-3 py-1.5 text-sm font-medium text-slate-500 rounded-full hover:bg-slate-200 transition-colors';
+        a.dataset.target = section.id;
+
+        a.addEventListener('click', (e) => {
+            e.preventDefault();
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        li.appendChild(a);
+        stepperUl.appendChild(li);
+        sectionMap.set(section.id, a);
+    });
+
+    stepperContainer.appendChild(stepperUl);
+
+    // Intersection Observer for scroll-spy
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const link = sectionMap.get(entry.target.id);
+            if (entry.isIntersecting) {
+                link.classList.add('active-stepper');
+            } else {
+                link.classList.remove('active-stepper');
+            }
+        });
+    }, { rootMargin: '-40% 0px -60% 0px', threshold: 0 });
+
+    sections.forEach(section => observer.observe(section));
 }
 
 function goToCustomization(productId) {

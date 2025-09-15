@@ -290,10 +290,13 @@
                             </div>
                         </div>
                         <div class="lg:col-span-2">
+                            <div id="stepper-nav-container" class="sticky top-24 z-10 bg-white/95 backdrop-blur-sm -mx-4 px-4 py-3 mb-6 border-b border-slate-200">
+                                <!-- Stepper will be dynamically generated here -->
+                            </div>
                             <h2 class="text-2xl font-bold mb-6" id="customization-header">通用彩盒 定制</h2>
-                            <div class="space-y-6">
+                            <div class="space-y-8" id="customization-sections">
                                 <!-- 1. 输入尺寸 -->
-                                <div>
+                                <div id="step-1" class="customization-section">
                                     <h3 class="text-lg font-semibold mb-3">1. 输入尺寸 *</h3>
                                     <div class="grid grid-cols-3 gap-4">
                                         <div><label for="length" class="block text-sm font-medium text-slate-700">长
@@ -332,7 +335,7 @@
                                     </div>
                                 </div>
                                 <!-- 2. 选择材料 -->
-                                <div>
+                                <div id="step-2" class="customization-section">
                                     <h3 class="text-lg font-semibold mb-3">2. 选择材料</h3>
                                     <div class="space-y-4">
                                         <div>
@@ -347,7 +350,7 @@
                                     </div>
                                 </div>
                                 <!-- 3. 图案印制方式 -->
-                                <div>
+                                <div id="step-3" class="customization-section">
                                     <h3 class="text-lg font-semibold mb-3">3. 图案印制方式</h3>
                                     <div class="space-y-3">
                                         <!-- 精美数码印刷 -->
@@ -434,7 +437,7 @@
                                     </div>
                                 </div>
                                 <!-- 4. 表面处理 -->
-                                <div>
+                                <div id="step-4" class="customization-section">
                                     <h3 class="text-lg font-semibold mb-3">4. 表面处理</h3>
                                     <div class="space-y-4">
                                         <div>
@@ -506,14 +509,14 @@
                                     </div>
                                 </div>
                                 <!-- 5. 装饰工艺 -->
-                                <div>
+                                <div id="step-5" class="customization-section">
                                     <h3 class="text-lg font-semibold mb-3">5. 装饰工艺</h3>
                                     <div id="special-processes-container" class="space-y-4">
                                         <!-- Process options will be rendered here by JS -->
                                     </div>
                                 </div>
                                 <!-- 6. 成型 -->
-                                <div>
+                                <div id="step-6" class="customization-section">
                                     <h3 class="text-lg font-semibold mb-3">6. 成型</h3>
                                     <div class="space-y-3">
                                         <label
@@ -540,9 +543,10 @@
                                 </div>
 
                                 <!-- 7. 配件 & 8. 其它服务 -->
-                                <div class="grid grid-cols-2 gap-6">
-                                    <div>
-                                        <h3 class="text-lg font-semibold mb-3">7. 配件</h3>
+                                <div id="step-7" class="customization-section">
+                                    <div class="grid grid-cols-2 gap-6">
+                                        <div>
+                                            <h3 class="text-lg font-semibold mb-3">7. 配件</h3>
                                         <div class="space-y-3">
                                             <!-- 内托选项 -->
                                             <label
@@ -801,7 +805,7 @@
                                     </div>
                                 </div>
                                 <!-- 9. 打样服务 -->
-                                <div>
+                                <div id="step-8" class="customization-section">
                                     <h3 class="text-lg font-semibold mb-3">9. 打样服务 <span
                                             class="text-xs text-slate-500 font-normal">（支持一个起订）</span></h3>
                                     <div class="space-y-3">
@@ -845,7 +849,7 @@
                                     </div>
                                 </div>
                                 <!-- 10. 输入数量 -->
-                                <div>
+                                <div id="step-9" class="customization-section">
                                     <h3 class="text-lg font-semibold mb-3">10. 输入数量 * <span
                                             class="text-xs text-green-600 font-normal">（支持1个起订）</span></h3>
                                     <div class="relative">
