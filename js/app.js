@@ -132,32 +132,50 @@ function showUserCenterView(viewId, context) {
 // Store the currently viewed product ID
 let currentProductDetailId = null;
 
+function findProductInCatalog(productId) {
+    for (const domain in productCatalog) {
+        for (const pCat in productCatalog[domain]) {
+            for (const sCat in productCatalog[domain][pCat]) {
+                const product = productCatalog[domain][pCat][sCat].find(p => p.id === productId);
+                if (product) {
+                    return product;
+                }
+            }
+        }
+    }
+    return null;
+}
+
 function showProductDetail(productId) {
     currentProductDetailId = productId;
-    const product = products.find(p => p.id === productId);
-    if (!product) {
-        alert('产品未找到!');
+
+    const productInfo = findProductInCatalog(productId);
+    const details = productDetails[productId];
+
+    if (!productInfo || !details) {
+        alert('产品信息不完整，无法加载详情页。');
+        showPage('product-center-page'); // Go back to product center
         return;
     }
 
     // Update main product information
-    document.getElementById('product-detail-title').textContent = product.name;
-    document.getElementById('product-detail-subtitle').textContent = product.id;
-    document.getElementById('product-detail-main-image').src = product.imageUrl.replace('400', '600');
-    document.getElementById('product-detail-breadcrumb').textContent = product.name;
+    document.getElementById('product-detail-title').textContent = productInfo.name;
+    document.getElementById('product-detail-subtitle').textContent = productInfo.id;
+    document.getElementById('product-detail-main-image').src = productInfo.imageUrl.replace('400', '600');
+    document.getElementById('product-detail-breadcrumb').textContent = productInfo.name;
 
     // Update features
     const featuresContainer = document.getElementById('product-detail-features');
-    if (product.features && featuresContainer) {
-        featuresContainer.innerHTML = product.features.map(feature =>
+    if (details.features && featuresContainer) {
+        featuresContainer.innerHTML = details.features.map(feature =>
             `<li class="flex items-start"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>${feature}</li>`
         ).join('');
     }
 
     // Update scenarios
     const scenariosContainer = document.getElementById('product-detail-scenarios');
-    if (product.scenarios && scenariosContainer) {
-        scenariosContainer.innerHTML = product.scenarios.map(scenario =>
+    if (details.scenarios && scenariosContainer) {
+        scenariosContainer.innerHTML = details.scenarios.map(scenario =>
             `<div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
                 <i data-lucide="${scenario.icon}" class="w-6 h-6 text-${scenario.color}-600"></i>
                 <div>
@@ -181,110 +199,124 @@ function showProductDetail(productId) {
 }
 
 function renderProductDetailTab(tabId) {
-    const product = products.find(p => p.id === currentProductDetailId);
-    if (!product) return;
-
+    const details = productDetails[currentProductDetailId];
     const container = document.getElementById(`${tabId}-content`);
+
     if (!container) return;
 
+    if (!details) {
+        container.innerHTML = `<p>无法加载产品详细信息。</p>`;
+        return;
+    }
+
     let contentHTML = '';
-    switch (tabId) {
-        case 'specifications':
-            contentHTML = `
-                <h3 class="text-xl font-semibold mb-6">产品规格参数</h3>
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="font-semibold mb-4 text-slate-800">基本参数</h4>
-                        <div class="space-y-3">
-                            ${(product.specifications.basic || []).map(spec => `
-                                <div class="flex justify-between py-2 border-b border-slate-100">
-                                    <span class="text-slate-600">${spec.label}</span>
-                                    <span class="font-medium">${spec.value}</span>
-                                </div>`).join('')}
+    // Check if the specific detail for the tab exists
+    if (!details[tabId]) {
+         contentHTML = `
+            <div class="text-center py-12 text-slate-500">
+                <i data-lucide="info" class="w-12 h-12 mx-auto"></i>
+                <p class="mt-4">此产品的详细技术规格、工艺及下单须知等信息正在整理中，敬请期待！</p>
+                <p class="mt-2 text-sm">您可以现在就<a href="#" onclick="goToCustomization(currentProductDetailId)" class="font-semibold text-blue-600 hover:underline">开始定制</a>，我们的工程师会在后续流程中与您确认所有细节。</p>
+            </div>`;
+    } else {
+        switch (tabId) {
+            case 'specifications':
+                contentHTML = `
+                    <h3 class="text-xl font-semibold mb-6">产品规格参数</h3>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="font-semibold mb-4 text-slate-800">基本参数</h4>
+                            <div class="space-y-3">
+                                ${(details.specifications.basic || []).map(spec => `
+                                    <div class="flex justify-between py-2 border-b border-slate-100">
+                                        <span class="text-slate-600">${spec.label}</span>
+                                        <span class="font-medium">${spec.value}</span>
+                                    </div>`).join('')}
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold mb-4 text-slate-800">尺寸范围</h4>
-                        <div class="space-y-3">
-                             ${(product.specifications.size || []).map(spec => `
-                                <div class="flex justify-between py-2 border-b border-slate-100">
-                                    <span class="text-slate-600">${spec.label}</span>
-                                    <span class="font-medium">${spec.value}</span>
-                                </div>`).join('')}
+                        <div>
+                            <h4 class="font-semibold mb-4 text-slate-800">尺寸范围</h4>
+                            <div class="space-y-3">
+                                 ${(details.specifications.size || []).map(spec => `
+                                    <div class="flex justify-between py-2 border-b border-slate-100">
+                                        <span class="text-slate-600">${spec.label}</span>
+                                        <span class="font-medium">${spec.value}</span>
+                                    </div>`).join('')}
+                            </div>
                         </div>
-                    </div>
-                </div>`;
-            break;
-        case 'process':
-             contentHTML = `
-                <h3 class="text-xl font-semibold mb-6">工艺介绍</h3>
-                <div class="space-y-8">
-                    <div>
-                        <h4 class="font-semibold mb-4 text-slate-800 flex items-center"><i data-lucide="scissors" class="w-5 h-5 mr-2 text-blue-600"></i>模切工艺</h4>
-                        <p class="text-slate-600 leading-relaxed mb-4">${product.processIntro.dieCutting || ''}</p>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold mb-4 text-slate-800 flex items-center"><i data-lucide="palette" class="w-5 h-5 mr-2 text-purple-600"></i>印刷工艺</h4>
-                        <div class="grid md:grid-cols-2 gap-6">
-                            ${(product.processIntro.printing || []).map(p => `
-                                <div class="border border-slate-200 p-4 rounded-lg">
-                                    <h5 class="font-medium mb-2">${p.name}</h5>
-                                    <p class="text-sm text-slate-600">${p.desc}</p>
-                                </div>`).join('')}
+                    </div>`;
+                break;
+            case 'process':
+                 contentHTML = `
+                    <h3 class="text-xl font-semibold mb-6">工艺介绍</h3>
+                    <div class="space-y-8">
+                        <div>
+                            <h4 class="font-semibold mb-4 text-slate-800 flex items-center"><i data-lucide="scissors" class="w-5 h-5 mr-2 text-blue-600"></i>模切工艺</h4>
+                            <p class="text-slate-600 leading-relaxed mb-4">${details.processIntro.dieCutting || ''}</p>
                         </div>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold mb-4 text-slate-800 flex items-center"><i data-lucide="sparkles" class="w-5 h-5 mr-2 text-yellow-600"></i>表面处理</h4>
-                        <div class="grid md:grid-cols-3 gap-4">
-                             ${(product.processIntro.finishing || []).map(f => `
-                                <div class="text-center p-4 bg-slate-50 rounded-lg">
-                                    <h5 class="font-medium text-sm">${f.name}</h5>
-                                    <p class="text-xs text-slate-500 mt-1">${f.desc}</p>
-                                </div>`).join('')}
+                        <div>
+                            <h4 class="font-semibold mb-4 text-slate-800 flex items-center"><i data-lucide="palette" class="w-5 h-5 mr-2 text-purple-600"></i>印刷工艺</h4>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                ${(details.processIntro.printing || []).map(p => `
+                                    <div class="border border-slate-200 p-4 rounded-lg">
+                                        <h5 class="font-medium mb-2">${p.name}</h5>
+                                        <p class="text-sm text-slate-600">${p.desc}</p>
+                                    </div>`).join('')}
+                            </div>
                         </div>
-                    </div>
-                </div>`;
-            break;
-        case 'notice':
-            contentHTML = `
-                <h3 class="text-xl font-semibold mb-6">下单须知</h3>
-                <div class="space-y-6">
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                        <h4 class="font-semibold text-blue-800 mb-3 flex items-center"><i data-lucide="info" class="w-5 h-5 mr-2"></i>文件要求</h4>
-                        <ul class="space-y-2 text-sm text-blue-700 list-disc list-inside">${(product.orderingNotice.fileRequirements || []).map(r => `<li>${r}</li>`).join('')}</ul>
-                    </div>
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-6">
-                        <h4 class="font-semibold text-green-800 mb-3 flex items-center"><i data-lucide="clock" class="w-5 h-5 mr-2"></i>生产周期</h4>
-                        <div class="grid md:grid-cols-2 gap-4 text-sm">
-                           ${(product.orderingNotice.productionCycle || []).map(c => `
-                                <div>
-                                    <p class="font-medium text-green-700 mb-2">${c.name}</p>
-                                    <ul class="space-y-1 text-green-600 list-disc list-inside">${(c.details || []).map(d => `<li>${d}</li>`).join('')}</ul>
-                                </div>`).join('')}
+                        <div>
+                            <h4 class="font-semibold mb-4 text-slate-800 flex items-center"><i data-lucide="sparkles" class="w-5 h-5 mr-2 text-yellow-600"></i>表面处理</h4>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                 ${(details.processIntro.finishing || []).map(f => `
+                                    <div class="text-center p-4 bg-slate-50 rounded-lg">
+                                        <h5 class="font-medium text-sm">${f.name}</h5>
+                                        <p class="text-xs text-slate-500 mt-1">${f.desc}</p>
+                                    </div>`).join('')}
+                            </div>
                         </div>
-                    </div>
-                     <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-                        <h4 class="font-semibold text-yellow-800 mb-3 flex items-center"><i data-lucide="alert-triangle" class="w-5 h-5 mr-2"></i>注意事项</h4>
-                        <ul class="space-y-2 text-sm text-yellow-700 list-disc list-inside">${(product.orderingNotice.notes || []).map(n => `<li>${n}</li>`).join('')}</ul>
-                    </div>
-                </div>`;
-            break;
-        case 'faq':
-             contentHTML = `
-                <h3 class="text-xl font-semibold mb-6">常见问题</h3>
-                <div class="space-y-4">
-                   ${(product.faq || []).map(item => `
-                        <div class="border border-slate-200 rounded-lg">
-                            <details class="group">
-                                <summary class="flex justify-between items-center cursor-pointer p-4 hover:bg-slate-50">
-                                    <h4 class="font-medium">${item.q}</h4>
-                                    <i data-lucide="plus" class="w-5 h-5 text-slate-400 group-open:rotate-45 transition-transform"></i>
-                                </summary>
-                                <div class="px-4 pb-4 text-slate-600 leading-relaxed">${item.a}</div>
-                            </details>
-                        </div>`).join('')}
-                </div>`;
-            break;
+                    </div>`;
+                break;
+            case 'notice':
+                contentHTML = `
+                    <h3 class="text-xl font-semibold mb-6">下单须知</h3>
+                    <div class="space-y-6">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                            <h4 class="font-semibold text-blue-800 mb-3 flex items-center"><i data-lucide="info" class="w-5 h-5 mr-2"></i>文件要求</h4>
+                            <ul class="space-y-2 text-sm text-blue-700 list-disc list-inside">${(details.orderingNotice.fileRequirements || []).map(r => `<li>${r}</li>`).join('')}</ul>
+                        </div>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                            <h4 class="font-semibold text-green-800 mb-3 flex items-center"><i data-lucide="clock" class="w-5 h-5 mr-2"></i>生产周期</h4>
+                            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                               ${(details.orderingNotice.productionCycle || []).map(c => `
+                                    <div>
+                                        <p class="font-medium text-green-700 mb-2">${c.name}</p>
+                                        <ul class="space-y-1 text-green-600 list-disc list-inside">${(c.details || []).map(d => `<li>${d}</li>`).join('')}</ul>
+                                    </div>`).join('')}
+                            </div>
+                        </div>
+                         <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                            <h4 class="font-semibold text-yellow-800 mb-3 flex items-center"><i data-lucide="alert-triangle" class="w-5 h-5 mr-2"></i>注意事项</h4>
+                            <ul class="space-y-2 text-sm text-yellow-700 list-disc list-inside">${(details.orderingNotice.notes || []).map(n => `<li>${n}</li>`).join('')}</ul>
+                        </div>
+                    </div>`;
+                break;
+            case 'faq':
+                 contentHTML = `
+                    <h3 class="text-xl font-semibold mb-6">常见问题</h3>
+                    <div class="space-y-4">
+                       ${(details.faq || []).map(item => `
+                            <div class="border border-slate-200 rounded-lg">
+                                <details class="group">
+                                    <summary class="flex justify-between items-center cursor-pointer p-4 hover:bg-slate-50">
+                                        <h4 class="font-medium">${item.q}</h4>
+                                        <i data-lucide="plus" class="w-5 h-5 text-slate-400 group-open:rotate-45 transition-transform"></i>
+                                    </summary>
+                                    <div class="px-4 pb-4 text-slate-600 leading-relaxed">${item.a}</div>
+                                </details>
+                            </div>`).join('')}
+                    </div>`;
+                break;
+        }
     }
     container.innerHTML = contentHTML;
     renderIcons();
