@@ -308,15 +308,27 @@ function switchProductDetailTab(button, tabId) {
     renderProductDetailTab(tabId);
 }
 
-function renderProductCenter(filter = { level: 'domain', value: 'P - 包装域' }) {
+function renderProductCenter(selectedDomains) {
     const container = document.getElementById('product-center-domains');
     if (!container) return;
 
-    let html = '';
-    const domainsToRender = filter.level === 'domain' ? [filter.value] : Object.keys(productCatalog);
+    const domainsToRender = Array.isArray(selectedDomains) ? selectedDomains : [];
 
+    if (domainsToRender.length === 0) {
+        container.innerHTML = `<div class="text-center p-12 text-slate-500 bg-white rounded-xl shadow-sm">
+            <i data-lucide="inbox" class="w-16 h-16 mx-auto text-slate-300"></i>
+            <h3 class="mt-4 text-xl font-semibold text-slate-700">请选择产品分类</h3>
+            <p class="mt-2">请在左侧勾选您想查看的产品分类，以显示相应的产品。</p>
+        </div>`;
+        renderIcons();
+        return;
+    }
+
+    let html = '';
     domainsToRender.forEach(domainName => {
         const domainData = productCatalog[domainName];
+        if (!domainData) return; // Safeguard if a domain name is invalid
+
         const categoriesHTML = Object.keys(domainData).map(primaryCategoryName => {
             const primaryCategoryData = domainData[primaryCategoryName];
             const secondaryCategoriesHTML = Object.keys(primaryCategoryData).map(secondaryCategoryName => {
