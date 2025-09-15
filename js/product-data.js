@@ -132,15 +132,5 @@ const products = [
         imageUrl: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
         features: [],
         scenarios: []
-    },
-    // A special case from the product detail page that seems to be a duplicate but let's keep it for mapping.
-    {
-        id: 'P-01-KH-SC-DETAIL',
-        name: '双插盒', // Simpler name used in some places
-        category: '卡纸盒',
-        description: 'Tuck End Box | 上下盖均为插入式，组装便捷，是最常见的卡盒结构。',
-        imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80',
-        features: [],
-        scenarios: []
     }
 ];
