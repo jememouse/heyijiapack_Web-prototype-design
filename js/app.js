@@ -559,7 +559,8 @@ function initializeFilters() {
             secondaryContainer.className = 'pl-4 mt-1 space-y-1 border-l border-slate-200 ml-2';
 
             Object.keys(primaryCategoryData).forEach(secondaryCategoryName => {
-                if (primaryCategoryData[secondaryCategoryName].length > 0) {
+                const secondaryProducts = primaryCategoryData[secondaryCategoryName];
+                if (secondaryProducts.length > 0) {
                     const secondaryLink = document.createElement('a');
                     secondaryLink.href = '#';
                     secondaryLink.className = 'filter-link text-sm block p-2 rounded-lg hover:bg-slate-50';
@@ -571,6 +572,11 @@ function initializeFilters() {
                         handleFilterClick('secondary', secondaryCategoryName, e.currentTarget);
                     });
                     secondaryContainer.appendChild(secondaryLink);
+                } else {
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'text-sm block p-2 text-slate-400 cursor-not-allowed';
+                    placeholder.textContent = secondaryCategoryName + ' (敬请期待)';
+                    secondaryContainer.appendChild(placeholder);
                 }
             });
 
