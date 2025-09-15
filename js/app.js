@@ -308,32 +308,60 @@ function switchProductDetailTab(button, tabId) {
     renderProductDetailTab(tabId);
 }
 
-function renderProductCenter(selectedDomains) {
+function renderProductCenter(filter) {
     const container = document.getElementById('product-center-domains');
     if (!container) return;
 
-    const domainsToRender = Array.isArray(selectedDomains) ? selectedDomains : [];
+    // Default filter if none is provided
+    if (!filter || !filter.level || !filter.value) {
+        const firstDomain = Object.keys(productCatalog)[0];
+        filter = { level: 'domain', value: firstDomain };
+    }
 
-    if (domainsToRender.length === 0) {
-        container.innerHTML = `<div class="text-center p-12 text-slate-500 bg-white rounded-xl shadow-sm">
-            <i data-lucide="inbox" class="w-16 h-16 mx-auto text-slate-300"></i>
-            <h3 class="mt-4 text-xl font-semibold text-slate-700">请选择产品分类</h3>
-            <p class="mt-2">请在左侧勾选您想查看的产品分类，以显示相应的产品。</p>
-        </div>`;
-        renderIcons();
-        return;
+    const { level, value } = filter;
+
+    let domainsToRender = {};
+
+    // Build a filtered catalog based on the filter
+    if (level === 'domain') {
+        if (productCatalog[value]) {
+            domainsToRender = { [value]: productCatalog[value] };
+        }
+    } else if (level === 'primary') {
+        for (const domainName in productCatalog) {
+            if (productCatalog[domainName][value]) {
+                domainsToRender = { [domainName]: { [value]: productCatalog[domainName][value] } };
+                break;
+            }
+        }
+    } else if (level === 'secondary') {
+        for (const domainName in productCatalog) {
+            for (const primaryCategoryName in productCatalog[domainName]) {
+                if (productCatalog[domainName][primaryCategoryName][value]) {
+                    domainsToRender = {
+                        [domainName]: {
+                            [primaryCategoryName]: {
+                                [value]: productCatalog[domainName][primaryCategoryName][value]
+                            }
+                        }
+                    };
+                    break;
+                }
+            }
+            if (Object.keys(domainsToRender).length > 0) break;
+        }
     }
 
     let html = '';
-    domainsToRender.forEach(domainName => {
-        const domainData = productCatalog[domainName];
-        if (!domainData) return; // Safeguard if a domain name is invalid
+    Object.keys(domainsToRender).forEach(domainName => {
+        const domainData = domainsToRender[domainName];
+        if (!domainData) return;
 
         const categoriesHTML = Object.keys(domainData).map(primaryCategoryName => {
             const primaryCategoryData = domainData[primaryCategoryName];
             const secondaryCategoriesHTML = Object.keys(primaryCategoryData).map(secondaryCategoryName => {
                 const products = primaryCategoryData[secondaryCategoryName];
-                if (products.length === 0) return '';
+                if (!products || products.length === 0) return '';
 
                 const productsHTML = products.map(product => {
                     const details = productDetails[product.id] || {};
@@ -381,7 +409,15 @@ function renderProductCenter(selectedDomains) {
             </div>`;
     });
 
-    container.innerHTML = html;
+    if (html === '') {
+         container.innerHTML = `<div class="text-center p-12 text-slate-500 bg-white rounded-xl shadow-sm">
+            <i data-lucide="search-x" class="w-16 h-16 mx-auto text-slate-300"></i>
+            <h3 class="mt-4 text-xl font-semibold text-slate-700">未找到产品</h3>
+            <p class="mt-2">当前筛选条件下没有找到相关的产品。</p>
+        </div>`;
+    } else {
+        container.innerHTML = html;
+    }
     renderIcons();
 }
 
@@ -425,15 +461,14 @@ function goToCustomization(productId) {
     showPage('customization-page');
 }
 
-function applyFilters() {
-    const selectedDomains = Array.from(document.querySelectorAll('input[name="domain-filter"]:checked')).map(input => input.value);
-    renderProductCenter(selectedDomains);
-}
-
 // --- New Hierarchical Filter Logic ---
 function initializeFilters() {
     const container = document.getElementById('hierarchical-filter-container');
-    if (!container) return;
+    if (!container) {
+        return;
+    }
+    // Clear previous content
+    container.innerHTML = '';
 
     const domainMap = {
         "P - 包装域": "包装盒",
@@ -441,30 +476,93 @@ function initializeFilters() {
         "A - 辅料域": "辅料"
     };
 
-    const filterHTML = Object.keys(productCatalog).map(domainName => `
-        <label class="flex items-center p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors has-[:checked]:bg-blue-50 has-[:checked]:border-blue-200 border border-transparent">
-            <input type="checkbox" name="domain-filter" value="${domainName}" class="h-4 w-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500" checked>
-            <div class="ml-3 flex-1">
-                <span class="text-sm font-medium text-slate-900">${domainMap[domainName] || domainName}</span>
-            </div>
-        </label>
-    `).join('');
+    const handleFilterClick = (level, value, element) => {
+        renderProductCenter({ level, value });
 
-    container.innerHTML = `<h4 class="font-semibold mb-4 text-slate-800 flex items-center">
-                            <i data-lucide="package" class="w-4 h-4 mr-2 text-blue-600"></i>
-                            产品分类
-                        </h4>
-                        <div class="space-y-2">
-                         ${filterHTML}
-                        </div>`;
+        // Remove active style from all links
+        container.querySelectorAll('.filter-link').forEach(l => l.classList.remove('active-filter'));
 
-    container.querySelectorAll('input[name="domain-filter"]').forEach(checkbox => {
-        checkbox.addEventListener('change', applyFilters);
+        // Add active style to the clicked link
+        element.classList.add('active-filter');
+    };
+
+    Object.keys(productCatalog).forEach(domainName => {
+        const domainData = productCatalog[domainName];
+
+        const domainDetails = document.createElement('details');
+        domainDetails.className = 'filter-group';
+        domainDetails.open = true;
+
+        const domainSummary = document.createElement('summary');
+        domainSummary.className = 'filter-link font-semibold p-2 rounded-lg hover:bg-slate-50 cursor-pointer flex justify-between items-center';
+        domainSummary.dataset.level = 'domain';
+        domainSummary.dataset.value = domainName;
+        domainSummary.innerHTML = `
+            <span>${domainMap[domainName] || domainName}</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform transform group-open:rotate-180"></i>
+        `;
+        domainSummary.addEventListener('click', (e) => handleFilterClick('domain', domainName, e.currentTarget));
+
+        const primaryContainer = document.createElement('div');
+        primaryContainer.className = 'pl-4 mt-1 space-y-1 border-l border-slate-200 ml-2';
+
+        Object.keys(domainData).forEach(primaryCategoryName => {
+            const primaryCategoryData = domainData[primaryCategoryName];
+
+            const primaryDetails = document.createElement('details');
+            primaryDetails.className = 'filter-group';
+            primaryDetails.open = true;
+
+            const primarySummary = document.createElement('summary');
+            primarySummary.className = 'filter-link p-2 rounded-lg hover:bg-slate-50 cursor-pointer flex justify-between items-center';
+            primarySummary.dataset.level = 'primary';
+            primarySummary.dataset.value = primaryCategoryName;
+            primarySummary.innerHTML = `
+                <span>${primaryCategoryName}</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 transition-transform transform group-open:rotate-180"></i>
+            `;
+            primarySummary.addEventListener('click', (e) => handleFilterClick('primary', primaryCategoryName, e.currentTarget));
+
+            const secondaryContainer = document.createElement('div');
+            secondaryContainer.className = 'pl-4 mt-1 space-y-1 border-l border-slate-200 ml-2';
+
+            Object.keys(primaryCategoryData).forEach(secondaryCategoryName => {
+                if (primaryCategoryData[secondaryCategoryName].length > 0) {
+                    const secondaryLink = document.createElement('a');
+                    secondaryLink.href = '#';
+                    secondaryLink.className = 'filter-link text-sm block p-2 rounded-lg hover:bg-slate-50';
+                    secondaryLink.dataset.level = 'secondary';
+                    secondaryLink.dataset.value = secondaryCategoryName;
+                    secondaryLink.textContent = secondaryCategoryName;
+                    secondaryLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        handleFilterClick('secondary', secondaryCategoryName, e.currentTarget);
+                    });
+                    secondaryContainer.appendChild(secondaryLink);
+                }
+            });
+
+            primaryDetails.appendChild(primarySummary);
+            primaryDetails.appendChild(secondaryContainer);
+            primaryContainer.appendChild(primaryDetails);
+        });
+
+        domainDetails.appendChild(domainSummary);
+        domainDetails.appendChild(primaryContainer);
+        container.appendChild(domainDetails);
     });
 
+    // Initial render
+    const firstDomainValue = Object.keys(productCatalog)[0];
+    if (firstDomainValue) {
+        renderProductCenter({ level: 'domain', value: firstDomainValue });
+        const firstLink = container.querySelector(`.filter-link[data-value="${firstDomainValue}"]`);
+        if (firstLink) {
+            firstLink.classList.add('active-filter');
+        }
+    }
+
     renderIcons();
-    // Initial render with default view
-    applyFilters();
 }
 
 function buildSidebar(container, activeViewId) {
