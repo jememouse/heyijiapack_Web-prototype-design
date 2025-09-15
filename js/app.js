@@ -311,157 +311,167 @@ function switchProductDetailTab(button, tabId) {
     renderProductDetailTab(tabId);
 }
 
-function renderProductCenter(selectedDomain = '包装盒域') {
+function renderProductCenter(filter = { level: 'domain', value: 'P - 包装域' }) {
     const container = document.getElementById('product-center-domains');
     if (!container) return;
 
-    // Filter products for the selected domain
-    const domainProducts = products.filter(p => p.domain === selectedDomain);
+    let html = '';
+    const domainsToRender = filter.level === 'domain' ? [filter.value] : Object.keys(productCatalog);
 
-    // Group products by category (subcategory)
-    const productsByCategory = domainProducts.reduce((acc, product) => {
-        (acc[product.category] = acc[product.category] || []).push(product);
-        return acc;
-    }, {});
+    domainsToRender.forEach(domainName => {
+        const domainData = productCatalog[domainName];
+        const categoriesHTML = Object.keys(domainData).map(primaryCategoryName => {
+            const primaryCategoryData = domainData[primaryCategoryName];
+            const secondaryCategoriesHTML = Object.keys(primaryCategoryData).map(secondaryCategoryName => {
+                const products = primaryCategoryData[secondaryCategoryName];
+                if (products.length === 0) return '';
 
-    // Generate HTML for each category within the domain
-    const categoriesHTML = Object.keys(productsByCategory).map(category => {
-        const categoryProducts = productsByCategory[category];
-        const productsHTML = categoryProducts.map(product => `
-            <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all">
-                <div class="image-container bg-slate-100" onclick="showProductDetail('${product.id}')">
-                    <img class="img-3d w-full h-48 object-cover cursor-pointer"
-                        src="${product.imageUrl}"
-                        alt="${product.name} 3D图">
-                </div>
-                <div class="p-5">
-                    <h3 class="text-lg font-bold">${product.name}</h3>
-                    <p class="text-xs text-slate-500 mt-1">${product.id}</p>
-                    <div class="mt-4 space-y-2">
-                        <button
-                            onclick="showProductDetail('${product.id}')"
-                            class="w-full border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">查看详情</button>
-                        <button
-                            onclick="goToCustomization('${product.id}')"
-                            class="w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button>
+                const productsHTML = products.map(product => {
+                    const details = productDetails[product.id] || {};
+                    return `
+                        <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all">
+                            <div class="image-container bg-slate-100" onclick="showProductDetail('${product.id}')">
+                                <img class="img-3d w-full h-48 object-cover cursor-pointer"
+                                    src="${product.imageUrl}"
+                                    alt="${product.name} 3D图">
+                            </div>
+                            <div class="p-5 flex flex-col">
+                                <h3 class="text-lg font-bold flex-grow">${product.name}</h3>
+                                <p class="text-xs text-slate-500 mt-1">${product.id}</p>
+                                <div class="mt-4 space-y-2">
+                                    <button onclick="showProductDetail('${product.id}')" class="w-full border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">查看详情</button>
+                                    <button onclick="goToCustomization('${product.id}')" class="w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button>
+                                </div>
+                            </div>
+                        </div>`;
+                }).join('');
+
+                return `
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4 text-slate-700">${secondaryCategoryName}</h3>
+                        <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                            ${productsHTML}
+                        </div>
+                    </div>`;
+            }).join('');
+
+            return `
+                <div class="product-category-section" data-category="${primaryCategoryName}">
+                    <h2 class="text-3xl font-semibold mb-8 border-l-4 border-blue-500 pl-4">${primaryCategoryName}</h2>
+                    <div class="space-y-10">
+                        ${secondaryCategoriesHTML}
                     </div>
+                </div>`;
+        }).join('');
+
+        html += `
+            <div class="product-domain-section" data-domain="${domainName}">
+                <div class="space-y-12">
+                    ${categoriesHTML}
                 </div>
-            </div>
-        `).join('');
+            </div>`;
+    });
 
-        return `
-            <div class="product-category-section" data-category="${category}">
-                <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-4">${category}</h2>
-                <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-8">
-                    ${productsHTML}
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    // Generate HTML for the entire domain
-    container.innerHTML = `
-        <div class="product-domain-section" data-domain="${selectedDomain}">
-            <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight mb-12">${selectedDomain}</h1>
-            <div class="space-y-12">
-                ${categoriesHTML}
-            </div>
-        </div>
-    `;
-
+    container.innerHTML = html;
     renderIcons();
 }
 
 function goToCustomization(productId) {
-    const product = products.find(p => p.id === productId);
-    if (!product) {
-        alert('产品未找到!');
+    const details = productDetails[productId];
+    if (!details) {
+        alert('该产品的定制功能即将上线，敬请期待！');
         return;
     }
 
-    // Set the selected product in the customization page
+    // This part remains the same as it correctly populates the customization page
     const titleElement = document.getElementById('customization-title');
     const headerElement = document.getElementById('customization-header');
     const descElement = document.getElementById('customization-desc');
     const imageElement = document.getElementById('customization-preview-img');
 
-    if (titleElement) titleElement.textContent = product.name;
-    if (headerElement) headerElement.textContent = `${product.name} 定制`;
-    if (descElement) descElement.textContent = product.description;
-    if (imageElement) {
-        imageElement.src = product.imageUrl.replace('400', '800').replace('300','600');
-        imageElement.alt = product.name;
+    // Find the product in the catalog to get its name and image
+    let productInfo = null;
+    for (const domain in productCatalog) {
+        for (const pCat in productCatalog[domain]) {
+            for (const sCat in productCatalog[domain][pCat]) {
+                const found = productCatalog[domain][pCat][sCat].find(p => p.id === productId);
+                if (found) {
+                    productInfo = found;
+                    break;
+                }
+            }
+            if (productInfo) break;
+        }
+        if (productInfo) break;
     }
 
-    // Navigate to customization page
+    if (titleElement) titleElement.textContent = productInfo.name;
+    if (headerElement) headerElement.textContent = `${productInfo.name} 定制`;
+    if (descElement) descElement.textContent = details.description;
+    if (imageElement) {
+        imageElement.src = productInfo.imageUrl.replace('400', '800').replace('300','600');
+        imageElement.alt = productInfo.name;
+    }
+
     showPage('customization-page');
 }
 
-// Mobile Filter Functions
-function toggleMobileFilter() {
-    const sidebar = document.getElementById('filter-sidebar');
-    const chevron = document.getElementById('filter-chevron');
-    const isHidden = sidebar.classList.contains('hidden');
-
-    if (isHidden) {
-        sidebar.classList.remove('hidden');
-        chevron.style.transform = 'rotate(180deg)';
-    } else {
-        sidebar.classList.add('hidden');
-        chevron.style.transform = 'rotate(0deg)';
-    }
-}
-
-function clearAllFilters() {
-    // Clear domain filters
-    document.querySelectorAll('input[name="domain-filter"]').forEach(input => {
-        input.checked = input.value === '纸质包装';
-    });
-
-    // Clear style filters
-    document.querySelectorAll('input[name="style-filter"]').forEach(input => {
-        input.checked = true;
-    });
-
-    updateActiveFiltersCount();
-    applyFilters();
-}
-
-function applyFiltersAndClose() {
-    applyFilters();
-    // Close mobile filter on mobile
-    if (window.innerWidth < 1024) {
-        document.getElementById('filter-sidebar').classList.add('hidden');
-        document.getElementById('filter-chevron').style.transform = 'rotate(0deg)';
-    }
-}
-
-function updateActiveFiltersCount() {
-    const domainFilters = document.querySelectorAll('input[name="domain-filter"]:checked');
-    const styleFilters = document.querySelectorAll('input[name="style-filter"]:checked');
-    const totalActive = domainFilters.length + styleFilters.length;
-
-    const countBadge = document.getElementById('active-filters-count');
-    if (totalActive > 0) {
-        countBadge.textContent = totalActive;
-        countBadge.classList.remove('hidden');
-    } else {
-        countBadge.classList.add('hidden');
-    }
-}
-
-// Initialize filters on page load
+// --- New Hierarchical Filter Logic ---
 function initializeFilters() {
-    // Add event listeners to filter inputs
-    document.querySelectorAll('input[name="domain-selector"]').forEach(input => {
-        input.addEventListener('change', (e) => {
-            renderProductCenter(e.target.value);
-        });
+    const container = document.getElementById('hierarchical-filter-container');
+    if (!container) return;
+
+    const filterHTML = Object.keys(productCatalog).map(domainName => {
+        const primaryCategories = Object.keys(productCatalog[domainName]);
+        const primaryCategoriesHTML = primaryCategories.map(pCatName => {
+            const secondaryCategories = Object.keys(productCatalog[domainName][pCatName]);
+            const secondaryCategoriesHTML = secondaryCategories.map(sCatName => `
+                <li><a href="#" class="filter-link block px-4 py-1.5 text-sm text-slate-600 hover:bg-slate-100 rounded" data-level="secondary" data-value="${sCatName}">${sCatName}</a></li>
+            `).join('');
+
+            return `
+                <li class="py-1">
+                    <a href="#" class="filter-link block px-2 py-1 text-sm font-semibold text-slate-800 hover:bg-slate-100 rounded" data-level="primary" data-value="${pCatName}">${pCatName}</a>
+                    <ul class="pl-4 mt-1 space-y-1">${secondaryCategoriesHTML}</ul>
+                </li>`;
+        }).join('');
+
+        return `
+            <div class="py-2">
+                <details class="filter-group" open>
+                    <summary class="font-bold text-lg cursor-pointer py-2 flex justify-between items-center">
+                        ${domainName}
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-200"></i>
+                    </summary>
+                    <ul class="mt-2 space-y-1">${primaryCategoriesHTML}</ul>
+                </details>
+            </div>`;
+    }).join('');
+
+    container.innerHTML = `<h4 class="font-semibold mb-4 text-slate-800 flex items-center">
+                            <i data-lucide="package" class="w-4 h-4 mr-2 text-blue-600"></i>
+                            产品分类
+                        </h4>` + filterHTML;
+
+    container.addEventListener('click', e => {
+        if (e.target.classList.contains('filter-link')) {
+            e.preventDefault();
+
+            // Remove active class from all links
+            container.querySelectorAll('.filter-link').forEach(link => link.classList.remove('bg-blue-100', 'text-blue-700'));
+            // Add active class to the clicked link
+            e.target.classList.add('bg-blue-100', 'text-blue-700');
+
+            const level = e.target.dataset.level;
+            const value = e.target.dataset.value;
+            // This is where you would call a new, more complex render function
+            alert(`Filtering by ${level}: ${value}`);
+        }
     });
 
-    // Initial render
-    const initialDomain = document.querySelector('input[name="domain-selector"]:checked').value;
-    renderProductCenter(initialDomain);
+    renderIcons();
+    // Initial render with default view
+    renderProductCenter();
 }
 
 function buildSidebar(container, activeViewId) {
