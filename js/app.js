@@ -311,70 +311,63 @@ function switchProductDetailTab(button, tabId) {
     renderProductDetailTab(tabId);
 }
 
-function renderProductCenter() {
+function renderProductCenter(selectedDomain = '包装盒域') {
     const container = document.getElementById('product-center-domains');
     if (!container) return;
 
-    // Group products by domain
-    const productsByDomain = products.reduce((acc, product) => {
-        (acc[product.domain] = acc[product.domain] || []).push(product);
+    // Filter products for the selected domain
+    const domainProducts = products.filter(p => p.domain === selectedDomain);
+
+    // Group products by category (subcategory)
+    const productsByCategory = domainProducts.reduce((acc, product) => {
+        (acc[product.category] = acc[product.category] || []).push(product);
         return acc;
     }, {});
 
-    container.innerHTML = Object.keys(productsByDomain).map(domain => {
-        const domainProducts = productsByDomain[domain];
-
-        // Group products within the domain by category (subcategory)
-        const productsByCategory = domainProducts.reduce((acc, product) => {
-            (acc[product.category] = acc[product.category] || []).push(product);
-            return acc;
-        }, {});
-
-        // Generate HTML for each category within the domain
-        const categoriesHTML = Object.keys(productsByCategory).map(category => {
-            const categoryProducts = productsByCategory[category];
-            const productsHTML = categoryProducts.map(product => `
-                <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all">
-                    <div class="image-container bg-slate-100" onclick="showProductDetail('${product.id}')">
-                        <img class="img-3d w-full h-48 object-cover cursor-pointer"
-                            src="${product.imageUrl}"
-                            alt="${product.name} 3D图">
-                    </div>
-                    <div class="p-5">
-                        <h3 class="text-lg font-bold">${product.name}</h3>
-                        <p class="text-xs text-slate-500 mt-1">${product.id}</p>
-                        <div class="mt-4 space-y-2">
-                            <button
-                                onclick="showProductDetail('${product.id}')"
-                                class="w-full border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">查看详情</button>
-                            <button
-                                onclick="goToCustomization('${product.id}')"
-                                class="w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button>
-                        </div>
+    // Generate HTML for each category within the domain
+    const categoriesHTML = Object.keys(productsByCategory).map(category => {
+        const categoryProducts = productsByCategory[category];
+        const productsHTML = categoryProducts.map(product => `
+            <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all">
+                <div class="image-container bg-slate-100" onclick="showProductDetail('${product.id}')">
+                    <img class="img-3d w-full h-48 object-cover cursor-pointer"
+                        src="${product.imageUrl}"
+                        alt="${product.name} 3D图">
+                </div>
+                <div class="p-5">
+                    <h3 class="text-lg font-bold">${product.name}</h3>
+                    <p class="text-xs text-slate-500 mt-1">${product.id}</p>
+                    <div class="mt-4 space-y-2">
+                        <button
+                            onclick="showProductDetail('${product.id}')"
+                            class="w-full border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">查看详情</button>
+                        <button
+                            onclick="goToCustomization('${product.id}')"
+                            class="w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button>
                     </div>
                 </div>
-            `).join('');
+            </div>
+        `).join('');
 
-            return `
-                <div class="product-category-section" data-category="${category}">
-                    <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-4">${category}</h2>
-                    <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-8">
-                        ${productsHTML}
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // Generate HTML for the entire domain
         return `
-            <div class="product-domain-section" data-domain="${domain}">
-                <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight mb-12">${domain}</h1>
-                <div class="space-y-12">
-                    ${categoriesHTML}
+            <div class="product-category-section" data-category="${category}">
+                <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-4">${category}</h2>
+                <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                    ${productsHTML}
                 </div>
             </div>
         `;
     }).join('');
+
+    // Generate HTML for the entire domain
+    container.innerHTML = `
+        <div class="product-domain-section" data-domain="${selectedDomain}">
+            <h1 class="text-4xl font-extrabold text-slate-800 tracking-tight mb-12">${selectedDomain}</h1>
+            <div class="space-y-12">
+                ${categoriesHTML}
+            </div>
+        </div>
+    `;
 
     renderIcons();
 }
@@ -457,34 +450,18 @@ function updateActiveFiltersCount() {
     }
 }
 
-function applyFilters() {
-    const selectedDomains = Array.from(document.querySelectorAll('input[name="style-filter"]:checked'))
-        .map(input => input.value);
-
-    // Show/hide product sections based on selected filters
-    document.querySelectorAll('.product-domain-section').forEach(section => {
-        const domain = section.getAttribute('data-domain');
-        if (selectedDomains.includes(domain)) {
-            section.style.display = 'block';
-        } else {
-            section.style.display = 'none';
-        }
-    });
-}
-
 // Initialize filters on page load
 function initializeFilters() {
     // Add event listeners to filter inputs
-    document.querySelectorAll('input[name="domain-filter"], input[name="style-filter"]').forEach(input => {
-        input.addEventListener('change', () => {
-            updateActiveFiltersCount();
-            applyFilters();
+    document.querySelectorAll('input[name="domain-selector"]').forEach(input => {
+        input.addEventListener('change', (e) => {
+            renderProductCenter(e.target.value);
         });
     });
 
-    // Initialize count
-    updateActiveFiltersCount();
-    applyFilters();
+    // Initial render
+    const initialDomain = document.querySelector('input[name="domain-selector"]:checked').value;
+    renderProductCenter(initialDomain);
 }
 
 function buildSidebar(container, activeViewId) {
