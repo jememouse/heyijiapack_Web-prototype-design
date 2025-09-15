@@ -105,10 +105,7 @@ function showPage(pageId, context) {
         renderMaterialOptions();
         renderSpecialProcesses();
     } else if (pageId === 'product-center-page') {
-        renderProductCenter();
-        // 初始化产品中心页面的筛选器
         initializeFilters();
-        applyFilters();
     }
 
     window.scrollTo(0, 0);
@@ -311,15 +308,27 @@ function switchProductDetailTab(button, tabId) {
     renderProductDetailTab(tabId);
 }
 
-function renderProductCenter(filter = { level: 'domain', value: 'P - 包装域' }) {
+function renderProductCenter(selectedDomains) {
     const container = document.getElementById('product-center-domains');
     if (!container) return;
 
-    let html = '';
-    const domainsToRender = filter.level === 'domain' ? [filter.value] : Object.keys(productCatalog);
+    const domainsToRender = Array.isArray(selectedDomains) ? selectedDomains : [];
 
+    if (domainsToRender.length === 0) {
+        container.innerHTML = `<div class="text-center p-12 text-slate-500 bg-white rounded-xl shadow-sm">
+            <i data-lucide="inbox" class="w-16 h-16 mx-auto text-slate-300"></i>
+            <h3 class="mt-4 text-xl font-semibold text-slate-700">请选择产品分类</h3>
+            <p class="mt-2">请在左侧勾选您想查看的产品分类，以显示相应的产品。</p>
+        </div>`;
+        renderIcons();
+        return;
+    }
+
+    let html = '';
     domainsToRender.forEach(domainName => {
         const domainData = productCatalog[domainName];
+        if (!domainData) return; // Safeguard if a domain name is invalid
+
         const categoriesHTML = Object.keys(domainData).map(primaryCategoryName => {
             const primaryCategoryData = domainData[primaryCategoryName];
             const secondaryCategoriesHTML = Object.keys(primaryCategoryData).map(secondaryCategoryName => {
@@ -416,62 +425,46 @@ function goToCustomization(productId) {
     showPage('customization-page');
 }
 
+function applyFilters() {
+    const selectedDomains = Array.from(document.querySelectorAll('input[name="domain-filter"]:checked')).map(input => input.value);
+    renderProductCenter(selectedDomains);
+}
+
 // --- New Hierarchical Filter Logic ---
 function initializeFilters() {
     const container = document.getElementById('hierarchical-filter-container');
     if (!container) return;
 
-    const filterHTML = Object.keys(productCatalog).map(domainName => {
-        const primaryCategories = Object.keys(productCatalog[domainName]);
-        const primaryCategoriesHTML = primaryCategories.map(pCatName => {
-            const secondaryCategories = Object.keys(productCatalog[domainName][pCatName]);
-            const secondaryCategoriesHTML = secondaryCategories.map(sCatName => `
-                <li><a href="#" class="filter-link block px-4 py-1.5 text-sm text-slate-600 hover:bg-slate-100 rounded" data-level="secondary" data-value="${sCatName}">${sCatName}</a></li>
-            `).join('');
+    const domainMap = {
+        "P - 包装域": "包装盒",
+        "M - 印刷品域": "印刷品",
+        "A - 辅料域": "辅料"
+    };
 
-            return `
-                <li class="py-1">
-                    <a href="#" class="filter-link block px-2 py-1 text-sm font-semibold text-slate-800 hover:bg-slate-100 rounded" data-level="primary" data-value="${pCatName}">${pCatName}</a>
-                    <ul class="pl-4 mt-1 space-y-1">${secondaryCategoriesHTML}</ul>
-                </li>`;
-        }).join('');
-
-        return `
-            <div class="py-2">
-                <details class="filter-group" open>
-                    <summary class="font-bold text-lg cursor-pointer py-2 flex justify-between items-center">
-                        ${domainName}
-                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-200"></i>
-                    </summary>
-                    <ul class="mt-2 space-y-1">${primaryCategoriesHTML}</ul>
-                </details>
-            </div>`;
-    }).join('');
+    const filterHTML = Object.keys(productCatalog).map(domainName => `
+        <label class="flex items-center p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors has-[:checked]:bg-blue-50 has-[:checked]:border-blue-200 border border-transparent">
+            <input type="checkbox" name="domain-filter" value="${domainName}" class="h-4 w-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500" checked>
+            <div class="ml-3 flex-1">
+                <span class="text-sm font-medium text-slate-900">${domainMap[domainName] || domainName}</span>
+            </div>
+        </label>
+    `).join('');
 
     container.innerHTML = `<h4 class="font-semibold mb-4 text-slate-800 flex items-center">
                             <i data-lucide="package" class="w-4 h-4 mr-2 text-blue-600"></i>
                             产品分类
-                        </h4>` + filterHTML;
+                        </h4>
+                        <div class="space-y-2">
+                         ${filterHTML}
+                        </div>`;
 
-    container.addEventListener('click', e => {
-        if (e.target.classList.contains('filter-link')) {
-            e.preventDefault();
-
-            // Remove active class from all links
-            container.querySelectorAll('.filter-link').forEach(link => link.classList.remove('bg-blue-100', 'text-blue-700'));
-            // Add active class to the clicked link
-            e.target.classList.add('bg-blue-100', 'text-blue-700');
-
-            const level = e.target.dataset.level;
-            const value = e.target.dataset.value;
-            // This is where you would call a new, more complex render function
-            alert(`Filtering by ${level}: ${value}`);
-        }
+    container.querySelectorAll('input[name="domain-filter"]').forEach(checkbox => {
+        checkbox.addEventListener('change', applyFilters);
     });
 
     renderIcons();
     // Initial render with default view
-    renderProductCenter();
+    applyFilters();
 }
 
 function buildSidebar(container, activeViewId) {
