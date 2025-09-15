@@ -105,6 +105,7 @@ function showPage(pageId, context) {
         renderMaterialOptions();
         renderSpecialProcesses();
     } else if (pageId === 'product-center-page') {
+        renderProductCenter();
         // 初始化产品中心页面的筛选器
         initializeFilters();
         applyFilters();
@@ -131,31 +132,43 @@ function showUserCenterView(viewId, context) {
 }
 
 // Product Detail Page Functions
-function showProductDetail(productName, productSubtitle, productImage, features, scenarios) {
+function showProductDetail(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) {
+        alert('产品未找到!');
+        return;
+    }
+
     // Update product information
-    document.getElementById('product-detail-title').textContent = productName;
-    document.getElementById('product-detail-subtitle').textContent = productSubtitle;
-    document.getElementById('product-detail-main-image').src = productImage;
-    document.getElementById('product-detail-breadcrumb').textContent = productName;
+    document.getElementById('product-detail-title').textContent = product.name;
+    document.getElementById('product-detail-subtitle').textContent = product.id;
+    document.getElementById('product-detail-main-image').src = product.imageUrl.replace('400', '600');
+    document.getElementById('product-detail-breadcrumb').textContent = product.name;
 
     // Update features
     const featuresContainer = document.getElementById('product-detail-features');
-    if (features && featuresContainer) {
-        featuresContainer.innerHTML = features.map(feature =>
+    if (product.features && featuresContainer) {
+        featuresContainer.innerHTML = product.features.map(feature =>
             `<li class="flex items-start"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>${feature}</li>`
         ).join('');
     }
 
     // Update scenarios
     const scenariosContainer = document.getElementById('product-detail-scenarios');
-    if (scenarios && scenariosContainer) {
-        scenariosContainer.innerHTML = scenarios.map(scenario =>
+    if (product.scenarios && scenariosContainer) {
+        scenariosContainer.innerHTML = product.scenarios.map(scenario =>
             `<div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
                 <i data-lucide="${scenario.icon}" class="w-6 h-6 text-${scenario.color}-600"></i>
                 <span class="text-sm font-medium">${scenario.name}</span>
             </div>`
         ).join('');
     }
+
+    const customizeButton = document.querySelector('#product-detail-page .bg-blue-600');
+    if(customizeButton) {
+        customizeButton.onclick = () => goToCustomization(productId);
+    }
+
 
     // Show product detail page
     showPage('product-detail-page');
@@ -178,19 +191,69 @@ function switchProductDetailTab(button, tabId) {
     document.getElementById(tabId + '-content').classList.remove('hidden');
 }
 
-function goToCustomization(productName, productDescription, productImage) {
+function renderProductCenter() {
+    const categories = ['卡纸盒', '精品盒', '瓦楞盒', '纸袋', '纸管'];
+    categories.forEach(category => {
+        const container = document.querySelector(`.product-category-section[data-category="${category}"] .grid`);
+        if (!container) return;
+
+        const categoryProducts = products.filter(p => p.category === category);
+
+        if (categoryProducts.length > 0) {
+            container.innerHTML = categoryProducts.map(product => `
+                <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all">
+                    <div class="image-container bg-slate-100" onclick="showProductDetail('${product.id}')">
+                        <img class="img-3d w-full h-48 object-cover cursor-pointer"
+                            src="${product.imageUrl}"
+                            alt="${product.name} 3D图">
+                        <img class="img-2d w-full h-48 object-cover p-4 cursor-pointer"
+                            src="${product.imageUrl.replace('400', '300')}"
+                            alt="${product.name} 2D图">
+                    </div>
+                    <div class="p-5">
+                        <h3 class="text-lg font-bold">${product.name}</h3>
+                        <p class="text-xs text-slate-500 mt-1">${product.id}</p>
+                        <div class="mt-4 space-y-2">
+                            <button
+                                onclick="showProductDetail('${product.id}')"
+                                class="w-full border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">查看详情</button>
+                            <button
+                                onclick="goToCustomization('${product.id}')"
+                                class="w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            // Render the "coming soon" placeholder
+            container.innerHTML = `
+                <div class="col-span-full text-center py-12 bg-slate-100 rounded-lg">
+                    <p class="text-slate-500">此类产品即将上线，敬请期待！</p>
+                </div>
+            `;
+        }
+    });
+}
+
+function goToCustomization(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) {
+        alert('产品未找到!');
+        return;
+    }
+
     // Set the selected product in the customization page
     const titleElement = document.getElementById('customization-title');
     const headerElement = document.getElementById('customization-header');
     const descElement = document.getElementById('customization-desc');
     const imageElement = document.getElementById('customization-preview-img');
 
-    if (titleElement) titleElement.textContent = productName;
-    if (headerElement) headerElement.textContent = `${productName} 定制`;
-    if (descElement) descElement.textContent = productDescription;
+    if (titleElement) titleElement.textContent = product.name;
+    if (headerElement) headerElement.textContent = `${product.name} 定制`;
+    if (descElement) descElement.textContent = product.description;
     if (imageElement) {
-        imageElement.src = productImage.replace('400x300', '800x600');
-        imageElement.alt = productName;
+        imageElement.src = product.imageUrl.replace('400', '800').replace('300','600');
+        imageElement.alt = product.name;
     }
 
     // Navigate to customization page
@@ -1598,6 +1661,21 @@ function updateQuote() {
 
 // --- 初始化 ---
 document.addEventListener('DOMContentLoaded', () => {
+    // 检查是否有来自 smart-matcher 的导航请求
+    const navigateToAction = localStorage.getItem('navigateTo');
+    if (navigateToAction) {
+        localStorage.removeItem('navigateTo'); // 清除以防重复触发
+        try {
+            const { action, productId } = JSON.parse(navigateToAction);
+            if (action === 'goToCustomization' && productId) {
+                goToCustomization(productId);
+                return; // 阻止后续的默认页面加载
+            }
+        } catch (e) {
+            console.error("Error parsing navigateTo action:", e);
+        }
+    }
+
     // 检查是否有目标页面需要跳转
     const targetPage = localStorage.getItem('targetPage');
     if (targetPage) {

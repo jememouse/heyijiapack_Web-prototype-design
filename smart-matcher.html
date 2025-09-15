@@ -160,6 +160,7 @@
         </div>
     </div>
 
+    <script src="js/product-data.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -428,7 +429,39 @@
             }
 
             function navigateToCustomization(boxType) {
-                alert(`正在跳转到 “${boxType}” 的定制页面... \n(此为原型演示功能，实际跳转后会带入场景参数)`);
+                // Map generic box type names from matcher to specific product IDs
+                const productMapping = {
+                    "天地盖盒": "P-02-JP-TD", // Defaulting to the '精品盒' version
+                    "翻盖书型盒": "P-02-JP-SX",
+                    "抽屉盒": "P-02-JP-CT", // Defaulting to the '精品盒' version
+                    "手提袋": null, // No direct equivalent in product data, handle gracefully
+                    "双插盒": "P-01-KH-SC",
+                    "锁底盒": "P-01-KH-SD", // Mapping to manual lock bottom
+                    "纸管": null, // Not available
+                    "异形盒": null, // Not available
+                    "瓦楞盒": null, // No generic corrugated box, only airplane box
+                    "飞机盒": "P-01-KH-FJ",
+                    "飞机盒(大号)": "P-01-KH-FJ", // Map to the same for now
+                    "手提盒": null, // Not available
+                    "西点盒": null, // Not available
+                    "八边封袋": null, // Not available
+                    "自立袋": null, // Not available
+                    "首饰袋": null, // Not available
+                    "锁底盒 (带挂钩)": "P-01-KH-DS" // Mapping to a similar type
+                };
+
+                const productId = productMapping[boxType];
+
+                if (productId) {
+                    // Store an object to be more descriptive about the action
+                    localStorage.setItem('navigateTo', JSON.stringify({
+                        action: 'goToCustomization',
+                        productId: productId
+                    }));
+                    window.location.href = 'index.html';
+                } else {
+                    alert(`“${boxType}”的在线定制功能即将上线，敬请期待！`);
+                }
             }
 
             // --- Event Listeners ---
