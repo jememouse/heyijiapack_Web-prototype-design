@@ -250,10 +250,12 @@ textarea.border-slate-300:focus {
     min-width: 200px;
     z-index: 50;
     white-space: nowrap;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
 .dropdown-menu.open {
-    display: block;
+    display: flex;
 }
 
 .dropdown-menu a {
