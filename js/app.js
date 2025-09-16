@@ -5,7 +5,7 @@ function saveCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
 }
 let lastOrderId = null;
-let distributionStatus = 'none'; // 'none', 'pending', 'approved'
+let distributionStatus = 'approved'; // 'none', 'pending', 'approved'
 let withdrawalAccounts = []; // To store saved bank accounts
 
 const userAddresses = [
