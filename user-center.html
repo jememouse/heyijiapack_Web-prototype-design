@@ -186,11 +186,21 @@
                     <span class="text-xl font-bold text-slate-900">智盒工坊</span>
                 </a>
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="index.html" class="text-slate-600 hover:text-blue-600">首页</a>
-                    <a href="products.html" class="text-slate-600 hover:text-blue-600">在线定制</a>
-                    <a href="user-center.html" class="text-slate-600 hover:text-blue-600">个人中心</a>
-                    <a href="solutions.html" class="text-slate-600 hover:text-blue-600">解决方案</a>
-                    <a href="help.html" class="text-slate-600 hover:text-blue-600">帮助中心</a>
+                    <a href="index.html" class="text-slate-600 hover:text-blue-600 nav-item">首页</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="text-slate-600 hover:text-blue-600 flex items-center">
+                            产品与服务
+                            <i data-lucide="chevron-down" class="w-4 h-4 ml-1"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <a href="products.html">在线定制</a>
+                            <a href="smart-matcher.html">智能包装方案匹配器</a>
+                            <a href="smart-design.html">智能包装设计及打样服务</a>
+                        </div>
+                    </div>
+                    <a href="solutions.html" class="text-slate-600 hover:text-blue-600 nav-item">解决方案</a>
+                    <a href="user-center.html" class="text-slate-600 hover:text-blue-600 nav-item">个人中心</a>
+                    <a href="help.html" class="text-slate-600 hover:text-blue-600 nav-item">帮助中心</a>
                 </div>
                 <div class="flex items-center space-x-4">
                     <a href="#" onclick="openLoginModal()" class="text-slate-600 hover:text-blue-600 text-sm">登录/注册</a>
@@ -233,8 +243,8 @@
                                     <!-- Apply View -->
                                     <div id="distribution-apply-view">
                                         <div class="bg-white p-8 rounded-xl shadow-sm">
-                                            <h1 class="text-3xl font-bold text-slate-900">申请成为企业分销商</h1>
-                                            <p class="mt-2 text-slate-500">加入我们的分销网络，必须以公司主体的名义进行申请，共享成功，共创未来。</p>
+                                            <h1 class="text-3xl font-bold text-slate-900">申请成为分销商</h1>
+                                            <p class="mt-2 text-slate-500">加入我们的分销网络，共享成功，共创未来。</p>
                                             <div class="mt-8 grid md:grid-cols-3 gap-8">
                                                 <div class="flex items-start space-x-4">
                                                     <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-lg p-3"><i data-lucide="dollar-sign" class="w-6 h-6"></i></div>
@@ -250,29 +260,36 @@
                                                 </div>
                                             </div>
                                             <div class="mt-8 border-t border-slate-200 pt-8">
-                                                <h2 class="text-xl font-semibold">填写申请信息</h2>
-                                                <form class="mt-6 space-y-4 max-w-lg">
-                                                    <div><label for="dist-company-name" class="block text-sm font-medium text-slate-700">公司全称</label><input type="text" id="dist-company-name" placeholder="请输入工商注册的全称" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
-                                                    <div><label for="dist-credit-code" class="block text-sm font-medium text-slate-700">统一社会信用代码</label><input type="text" id="dist-credit-code" placeholder="请输入18位统一社会信用代码" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
-                                                    <div><label for="dist-contact-name" class="block text-sm font-medium text-slate-700">联系人姓名</label><input type="text" id="dist-contact-name" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
-                                                    <div><label for="dist-contact-phone" class="block text-sm font-medium text-slate-700">联系电话</label><input type="text" id="dist-contact-phone" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
-                                                    <div>
-                                                        <label class="block text-sm font-medium text-slate-700">营业执照</label>
-                                                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-md">
-                                                            <div class="space-y-1 text-center">
-                                                                <i data-lucide="file-up" class="mx-auto h-12 w-12 text-slate-400"></i>
-                                                                <div class="flex text-sm text-slate-600">
-                                                                    <label for="dist-license-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
-                                                                        <span>上传文件</span>
-                                                                        <input id="dist-license-upload" name="dist-license-upload" type="file" class="sr-only">
-                                                                    </label>
-                                                                    <p class="pl-1">或拖拽到此处</p>
-                                                                </div>
-                                                                <p class="text-xs text-slate-500">支持 PDF, JPG, PNG, 不超过10MB</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <button type="button" onclick="handleDistributionApply()" class="btn-primary text-white px-6 py-2.5 rounded-lg font-semibold">提交申请</button>
+                                                <h2 class="text-xl font-semibold">选择申请类型</h2>
+                                                <div class="mt-4 border-b border-slate-200">
+                                                    <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                                        <button onclick="toggleApplyForm('individual')" class="auth-tab-button active whitespace-nowrap pb-3 px-1 border-b-2 font-semibold text-sm">个人申请</button>
+                                                        <button onclick="toggleApplyForm('company')" class="auth-tab-button text-slate-500 hover:text-slate-700 hover:border-transparent whitespace-nowrap pb-3 px-1 border-b-2 font-medium text-sm">企业申请</button>
+                                                    </nav>
+                                                </div>
+
+                                                <!-- Individual Form -->
+                                                <form id="individual-form" class="mt-6 space-y-4 max-w-lg">
+                                                    <div><label for="individual-name" class="block text-sm font-medium text-slate-700">姓名</label><input type="text" id="individual-name" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="individual-id" class="block text-sm font-medium text-slate-700">身份证号</label><input type="text" id="individual-id" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="individual-phone" class="block text-sm font-medium text-slate-700">联系电话</label><input type="text" id="individual-phone" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="individual-email" class="block text-sm font-medium text-slate-700">电子邮箱</label><input type="email" id="individual-email" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="individual-address" class="block text-sm font-medium text-slate-700">联系地址</label><input type="text" id="individual-address" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="individual-experience" class="block text-sm font-medium text-slate-700">相关经验或渠道说明</label><textarea id="individual-experience" rows="3" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></textarea></div>
+                                                    <button type="button" onclick="handleDistributionApply('individual')" class="btn-primary text-white px-6 py-2.5 rounded-lg font-semibold">提交个人申请</button>
+                                                </form>
+
+                                                <!-- Company Form -->
+                                                <form id="company-form" class="hidden mt-6 space-y-4 max-w-lg">
+                                                    <div><label for="company-name" class="block text-sm font-medium text-slate-700">公司全称</label><input type="text" id="company-name" placeholder="请输入工商注册的全称" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="business-license" class="block text-sm font-medium text-slate-700">统一社会信用代码</label><input type="text" id="business-license" placeholder="请输入18位统一社会信用代码" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="legal-person" class="block text-sm font-medium text-slate-700">法人姓名</label><input type="text" id="legal-person" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="contact-person" class="block text-sm font-medium text-slate-700">联系人姓名</label><input type="text" id="contact-person" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="contact-phone" class="block text-sm font-medium text-slate-700">联系电话</label><input type="text" id="contact-phone" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="company-email" class="block text-sm font-medium text-slate-700">企业邮箱</label><input type="email" id="company-email" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="business-address" class="block text-sm font-medium text-slate-700">公司地址</label><input type="text" id="business-address" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></div>
+                                                    <div><label for="business-scope" class="block text-sm font-medium text-slate-700">经营范围</label><textarea id="business-scope" rows="3" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm p-2"></textarea></div>
+                                                    <button type="button" onclick="handleDistributionApply('company')" class="btn-primary text-white px-6 py-2.5 rounded-lg font-semibold">提交企业申请</button>
                                                 </form>
                                             </div>
                                         </div>
@@ -283,7 +300,8 @@
                                             <i data-lucide="loader-2" class="w-16 h-16 mx-auto text-blue-500 animate-spin"></i>
                                             <h2 class="mt-6 text-2xl font-bold">申请已提交，等待审核</h2>
                                             <p class="mt-2 text-slate-500">我们将在1-3个工作日内完成审核，请您耐心等待。</p>
-                                            <button onclick="simulateApproval()" class="mt-6 bg-slate-200 text-slate-700 px-5 py-2 rounded-lg font-semibold text-sm">（模拟）刷新审核状态</button>
+                                            <div id="application-summary" class="mt-6 text-left text-sm bg-slate-50 p-4 rounded-lg max-w-lg mx-auto"></div>
+                                            <p class="mt-4 text-xs text-slate-400">提交时间: <span id="submit-time"></span></p>
                                         </div>
                                     </div>
                                     <!-- Rejected View -->
