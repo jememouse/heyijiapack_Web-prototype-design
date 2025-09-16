@@ -1,5 +1,9 @@
 // --- 全局状态和数据 ---
-let cart = [];
+let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
 let lastOrderId = null;
 let distributionStatus = 'none'; // 'none', 'pending', 'approved'
 let withdrawalAccounts = []; // To store saved bank accounts
@@ -74,7 +78,6 @@ function renderIcons() {
 }
 
 // --- 页面导航逻辑 ---
-const pages = document.querySelectorAll('.page');
 const userCenterViews = document.querySelectorAll('.user-center-view');
 
 const sidebarTemplate = [
@@ -88,29 +91,6 @@ const sidebarTemplate = [
     { id: 'coupons-view', icon: 'ticket', text: '我的优惠券' },
     { id: 'settings-view', icon: 'user-cog', text: '账户设置' },
 ];
-
-function showPage(pageId, context) {
-    pages.forEach(p => p.classList.add('hidden'));
-    const activePage = document.getElementById(pageId);
-    if (activePage) activePage.classList.remove('hidden');
-
-    if (pageId === 'user-center-page') {
-        const viewId = context?.viewId || 'dashboard-view';
-        showUserCenterView(viewId, context);
-    } else if (pageId === 'shopping-cart-page') {
-        renderCart();
-    } else if (pageId === 'checkout-page') {
-        renderCheckoutPage();
-    } else if (pageId === 'customization-page') {
-        renderMaterialOptions();
-        renderSpecialProcesses();
-    } else if (pageId === 'product-center-page') {
-        initializeFilters();
-    }
-
-    window.scrollTo(0, 0);
-    renderIcons();
-}
 
 function showUserCenterView(viewId, context) {
     userCenterViews.forEach(v => v.classList.add('hidden'));
@@ -421,20 +401,18 @@ function renderProductCenter(filter) {
     renderIcons();
 }
 
-function goToCustomization(productId) {
+function populateCustomizationPage(productId) {
     const details = productDetails[productId];
     if (!details) {
-        alert('该产品的定制功能即将上线，敬请期待！');
+        // handle error, maybe redirect or show a message
         return;
     }
 
-    // This part remains the same as it correctly populates the customization page
     const titleElement = document.getElementById('customization-title');
     const headerElement = document.getElementById('customization-header');
     const descElement = document.getElementById('customization-desc');
     const imageElement = document.getElementById('customization-preview-img');
 
-    // Find the product in the catalog to get its name and image
     let productInfo = null;
     for (const domain in productCatalog) {
         for (const pCat in productCatalog[domain]) {
@@ -457,8 +435,10 @@ function goToCustomization(productId) {
         imageElement.src = productInfo.imageUrl.replace('400', '800').replace('300','600');
         imageElement.alt = productInfo.name;
     }
+}
 
-    showPage('customization-page');
+function goToCustomization(productId) {
+    window.location.href = `customization.html?product=${productId}`;
 }
 
 // --- New Hierarchical Filter Logic ---
@@ -828,7 +808,7 @@ function handleAddToCart() {
     };
 
     cart.push(newItem);
-
+            saveCart();
     updateCartIcon();
 
     const cartIconContainer = document.getElementById('cart-icon-container');
@@ -895,8 +875,12 @@ function updateCartItemQuantity(itemId, change) {
     const item = cart.find(i => i.id === itemId);
     if (item) {
         const newQuantity = item.quantity + change;
-        if (newQuantity > 0) item.quantity = newQuantity;
-        else removeCartItem(itemId);
+                if (newQuantity > 0) {
+                    item.quantity = newQuantity;
+                    saveCart();
+                } else {
+                    removeCartItem(itemId);
+                }
     }
     renderCart();
     updateCartIcon();
@@ -904,6 +888,7 @@ function updateCartItemQuantity(itemId, change) {
 
 function removeCartItem(itemId) {
     cart = cart.filter(i => i.id !== itemId);
+            saveCart();
     renderCart();
     updateCartIcon();
 }
@@ -980,6 +965,7 @@ function confirmPayment() {
 
     openOrderSuccessModal();
     cart = [];
+            saveCart();
     updateCartIcon();
 }
 
@@ -1883,42 +1869,26 @@ function updateQuote() {
 
 // --- 初始化 ---
 document.addEventListener('DOMContentLoaded', () => {
-    // 检查是否有来自 smart-matcher 的导航请求
-    const navigateToAction = localStorage.getItem('navigateTo');
-    if (navigateToAction) {
-        localStorage.removeItem('navigateTo'); // 清除以防重复触发
-        try {
-            const { action, productId } = JSON.parse(navigateToAction);
-            if (action === 'goToCustomization' && productId) {
-                goToCustomization(productId);
-                return; // 阻止后续的默认页面加载
-            }
-        } catch (e) {
-            console.error("Error parsing navigateTo action:", e);
+    const path = window.location.pathname;
+
+    if (path.endsWith('products.html') || path.endsWith('/')) { // handle root path as products page
+        initializeFilters();
+    } else if (path.endsWith('customization.html')) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('product');
+        if (productId) {
+            populateCustomizationPage(productId);
         }
+        renderMaterialOptions();
+        renderSpecialProcesses();
+    } else if (path.endsWith('cart.html')) {
+        renderCart();
+    } else if (path.endsWith('user-center.html')) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const view = urlParams.get('view') || 'dashboard-view';
+        showUserCenterView(view);
     }
 
-    // 检查是否有目标页面需要跳转
-    const targetPage = localStorage.getItem('targetPage');
-    if (targetPage) {
-        localStorage.removeItem('targetPage');
-        showPage(targetPage);
-    } else {
-        showPage('homepage');
-    }
     updateCartIcon();
-    initializeFilters();
     renderIcons();
-
-    // Handle window resize for mobile filter
-    window.addEventListener('resize', () => {
-        if (window.innerWidth >= 1024) {
-            // Show sidebar on desktop
-            document.getElementById('filter-sidebar').classList.remove('hidden');
-        } else {
-            // Hide sidebar on mobile by default
-            document.getElementById('filter-sidebar').classList.add('hidden');
-            document.getElementById('filter-chevron').style.transform = 'rotate(0deg)';
-        }
-    });
 });
