@@ -92,13 +92,73 @@ const sidebarTemplate = [
     { id: 'settings-view', icon: 'user-cog', text: '账户设置' },
 ];
 
+function renderDashboardView() {
+    const view = document.getElementById('dashboard-view');
+    if (!view) return;
+
+    const pendingOrders = orders.filter(o => ['placed', 'processing', 'confirming', 'production'].includes(o.statusId)).length;
+    const shippedOrders = orders.filter(o => o.statusId === 'shipped').length;
+    // Assuming a static number for coupons for now
+    const couponCount = 5;
+
+    const recentOrders = orders.slice(0, 3);
+
+    view.innerHTML = `
+        <div class="bg-white p-8 rounded-xl shadow-sm">
+            <h1 class="text-3xl font-bold mb-2">欢迎回来, 李婷!</h1>
+            <p class="text-slate-600 mb-8">这是您的账户总览，祝您有美好的一天。</p>
+            <div class="grid sm:grid-cols-3 gap-6 mb-8">
+                <div class="bg-slate-50 p-6 rounded-lg">
+                    <p class="text-sm text-slate-500">待处理订单</p>
+                    <p class="text-3xl font-bold mt-1">${pendingOrders}</p>
+                </div>
+                <div class="bg-slate-50 p-6 rounded-lg">
+                    <p class="text-sm text-slate-500">待收货</p>
+                    <p class="text-3xl font-bold mt-1">${shippedOrders}</p>
+                </div>
+                <div class="bg-slate-50 p-6 rounded-lg">
+                    <p class="text-sm text-slate-500">可用优惠券</p>
+                    <p class="text-3xl font-bold mt-1">${couponCount}</p>
+                </div>
+            </div>
+            <h2 class="text-xl font-semibold mb-4">最近订单</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 text-sm text-slate-600">
+                        <tr>
+                            <th class="p-4 font-semibold">订单号</th>
+                            <th class="p-4 font-semibold">下单日期</th>
+                            <th class="p-4 font-semibold">总金额</th>
+                            <th class="p-4 font-semibold">状态</th>
+                            <th class="p-4 font-semibold"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${recentOrders.map(order => `
+                            <tr class="border-b border-slate-200">
+                                <td class="p-4">#...${order.id.slice(-3)}</td>
+                                <td class="p-4">${order.date}</td>
+                                <td class="p-4">¥${order.total.toFixed(2)}</td>
+                                <td class="p-4"><span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">${order.status}</span></td>
+                                <td class="p-4"><a href="#" onclick="showUserCenterView('order-detail-view', { orderId: '${order.id}' })" class="font-semibold text-blue-600">查看</a></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
 function showUserCenterView(viewId, context) {
     userCenterViews.forEach(v => v.classList.add('hidden'));
     const activeView = document.getElementById(viewId);
     if (activeView) activeView.classList.remove('hidden');
     buildSidebar(document.getElementById('user-center-sidebar'), viewId);
 
-    if (viewId === 'orders-view') {
+    if (viewId === 'dashboard-view') {
+        renderDashboardView();
+    } else if (viewId === 'orders-view') {
         renderOrdersPage();
     } else if (viewId === 'order-detail-view') {
         renderOrderDetailPage(context?.orderId);
@@ -109,59 +169,8 @@ function showUserCenterView(viewId, context) {
 }
 
 // Product Detail Page Functions
-// Store the currently viewed product ID
-let currentProductDetailId = null;
-
-function showProductDetail(productId) {
-    currentProductDetailId = productId;
-    const product = products.find(p => p.id === productId);
-    if (!product) {
-        alert('产品未找到!');
-        return;
-    }
-
-    // Update main product information
-    document.getElementById('product-detail-title').textContent = product.name;
-    document.getElementById('product-detail-subtitle').textContent = product.id;
-    document.getElementById('product-detail-main-image').src = product.imageUrl.replace('400', '600');
-    document.getElementById('product-detail-breadcrumb').textContent = product.name;
-
-    // Update features
-    const featuresContainer = document.getElementById('product-detail-features');
-    if (product.features && featuresContainer) {
-        featuresContainer.innerHTML = product.features.map(feature =>
-            `<li class="flex items-start"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>${feature}</li>`
-        ).join('');
-    }
-
-    // Update scenarios
-    const scenariosContainer = document.getElementById('product-detail-scenarios');
-    if (product.scenarios && scenariosContainer) {
-        scenariosContainer.innerHTML = product.scenarios.map(scenario =>
-            `<div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
-                <i data-lucide="${scenario.icon}" class="w-6 h-6 text-${scenario.color}-600"></i>
-                <div>
-                    <p class="text-sm font-medium">${scenario.name}</p>
-                    <p class="text-xs text-slate-500">${scenario.description || ''}</p>
-                </div>
-            </div>`
-        ).join('');
-    }
-
-    const customizeButton = document.querySelector('#product-detail-page .bg-blue-600');
-    if(customizeButton) {
-        customizeButton.onclick = () => goToCustomization(productId);
-    }
-
-    // Show product detail page and render the default tab
-    showPage('product-detail-page');
-    // Click the first tab by default
-    document.querySelector('.product-detail-tab-button').click();
-    renderIcons();
-}
-
-function renderProductDetailTab(tabId) {
-    const product = products.find(p => p.id === currentProductDetailId);
+function renderProductDetailTab(productId, tabId) {
+    const product = productDetails[productId];
     if (!product) return;
 
     const container = document.getElementById(`${tabId}-content`);
@@ -271,7 +280,7 @@ function renderProductDetailTab(tabId) {
 }
 
 
-function switchProductDetailTab(button, tabId) {
+function switchProductDetailTab(button, productId, tabId) {
     // Update tab buttons
     document.querySelectorAll('.product-detail-tab-button').forEach(btn => {
         btn.classList.remove('active');
@@ -285,7 +294,7 @@ function switchProductDetailTab(button, tabId) {
     const container = document.getElementById(tabId + '-content');
     container.classList.remove('hidden');
 
-    renderProductDetailTab(tabId);
+    renderProductDetailTab(productId, tabId);
 }
 
 function renderProductCenter(filter) {
@@ -347,7 +356,7 @@ function renderProductCenter(filter) {
                     const details = productDetails[product.id] || {};
                     return `
                         <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all">
-                            <div class="image-container bg-slate-100" onclick="showProductDetail('${product.id}')">
+                            <div class="image-container bg-slate-100" onclick="window.location.href='product-detail.html?product=${product.id}'">
                                 <img class="img-3d w-full h-48 object-cover cursor-pointer"
                                     src="${product.imageUrl}"
                                     alt="${product.name} 3D图">
@@ -356,7 +365,7 @@ function renderProductCenter(filter) {
                                 <h3 class="text-lg font-bold flex-grow">${product.name}</h3>
                                 <p class="text-xs text-slate-500 mt-1">${product.id}</p>
                                 <div class="mt-4 space-y-2">
-                                    <button onclick="showProductDetail('${product.id}')" class="w-full border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">查看详情</button>
+                                    <button onclick="window.location.href='product-detail.html?product=${product.id}'" class="w-full border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">查看详情</button>
                                     <button onclick="goToCustomization('${product.id}')" class="w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button>
                                 </div>
                             </div>
@@ -401,6 +410,20 @@ function renderProductCenter(filter) {
     renderIcons();
 }
 
+function findProductInCatalog(productId) {
+    for (const domain in productCatalog) {
+        for (const pCat in productCatalog[domain]) {
+            for (const sCat in productCatalog[domain][pCat]) {
+                const found = productCatalog[domain][pCat][sCat].find(p => p.id === productId);
+                if (found) {
+                    return found;
+                }
+            }
+        }
+    }
+    return null;
+}
+
 function populateCustomizationPage(productId) {
     const details = productDetails[productId];
     if (!details) {
@@ -413,20 +436,7 @@ function populateCustomizationPage(productId) {
     const descElement = document.getElementById('customization-desc');
     const imageElement = document.getElementById('customization-preview-img');
 
-    let productInfo = null;
-    for (const domain in productCatalog) {
-        for (const pCat in productCatalog[domain]) {
-            for (const sCat in productCatalog[domain][pCat]) {
-                const found = productCatalog[domain][pCat][sCat].find(p => p.id === productId);
-                if (found) {
-                    productInfo = found;
-                    break;
-                }
-            }
-            if (productInfo) break;
-        }
-        if (productInfo) break;
-    }
+    let productInfo = findProductInCatalog(productId);
 
     if (titleElement) titleElement.textContent = productInfo.name;
     if (headerElement) headerElement.textContent = `${productInfo.name} 定制`;
@@ -560,7 +570,7 @@ function buildSidebar(container, activeViewId) {
     const logoutLink = document.createElement('a');
     logoutLink.href = '#';
     logoutLink.className = 'flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg mt-4 border-t border-slate-200';
-    logoutLink.onclick = (e) => { e.preventDefault(); showPage('homepage'); };
+    logoutLink.onclick = (e) => { e.preventDefault(); window.location.href = 'index.html'; };
     logoutLink.innerHTML = `<i data-lucide="log-out" class="w-5 h-5 mr-3"></i> 退出登录`;
     container.appendChild(logoutLink);
 }
@@ -585,7 +595,7 @@ function closeLoginModal() { loginModal.classList.add('hidden'); }
 function openOrderSuccessModal() { orderSuccessModal.classList.remove('hidden'); renderIcons(); }
 function closeOrderSuccessModalAndGoToUpload() {
     orderSuccessModal.classList.add('hidden');
-    showPage('user-center-page', { viewId: 'order-detail-view', orderId: lastOrderId });
+    window.location.href = `user-center.html?view=order-detail-view&orderId=${lastOrderId}`;
 }
 function openPaymentModal(total) {
     document.getElementById('payment-amount').textContent = `¥ ${total.toFixed(2)}`;
@@ -686,11 +696,11 @@ function switchAuthTab(button, tabId) {
 }
 function handleLogin() {
     closeLoginModal();
-    showPage('user-center-page');
+    window.location.href = 'user-center.html';
 }
 function handleRegister() {
     closeLoginModal();
-    showPage('user-center-page');
+    window.location.href = 'user-center.html';
 }
 
 // --- Tab Switching Logic ---
@@ -817,7 +827,7 @@ function handleAddToCart() {
         cartIconContainer.classList.remove('cart-shake-animation');
     }, 400);
 
-    showPage('shopping-cart-page');
+    window.location.href = 'cart.html';
 }
 
 function renderCart() {
@@ -830,7 +840,7 @@ function renderCart() {
                 <i data-lucide="shopping-cart" class="w-16 h-16 mx-auto text-slate-300"></i>
                 <h2 class="mt-4 text-2xl font-semibold">您的购物车是空的</h2>
                 <p class="mt-2 text-slate-500">快去“在线定制”页面，添加一些商品吧！</p>
-                <button onclick="showPage('product-center-page')" class="mt-6 btn-primary text-white px-6 py-2 rounded-lg font-semibold">
+                <button onclick="window.location.href='products.html'" class="mt-6 btn-primary text-white px-6 py-2 rounded-lg font-semibold">
                     去定制
                 </button>
             </div>
@@ -898,7 +908,11 @@ function handleCheckout() {
         alert('您的购物车是空的！');
         return;
     }
-    showPage('checkout-page');
+    document.getElementById('shopping-cart-page').classList.add('hidden');
+    const checkoutPage = document.getElementById('checkout-page');
+    checkoutPage.classList.remove('hidden');
+    renderCheckoutPage();
+    window.scrollTo(0, 0);
 }
 
 function renderCheckoutPage() {
@@ -1869,24 +1883,96 @@ function updateQuote() {
 
 // --- 初始化 ---
 document.addEventListener('DOMContentLoaded', () => {
-    const path = window.location.pathname;
+    const path = window.location.pathname.split('/').pop();
+    const urlParams = new URLSearchParams(window.location.search);
 
-    if (path.endsWith('products.html') || path.endsWith('/')) { // handle root path as products page
-        initializeFilters();
-    } else if (path.endsWith('customization.html')) {
-        const urlParams = new URLSearchParams(window.location.search);
+    if (path === 'products.html' || path === '' || path === 'index.html') {
+        if (document.getElementById('hierarchical-filter-container')) {
+            initializeFilters();
+        }
+    } else if (path === 'product-detail.html') {
+        const productId = urlParams.get('product');
+        if (!productId) {
+            document.body.innerHTML = '<h1>产品未找到</h1>';
+            return;
+        }
+        const product = productDetails[productId];
+        const productInfo = findProductInCatalog(productId);
+
+        if (!product || !productInfo) {
+            document.body.innerHTML = '<h1>产品信息不存在</h1>';
+            return;
+        }
+
+        // Update main product information
+        document.getElementById('product-detail-title').textContent = productInfo.name;
+        document.getElementById('product-detail-subtitle').textContent = productInfo.id;
+        document.getElementById('product-detail-main-image').src = productInfo.imageUrl.replace('400', '600');
+        document.getElementById('product-detail-breadcrumb').textContent = productInfo.name;
+
+        // Update features
+        const featuresContainer = document.getElementById('product-detail-features');
+        if (product.features && featuresContainer) {
+            featuresContainer.innerHTML = product.features.map(feature =>
+                `<li class="flex items-start"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>${feature}</li>`
+            ).join('');
+        }
+
+        // Update scenarios
+        const scenariosContainer = document.getElementById('product-detail-scenarios');
+        if (product.scenarios && scenariosContainer) {
+            scenariosContainer.innerHTML = product.scenarios.map(scenario =>
+                `<div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                    <i data-lucide="${scenario.icon}" class="w-6 h-6 text-${scenario.color}-600"></i>
+                    <div>
+                        <p class="text-sm font-medium">${scenario.name}</p>
+                        <p class="text-xs text-slate-500">${scenario.description || ''}</p>
+                    </div>
+                </div>`
+            ).join('');
+        }
+
+        // Add event listeners for tabs
+        document.querySelectorAll('.product-detail-tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                switchProductDetailTab(button, productId, button.dataset.tab);
+            });
+        });
+
+        // Customize button
+        const customizeButton = document.querySelector('#product-detail-page .bg-blue-600');
+        if(customizeButton) {
+            customizeButton.onclick = () => goToCustomization(productId);
+        }
+
+        // Click the first tab by default
+        if (document.querySelector('.product-detail-tab-button')) {
+            document.querySelector('.product-detail-tab-button').click();
+        }
+
+    } else if (path === 'customization.html') {
         const productId = urlParams.get('product');
         if (productId) {
             populateCustomizationPage(productId);
         }
         renderMaterialOptions();
         renderSpecialProcesses();
-    } else if (path.endsWith('cart.html')) {
+    } else if (path === 'cart.html') {
         renderCart();
-    } else if (path.endsWith('user-center.html')) {
-        const urlParams = new URLSearchParams(window.location.search);
+        // Add event listener for going back to cart
+        const backToCartLink = document.querySelector('a[href="cart.html"]');
+        if(backToCartLink && backToCartLink.textContent.includes('返回购物车')){
+             backToCartLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('checkout-page').classList.add('hidden');
+                document.getElementById('shopping-cart-page').classList.remove('hidden');
+                window.scrollTo(0, 0);
+            });
+        }
+    } else if (path === 'user-center.html') {
         const view = urlParams.get('view') || 'dashboard-view';
-        showUserCenterView(view);
+        const orderId = urlParams.get('orderId');
+        showUserCenterView(view, { orderId });
     }
 
     updateCartIcon();

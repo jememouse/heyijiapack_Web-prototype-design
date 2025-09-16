@@ -17,6 +17,8 @@
 
     <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
 
+    <link rel="stylesheet" href="css/style.css">
+
     <!-- JSON-LD for SEO -->
     <script type="application/ld+json">
     {
@@ -205,32 +207,86 @@
         </header>
 
         <main class="flex-grow">
-            <div id="help-center-page" class="page">
-                <div class="bg-white"><div class="container mx-auto px-8 md:px-16 py-20 text-center"><h1 class="text-5xl font-extrabold text-slate-900 tracking-tight">帮助中心</h1><p class="mt-6 text-lg text-slate-600 max-w-3xl mx-auto">我们在这里解答您的任何疑问。您可以通过搜索或分类查找快速找到答案。</p><div class="mt-8 max-w-lg mx-auto"><div class="relative"><input type="search" placeholder="例如：如何上传设计文件？" class="w-full p-4 pr-12 text-lg border-slate-300 rounded-full shadow-sm focus:ring-blue-500 focus:border-blue-500"><div class="absolute inset-y-0 right-0 flex py-1.5 pr-1.5"><button type="submit" class="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold text-white btn-primary"><i data-lucide="search" class="w-5 h-5"></i></button></div></div></div></div></div>
+             <div id="help-center-page" class="page">
+                <div class="bg-white">
+                    <div class="container mx-auto px-8 md:px-16 py-20 text-center">
+                        <h1 class="text-5xl font-extrabold text-slate-900 tracking-tight">帮助中心</h1>
+                        <p class="mt-6 text-lg text-slate-600 max-w-3xl mx-auto">我们在这里解答您的任何疑问。您可以通过搜索或分类查找快速找到答案。</p>
+                        <div class="mt-8 max-w-lg mx-auto">
+                            <div class="relative"><input type="search" placeholder="例如：如何上传设计文件？"
+                                    class="w-full p-4 pr-12 text-lg border-slate-300 rounded-full shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                <div class="absolute inset-y-0 right-0 flex py-1.5 pr-1.5"><button type="submit"
+                                        class="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold text-white btn-primary"><i
+                                            data-lucide="search" class="w-5 h-5"></i></button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="container mx-auto px-8 md:px-16 py-24">
                     <div class="grid lg:grid-cols-4 gap-12">
                         <div class="lg:col-span-1">
                             <h2 class="text-2xl font-bold mb-6">问题分类</h2>
                             <ul class="space-y-2">
                                 <li><a href="#faq-ordering" class="font-semibold text-blue-600">订购流程</a></li>
-                                <li><a href="#faq-design" class="font-semibold text-slate-600 hover:text-blue-600">设计与文件</a></li>
-                                <li><a href="#faq-production" class="font-semibold text-slate-600 hover:text-blue-600">生产与配送</a></li>
-                                <li><a href="#faq-account" class="font-semibold text-slate-600 hover:text-blue-600">账户与支付</a></li>
+                                <li><a href="#faq-design"
+                                        class="font-semibold text-slate-600 hover:text-blue-600">设计与文件</a></li>
+                                <li><a href="#faq-production"
+                                        class="font-semibold text-slate-600 hover:text-blue-600">生产与配送</a></li>
+                                <li><a href="#faq-account"
+                                        class="font-semibold text-slate-600 hover:text-blue-600">账户与支付</a></li>
                             </ul>
                         </div>
                         <div class="lg:col-span-3 space-y-16">
                             <section id="faq-ordering">
                                 <h3 class="text-3xl font-bold mb-8 border-l-4 border-blue-600 pl-4">订购流程</h3>
                                 <div class="space-y-4">
-                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold">如何获取报价？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-500" style="line-height: 1.7;">在我们的“在线定制”页面，选择您需要的盒型，输入尺寸、材料、工艺和数量，系统将立即为您生成实时、透明的报价。</div></details></div>
-                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold">最小起订量是多少？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-500" style="line-height: 1.7;">我们支持小批量定制，大部分产品的最小起订量为100个。具体起订量会因产品类型和工艺复杂程度而异，您可以在定制页面看到具体的起订要求。</div></details></div>
+                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm">
+                                        <details>
+                                            <summary class="flex justify-between items-center cursor-pointer">
+                                                <h4 class="font-semibold">如何获取报价？</h4><i data-lucide="plus"
+                                                    class="icon text-slate-400"></i>
+                                            </summary>
+                                            <div class="mt-4 text-slate-500" style="line-height: 1.7;">
+                                                在我们的“在线定制”页面，选择您需要的盒型，输入尺寸、材料、工艺和数量，系统将立即为您生成实时、透明的报价。</div>
+                                        </details>
+                                    </div>
+                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm">
+                                        <details>
+                                            <summary class="flex justify-between items-center cursor-pointer">
+                                                <h4 class="font-semibold">最小起订量是多少？</h4><i data-lucide="plus"
+                                                    class="icon text-slate-400"></i>
+                                            </summary>
+                                            <div class="mt-4 text-slate-500" style="line-height: 1.7;">
+                                                我们支持小批量定制，大部分产品的最小起订量为100个。具体起订量会因产品类型和工艺复杂程度而异，您可以在定制页面看到具体的起订要求。</div>
+                                        </details>
+                                    </div>
                                 </div>
                             </section>
-                             <section id="faq-design">
+                            <section id="faq-design">
                                 <h3 class="text-3xl font-bold mb-8 border-l-4 border-blue-600 pl-4">设计与文件</h3>
                                 <div class="space-y-4">
-                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold">我应该上传什么格式的设计文件？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-500" style="line-height: 1.7;">我们建议您上传矢量格式的文件，如 Adobe Illustrator (.ai)、.pdf 或 .eps 格式，以确保最佳的印刷质量。对于位图文件，请确保分辨率至少为300 DPI。</div></details></div>
-                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm"><details><summary class="flex justify-between items-center cursor-pointer"><h4 class="font-semibold">你们提供设计服务吗？</h4><i data-lucide="plus" class="icon text-slate-400"></i></summary><div class="mt-4 text-slate-500" style="line-height: 1.7;">目前我们不直接提供创意设计服务，但我们专业的印前工程师团队会为您提供“文件规范化”服务。他们会检查您的设计稿，确保其符合生产标准，并进行专业的印前处理，如色彩模式转换（RGB转CMYK）、出血设置和拼版等。</div></details></div>
+                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm">
+                                        <details>
+                                            <summary class="flex justify-between items-center cursor-pointer">
+                                                <h4 class="font-semibold">我应该上传什么格式的设计文件？</h4><i data-lucide="plus"
+                                                    class="icon text-slate-400"></i>
+                                            </summary>
+                                            <div class="mt-4 text-slate-500" style="line-height: 1.7;">我们建议您上传矢量格式的文件，如
+                                                Adobe Illustrator (.ai)、.pdf 或 .eps 格式，以确保最佳的印刷质量。对于位图文件，请确保分辨率至少为300
+                                                DPI。</div>
+                                        </details>
+                                    </div>
+                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm">
+                                        <details>
+                                            <summary class="flex justify-between items-center cursor-pointer">
+                                                <h4 class="font-semibold">你们提供设计服务吗？</h4><i data-lucide="plus"
+                                                    class="icon text-slate-400"></i>
+                                            </summary>
+                                            <div class="mt-4 text-slate-500" style="line-height: 1.7;">
+                                                目前我们不直接提供创意设计服务，但我们专业的印前工程师团队会为您提供“文件规范化”服务。他们会检查您的设计稿，确保其符合生产标准，并进行专业的印前处理，如色彩模式转换（RGB转CMYK）、出血设置和拼版等。
+                                            </div>
+                                        </details>
+                                    </div>
                                 </div>
                             </section>
                         </div>
