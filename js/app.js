@@ -1977,4 +1977,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateCartIcon();
     renderIcons();
+
+    // Dropdown menu logic
+    const dropdown = document.querySelector('.dropdown');
+    if (dropdown) {
+        const toggle = dropdown.querySelector('a'); // The toggle is the `a` tag
+        const menu = dropdown.querySelector('.dropdown-menu');
+
+        toggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            menu.classList.toggle('open');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!dropdown.contains(e.target)) {
+                menu.classList.remove('open');
+            }
+        });
+    }
 });

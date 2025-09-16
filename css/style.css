@@ -252,7 +252,7 @@ textarea.border-slate-300:focus {
     white-space: nowrap;
 }
 
-.nav-item.dropdown:hover .dropdown-menu {
+.dropdown-menu.open {
     display: block;
 }
 
