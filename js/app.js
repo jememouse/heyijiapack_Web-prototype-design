@@ -1977,33 +1977,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateCartIcon();
     renderIcons();
-
-    // Dropdown menu logic
-    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-
-    dropdownToggles.forEach(toggle => {
-        toggle.addEventListener('click', e => {
-            e.preventDefault();
-            const currentDropdown = toggle.closest('.dropdown');
-            const menu = currentDropdown.querySelector('.dropdown-menu');
-
-            // Close other open dropdowns
-            document.querySelectorAll('.dropdown-menu.open').forEach(openMenu => {
-                if (openMenu !== menu) {
-                    openMenu.classList.remove('open');
-                }
-            });
-
-            menu.classList.toggle('open');
-        });
-    });
-
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', e => {
-        if (!e.target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown-menu.open').forEach(openMenu => {
-                openMenu.classList.remove('open');
-            });
-        }
-    });
 });
