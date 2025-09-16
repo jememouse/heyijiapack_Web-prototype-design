@@ -1979,20 +1979,31 @@ document.addEventListener('DOMContentLoaded', () => {
     renderIcons();
 
     // Dropdown menu logic
-    const dropdown = document.querySelector('.dropdown');
-    if (dropdown) {
-        const toggle = dropdown.querySelector('a'); // The toggle is the `a` tag
-        const menu = dropdown.querySelector('.dropdown-menu');
+    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
 
-        toggle.addEventListener('click', (e) => {
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', e => {
             e.preventDefault();
+            const currentDropdown = toggle.closest('.dropdown');
+            const menu = currentDropdown.querySelector('.dropdown-menu');
+
+            // Close other open dropdowns
+            document.querySelectorAll('.dropdown-menu.open').forEach(openMenu => {
+                if (openMenu !== menu) {
+                    openMenu.classList.remove('open');
+                }
+            });
+
             menu.classList.toggle('open');
         });
+    });
 
-        document.addEventListener('click', (e) => {
-            if (!dropdown.contains(e.target)) {
-                menu.classList.remove('open');
-            }
-        });
-    }
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown-menu.open').forEach(openMenu => {
+                openMenu.classList.remove('open');
+            });
+        }
+    });
 });
