@@ -4,13 +4,6 @@ let lastOrderId = null;
 let distributionStatus = 'none'; // 'none', 'pending', 'approved'
 let withdrawalAccounts = []; // To store saved bank accounts
 
-const mockUser = {
-    name: '李婷',
-    email: 'li.ting@example.com',
-    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=64&q=80',
-    status: '企业认证用户'
-};
-
 const userAddresses = [
     { id: 1, name: '李婷', phone: '138****1234', address: '上海市 浦东新区 世纪大道100号 东方明珠大厦 88层', isDefault: true },
     { id: 2, name: '王经理', phone: '159****5678', address: '江苏省 苏州市 工业园区 星湖街328号 创意产业园 A栋 201室', isDefault: false },
@@ -123,19 +116,9 @@ function showUserCenterView(viewId, context) {
     userCenterViews.forEach(v => v.classList.add('hidden'));
     const activeView = document.getElementById(viewId);
     if (activeView) activeView.classList.remove('hidden');
-
-    // Populate user info in sidebar header
-    const sidebarHeader = document.querySelector('#user-center-sidebar').previousElementSibling;
-    sidebarHeader.querySelector('img').src = mockUser.avatar;
-    sidebarHeader.querySelector('p.font-semibold').textContent = mockUser.name;
-    sidebarHeader.querySelector('p.text-slate-500').textContent = mockUser.status;
-
-
     buildSidebar(document.getElementById('user-center-sidebar'), viewId);
 
-    if (viewId === 'dashboard-view') {
-        renderDashboard();
-    } else if (viewId === 'orders-view') {
+    if (viewId === 'orders-view') {
         renderOrdersPage();
     } else if (viewId === 'order-detail-view') {
         renderOrderDetailPage(context?.orderId);
@@ -143,38 +126,6 @@ function showUserCenterView(viewId, context) {
         renderDistributionParentView();
     }
     renderIcons();
-}
-
-function renderDashboard() {
-    // Populate Welcome Message
-    const welcomeHeader = document.querySelector('#dashboard-view h1');
-    if (welcomeHeader) {
-        welcomeHeader.textContent = `欢迎回来, ${mockUser.name}!`;
-    }
-
-    // Populate Recent Orders
-    const recentOrdersTbody = document.querySelector('#dashboard-view table tbody');
-    if (recentOrdersTbody) {
-        const recentOrders = orders.slice(0, 3);
-        recentOrdersTbody.innerHTML = recentOrders.map(order => {
-            let statusClass = '';
-            switch (order.statusId) {
-                case 'processing': statusClass = 'bg-yellow-100 text-yellow-800'; break;
-                case 'shipped': statusClass = 'bg-blue-100 text-blue-800'; break;
-                case 'completed': statusClass = 'bg-green-100 text-green-800'; break;
-                default: statusClass = 'bg-slate-100 text-slate-800';
-            }
-            return `
-                 <tr class="border-b border-slate-200">
-                    <td class="p-4">#...${order.id.slice(-3)}</td>
-                    <td class="p-4">${order.date}</td>
-                    <td class="p-4">¥${order.total.toFixed(2)}</td>
-                    <td class="p-4"><span class="${statusClass} text-xs font-medium px-2 py-1 rounded-full">${order.status}</span></td>
-                    <td class="p-4"><a href="#" onclick="showUserCenterView('order-detail-view', { orderId: '${order.id}' })" class="font-semibold text-blue-600">查看</a></td>
-                </tr>
-            `;
-        }).join('');
-    }
 }
 
 // Product Detail Page Functions
@@ -1057,7 +1008,7 @@ function renderOrdersPage(filterStatus = 'all') {
                 </div>
                 <div class="p-6">
                     <div class="flex items-start space-x-6">
-                        <img src="${firstItem.imageUrl}" alt="${firstItem.name}" class="w-24 h-24 rounded-md object-cover border">
+                        <img src="${firstItem.imageUrl}" alt="${firstItem.name}" class="w-24 h-24 rounded-md object-cover">
                         <div class="flex-grow">
                             <h4 class="font-semibold">${firstItem.name} ${order.items.length > 1 ? `等 ${order.items.length} 件商品` : ''}</h4>
                             <p class="text-sm text-slate-500 mt-1">${firstItem.specs}</p>
