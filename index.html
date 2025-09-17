@@ -43,7 +43,7 @@
 
         <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-200">
             <nav class="container mx-auto px-8 md:px-16 py-4 flex justify-between items-center">
-                <a href="index.html" class="flex items-center space-x-2">
+                <a href="#" onclick="showPage('homepage')" class="flex items-center space-x-2">
                     <svg width="32" height="32" viewBox="0 0 24 24" class="text-blue-600">
                         <path fill="currentColor"
                             d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 15h-2v-5h-4v5H9V9h2v4h2V9h2v8z">
@@ -51,28 +51,31 @@
                     </svg>
                     <span class="text-xl font-bold text-slate-900">智盒工坊</span>
                 </a>
-                <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                    <a href="index.html" class="text-blue-600">首页</a>
-                    <a href="products.html" class="text-slate-700 hover:text-blue-600">在线定制</a>
-                    <a href="smart-matcher.html" class="text-slate-700 hover:text-blue-600">智能方案匹配</a>
-                    <a href="smart-design.html" class="text-slate-700 hover:text-blue-600">AI设计打样</a>
-                    <a href="solutions.html" class="text-slate-700 hover:text-blue-600">解决方案</a>
-                    <a href="user-center.html" class="text-slate-700 hover:text-blue-600">个人中心</a>
-                    <a href="help.html" class="text-slate-700 hover:text-blue-600">帮助中心</a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" onclick="showPage('homepage')" class="text-slate-600 hover:text-blue-600">首页</a>
+                    <a href="#" onclick="showPage('product-center-page')"
+                        class="text-slate-600 hover:text-blue-600">在线定制</a>
+                    <a href="smart-matcher.html" class="text-slate-600 hover:text-blue-600">智能包装方案匹配器</a>
+                    <a href="smart-design.html" class="text-slate-600 hover:text-blue-600">智能包装设计及打样服务</a>
+                    <a href="#" onclick="showPage('user-center-page')"
+                        class="text-slate-600 hover:text-blue-600">个人中心</a>
+                    <a href="#" onclick="showPage('solutions-page')" class="text-slate-600 hover:text-blue-600">解决方案</a>
+                    <a href="#" onclick="showPage('help-center-page')"
+                        class="text-slate-600 hover:text-blue-600">帮助中心</a>
                 </div>
                 <div class="flex items-center space-x-4">
                     <a href="#" onclick="openLoginModal()" class="text-slate-600 hover:text-blue-600 text-sm">登录/注册</a>
-                    <a href="cart.html" id="cart-icon-container"
+                    <a href="#" onclick="showPage('shopping-cart-page')" id="cart-icon-container"
                         class="relative flex items-center text-slate-600 hover:text-blue-600 transition-colors font-medium">
                         <i data-lucide="shopping-cart" class="w-5 h-5 mr-1"></i>
                         <span>我的购物车</span>
                         <span id="cart-badge"
                             class="ml-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                     </a>
-                    <a href="products.html"
+                    <button onclick="showPage('product-center-page')"
                         class="btn-primary text-white px-5 py-2 rounded-lg font-semibold shadow-sm transition-all hidden sm:block">
                         立即定制
-                    </a>
+                    </button>
                 </div>
             </nav>
         </header>
@@ -88,10 +91,10 @@
                             在线3秒报价，国际品质标准，像在京东购物一样省心。智盒工坊，让包装定制变得简单。
                         </p>
                         <div class="mt-10 flex justify-center items-center space-x-4">
-                            <a href="products.html"
+                            <button onclick="showPage('product-center-page')"
                                 class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-500 transition-colors text-lg">
                                 开启定制之旅
-                            </a>
+                            </button>
                             <a href="#features"
                                 class="text-blue-400 hover:text-white font-semibold flex items-center text-lg">
                                 了解更多 <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
@@ -269,6 +272,2191 @@
                     </div>
                 </section>
             </div>
+
+            <div id="customization-page" class="page hidden">
+                <div class="container mx-auto px-8 md:px-16 py-12">
+                    <div class="grid lg:grid-cols-5 gap-12">
+                        <div class="lg:col-span-3">
+                            <div class="bg-white rounded-xl shadow-sm sticky top-28 p-4">
+                                <div
+                                    class="aspect-w-4 aspect-h-3 bg-slate-100 rounded-lg flex items-center justify-center">
+                                    <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                                        alt="通用彩盒" id="customization-preview-img" class="w-full h-full object-contain">
+                                </div>
+                                <div class="mt-4 px-2">
+                                    <h3 class="text-lg font-semibold" id="customization-title">通用彩盒</h3>
+                                    <p class="text-sm text-slate-500 mt-1" id="customization-desc">根据您的需求，定制高品质通用彩盒。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <h2 class="text-2xl font-bold mb-6" id="customization-header">通用彩盒 定制</h2>
+                            <div class="space-y-6">
+                                <!-- 1. 输入尺寸 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">1. 输入尺寸 *</h3>
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div><label for="length" class="block text-sm font-medium text-slate-700">长
+                                                (L)</label>
+                                            <div class="mt-1 relative rounded-md shadow-sm"><input type="number"
+                                                    name="length" id="length" value="200" oninput="updateQuote()"
+                                                    class="w-full p-3 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors font-medium text-slate-900">
+                                                <div
+                                                    class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                    <span class="text-slate-600 font-medium text-sm">mm</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div><label for="width" class="block text-sm font-medium text-slate-700">宽
+                                                (W)</label>
+                                            <div class="mt-1 relative rounded-md shadow-sm"><input type="number"
+                                                    name="width" id="width" value="150" oninput="updateQuote()"
+                                                    class="w-full p-3 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors font-medium text-slate-900">
+                                                <div
+                                                    class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                    <span class="text-slate-600 font-medium text-sm">mm</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div><label for="height" class="block text-sm font-medium text-slate-700">高
+                                                (H)</label>
+                                            <div class="mt-1 relative rounded-md shadow-sm"><input type="number"
+                                                    name="height" id="height" value="50" oninput="updateQuote()"
+                                                    class="w-full p-3 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors font-medium text-slate-900">
+                                                <div
+                                                    class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                    <span class="text-slate-600 font-medium text-sm">mm</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 2. 选择材料 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">2. 选择材料</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-700 mb-2">纸张类型 *</label>
+                                            <div id="material-type-options" class="grid grid-cols-2 gap-3">
+                                                <!-- Material options will be generated by JS -->
+                                            </div>
+                                        </div>
+                                        <div id="grammage-options-container">
+                                            <!-- Grammage options will be generated by JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 3. 图案印制方式 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">3. 图案印制方式</h3>
+                                    <div class="space-y-3">
+                                        <!-- 精美数码印刷 -->
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <div class="flex items-center mb-1">
+                                                    <span class="font-semibold text-sm">精美数码印刷</span>
+                                                    <span
+                                                        class="ml-2 px-2 py-1 bg-blue-600 text-white text-xs rounded-full font-medium">推荐</span>
+                                                </div>
+                                                <p class="text-xs text-slate-500 mt-1">适合小批量、色彩鲜艳的设计，无专色选项，成本适中</p>
+                                            </div>
+                                            <input type="radio" name="printing-method" value="digital"
+                                                onchange="toggleSpotColorOptions(this.value)"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                        </label>
+
+                                        <!-- 胶印方式 -->
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">胶印方式</span>
+                                                <p class="text-xs text-slate-500 mt-1">适合大批量生产，默认包含CMYK四色，可增加专色</p>
+                                            </div>
+                                            <input type="radio" name="printing-method" value="offset"
+                                                onchange="toggleSpotColorOptions(this.value)"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        </label>
+
+                                        <!-- 专色选项 (条件显示) -->
+                                        <div id="spot-color-options"
+                                            class="hidden ml-4 pl-4 border-l-2 border-blue-200 space-y-3">
+                                            <label class="block text-sm font-medium text-slate-700">专色数量</label>
+                                            <div class="flex flex-wrap gap-2">
+                                                <label
+                                                    class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                    <input type="radio" name="printing-spot-color" value="0"
+                                                        data-price-factor="0" onchange="updateQuote()" class="sr-only"
+                                                        checked>
+                                                    无专色
+                                                </label>
+                                                <label
+                                                    class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                    <input type="radio" name="printing-spot-color" value="1"
+                                                        data-price-factor="0.2" onchange="updateQuote()"
+                                                        class="sr-only">
+                                                    1个专色
+                                                </label>
+                                                <label
+                                                    class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                    <input type="radio" name="printing-spot-color" value="2"
+                                                        data-price-factor="0.4" onchange="updateQuote()"
+                                                        class="sr-only">
+                                                    2个专色
+                                                </label>
+                                                <label
+                                                    class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                    <input type="radio" name="printing-spot-color" value="3"
+                                                        data-price-factor="0.6" onchange="updateQuote()"
+                                                        class="sr-only">
+                                                    3个专色
+                                                </label>
+                                            </div>
+                                            <div class="bg-blue-50 rounded-lg p-3">
+                                                <div class="text-xs text-blue-700">
+                                                    <p class="font-medium mb-1">专色说明</p>
+                                                    <p>专色是指预先调配好的特定颜色油墨，可实现更精准的色彩表现，常用于品牌标准色、金属色等特殊效果。</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 不印刷 -->
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-slate-50 has-[:checked]:border-slate-400 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">不印刷</span>
+                                                <p class="text-xs text-slate-500 mt-1">仅制作包装盒结构，不进行任何印刷，成本更低</p>
+                                            </div>
+                                            <input type="radio" name="printing-method" value="none"
+                                                onchange="toggleSpotColorOptions(this.value)"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- 4. 表面处理 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">4. 表面处理</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-500 mb-2">覆膜类</p>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="哑胶/哑膜"
+                                                        data-price-factor="1.1" onchange="updateQuote()" class="sr-only"
+                                                        checked><span class="font-semibold text-sm">哑胶/哑膜</span>
+                                                    <p class="text-xs text-slate-500 mt-1">表面哑光，手感舒适</p>
+                                                </label>
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="光胶/光膜"
+                                                        data-price-factor="1.1" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">光胶/光膜</span>
+                                                    <p class="text-xs text-slate-500 mt-1">表面光亮，防水防污</p>
+                                                </label>
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="防刮花哑膜"
+                                                        data-price-factor="1.4" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">防刮花哑膜</span>
+                                                    <p class="text-xs text-slate-500 mt-1">耐磨防刮，触感高级</p>
+                                                </label>
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="防刮花光膜"
+                                                        data-price-factor="1.4" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">防刮花光膜</span>
+                                                    <p class="text-xs text-slate-500 mt-1">耐磨防刮，更光亮</p>
+                                                </label>
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="镭射膜"
+                                                        data-price-factor="1.8" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">镭射膜</span>
+                                                    <p class="text-xs text-slate-500 mt-1">炫彩金属光泽效果</p>
+                                                </label>
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="触感膜"
+                                                        data-price-factor="1.6" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">触感膜</span>
+                                                    <p class="text-xs text-slate-500 mt-1">如肌肤般柔软触感</p>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-500 mb-2">上光/过油类</p>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="光油"
+                                                        data-price-factor="1.05" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">光油</span>
+                                                    <p class="text-xs text-slate-500 mt-1">提升光泽，保护印面</p>
+                                                </label>
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="哑油"
+                                                        data-price-factor="1.05" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">哑油</span>
+                                                    <p class="text-xs text-slate-500 mt-1">哑光质感，保护印面</p>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 5. 装饰工艺 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">5. 装饰工艺</h3>
+                                    <div id="special-processes-container" class="space-y-4">
+                                        <!-- Process options will be rendered here by JS -->
+                                    </div>
+                                </div>
+                                <!-- 6. 成型 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">6. 成型</h3>
+                                    <div class="space-y-3">
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">粘盒</span>
+                                                <p class="text-xs text-slate-500 mt-1">机器自动粘合成型，效率高，适合大批量</p>
+                                            </div>
+                                            <input type="radio" name="forming-method" value="粘盒" data-price-factor="0.1"
+                                                onchange="updateQuote()"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                        </label>
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">不粘盒</span>
+                                                <p class="text-xs text-slate-500 mt-1">仅模切不粘合，客户自行组装，成本更低</p>
+                                            </div>
+                                            <input type="radio" name="forming-method" value="不粘盒" data-price-factor="0"
+                                                onchange="updateQuote()"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- 7. 配件 & 8. 其它服务 -->
+                                <div class="grid grid-cols-2 gap-6">
+                                    <div>
+                                        <h3 class="text-lg font-semibold mb-3">7. 配件</h3>
+                                        <div class="space-y-3">
+                                            <!-- 内托选项 -->
+                                            <label
+                                                class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                                <div>
+                                                    <span class="font-semibold text-sm">内托</span>
+                                                    <p class="text-xs text-slate-500 mt-1">为产品提供固定和保护，提升包装档次</p>
+                                                </div>
+                                                <input type="checkbox" name="accessories" value="内托"
+                                                    data-price-factor="0.8"
+                                                    onchange="toggleInnerTrayOptions(this); updateQuote()"
+                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                            </label>
+
+                                            <!-- 内托详细选项 (条件显示) -->
+                                            <div id="inner-tray-options"
+                                                class="hidden ml-4 pl-4 border-l-2 border-blue-200 space-y-3">
+                                                <div>
+                                                    <label
+                                                        class="block text-sm font-medium text-slate-700 mb-2">内托材质</label>
+                                                    <div class="space-y-2">
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>EVA泡棉</span>
+                                                            <input type="radio" name="inner-tray-material" value="EVA泡棉"
+                                                                data-price-factor="0"
+                                                                onchange="toggleInnerTrayMaterialOptions(this.value)"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                                                                checked>
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>纸质内托</span>
+                                                            <input type="radio" name="inner-tray-material" value="纸质内托"
+                                                                data-price-factor="0.2"
+                                                                onchange="toggleInnerTrayMaterialOptions(this.value)"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>吸塑内托</span>
+                                                            <input type="radio" name="inner-tray-material" value="吸塑内托"
+                                                                data-price-factor="0.5"
+                                                                onchange="toggleInnerTrayMaterialOptions(this.value)"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <!-- 纸质内托详细选项 -->
+                                                <div id="paper-tray-options" class="hidden space-y-3">
+                                                    <label
+                                                        class="block text-sm font-medium text-slate-700 mb-2">纸张类型</label>
+                                                    <div class="space-y-2">
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>白卡纸</span>
+                                                            <input type="radio" name="paper-tray-type" value="白卡纸"
+                                                                data-price-factor="0"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                                                                checked>
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>瓦楞纸</span>
+                                                            <input type="radio" name="paper-tray-type" value="瓦楞纸"
+                                                                data-price-factor="0.1"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>牛皮纸</span>
+                                                            <input type="radio" name="paper-tray-type" value="牛皮纸"
+                                                                data-price-factor="0.05"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>灰板纸</span>
+                                                            <input type="radio" name="paper-tray-type" value="灰板纸"
+                                                                data-price-factor="0.08"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                    </div>
+                                                    <div>
+                                                        <label
+                                                            class="block text-sm font-medium text-slate-700 mb-2">纸张厚度</label>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="paper-tray-thickness"
+                                                                    value="250g" class="sr-only" checked>
+                                                                250g
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="paper-tray-thickness"
+                                                                    value="300g" class="sr-only">
+                                                                300g
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="paper-tray-thickness"
+                                                                    value="350g" class="sr-only">
+                                                                350g
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="paper-tray-thickness"
+                                                                    value="400g" class="sr-only">
+                                                                400g
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- 吸塑内托详细选项 -->
+                                                <div id="plastic-tray-options" class="hidden space-y-3">
+                                                    <label
+                                                        class="block text-sm font-medium text-slate-700 mb-2">塑料材质</label>
+                                                    <div class="space-y-2">
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>PET (环保)</span>
+                                                            <input type="radio" name="plastic-tray-type" value="PET"
+                                                                data-price-factor="0"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                                                                checked>
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>PVC (透明度高)</span>
+                                                            <input type="radio" name="plastic-tray-type" value="PVC"
+                                                                data-price-factor="0.1"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>PS (成本经济)</span>
+                                                            <input type="radio" name="plastic-tray-type" value="PS"
+                                                                data-price-factor="-0.05"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                    </div>
+                                                    <div>
+                                                        <label
+                                                            class="block text-sm font-medium text-slate-700 mb-2">厚度规格</label>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="plastic-tray-thickness"
+                                                                    value="0.3mm" class="sr-only" checked>
+                                                                0.3mm
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="plastic-tray-thickness"
+                                                                    value="0.5mm" class="sr-only">
+                                                                0.5mm
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="plastic-tray-thickness"
+                                                                    value="0.8mm" class="sr-only">
+                                                                0.8mm
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        class="block text-sm font-medium text-slate-700 mb-2">内托颜色</label>
+                                                    <div class="flex flex-wrap gap-2">
+                                                        <label
+                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                            <input type="radio" name="inner-tray-color" value="黑色"
+                                                                class="sr-only" checked>
+                                                            黑色
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                            <input type="radio" name="inner-tray-color" value="白色"
+                                                                class="sr-only">
+                                                            白色
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                            <input type="radio" name="inner-tray-color" value="灰色"
+                                                                class="sr-only">
+                                                            灰色
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                            <input type="radio" name="inner-tray-color" value="定制色"
+                                                                class="sr-only">
+                                                            定制色
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="bg-blue-50 rounded-lg p-3">
+                                                    <div class="text-xs text-blue-700">
+                                                        <p class="font-medium mb-1">内托说明</p>
+                                                        <p>内托可以有效固定产品位置，防止运输过程中的碰撞损坏，同时提升开箱体验和产品档次。我们会根据您的产品尺寸进行定制设计。
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- 其他配件选项 -->
+                                            <label
+                                                class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                                <div>
+                                                    <span class="font-semibold text-sm">手提绳</span>
+                                                    <p class="text-xs text-slate-500 mt-1">方便携带，提升用户体验</p>
+                                                </div>
+                                                <input type="checkbox" name="accessories" value="手提绳"
+                                                    data-price-factor="0.3" onchange="updateQuote()"
+                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                            </label>
+
+                                            <label
+                                                class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                                <div>
+                                                    <span class="font-semibold text-sm">封口贴</span>
+                                                    <p class="text-xs text-slate-500 mt-1">防拆封，增强产品安全性</p>
+                                                </div>
+                                                <input type="checkbox" name="accessories" value="封口贴"
+                                                    data-price-factor="0.2" onchange="updateQuote()"
+                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold mb-3">8. 其它服务</h3>
+                                        <div class="space-y-3">
+                                            <div>
+                                                <p class="text-sm font-medium text-slate-700 mb-2">打包方式</p>
+                                                <div class="space-y-2">
+                                                    <label
+                                                        class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                                        <span class="font-semibold text-sm">包装箱打包</span>
+                                                        <input type="radio" name="packaging-method" value="包装箱打包"
+                                                            data-price-factor="0.3" onchange="updateQuote()"
+                                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                                    </label>
+                                                    <label
+                                                        class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                                        <span class="font-semibold text-sm">牛皮纸打包</span>
+                                                        <input type="radio" name="packaging-method" value="牛皮纸打包"
+                                                            data-price-factor="0.1" onchange="updateQuote()"
+                                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 9. 打样服务 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">9. 打样服务 <span
+                                            class="text-xs text-slate-500 font-normal">（支持一个起订）</span></h3>
+                                    <div class="space-y-3">
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">3D数字展示</span>
+                                                <p class="text-xs text-slate-500 mt-1">虚拟3D效果图，快速预览成品效果</p>
+                                            </div>
+                                            <input type="checkbox" name="sampling-service" value="3D数字展示"
+                                                data-price-factor="80" onchange="updateQuote()">
+                                        </label>
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">结构白样</span>
+                                                <p class="text-xs text-slate-500 mt-1">无印刷白色样品，验证结构和尺寸</p>
+                                            </div>
+                                            <input type="checkbox" name="sampling-service" value="结构白样"
+                                                data-price-factor="150" onchange="updateQuote()">
+                                        </label>
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">平面色样</span>
+                                                <p class="text-xs text-slate-500 mt-1">含印刷颜色的样品，用于查看包装颜色效果，不含工艺</p>
+                                            </div>
+                                            <input type="checkbox" name="sampling-service" value="平面色样"
+                                                data-price-factor="180" onchange="updateQuote()">
+                                        </label>
+                                    </div>
+                                    <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                        <div class="flex items-start space-x-2">
+                                            <i data-lucide="info"
+                                                class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"></i>
+                                            <div class="text-xs text-blue-700">
+                                                <p class="font-medium mb-1">需要完整色彩与工艺效果样品？</p>
+                                                <p>建议直接下1-3个订单数量，即可获得含所有工艺的完整成品样品，更具参考价值。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 10. 输入数量 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">10. 输入数量 * <span
+                                            class="text-xs text-green-600 font-normal">（支持1个起订）</span></h3>
+                                    <div class="relative">
+                                        <input type="number" name="quantity" id="quantity" value="1" min="1"
+                                            oninput="updateQuote()"
+                                            class="w-full p-4 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors font-semibold text-lg text-slate-900">
+                                        <div
+                                            class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                            <span class="text-slate-600 font-medium text-sm">个</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-2">最小起订量：1个，无需担心库存压力</p>
+                                </div>
+                            </div>
+                            <!-- 价格 -->
+                            <div class="bg-white rounded-xl shadow-sm p-6 mt-6 sticky bottom-6">
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between items-center text-slate-600"><span>产品单价</span><span
+                                            id="unit-price" class="font-medium text-slate-800">¥ 0.00</span></div>
+                                    <div class="flex justify-between items-center text-slate-600"><span>产品总价</span><span
+                                            id="subtotal-price" class="font-medium text-slate-800">¥ 0.00</span></div>
+                                    <div class="flex justify-between items-center text-slate-600"><span>物流费用</span><span
+                                            id="logistics-fee" class="font-medium text-slate-800">¥ 0.00</span></div>
+                                    <div class="flex justify-between items-center text-slate-600"><span>预计货期</span><span
+                                            id="lead-time" class="font-medium text-slate-800">-</span></div>
+                                </div>
+                                <div class="border-t border-slate-200 my-4"></div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg font-semibold">总计价</span>
+                                    <span id="total-price" class="text-2xl font-bold text-blue-600">¥ 0.00</span>
+                                </div>
+                                <button onclick="handleAddToCart()"
+                                    class="mt-6 w-full btn-primary text-white px-8 py-3 rounded-lg font-bold text-base transition-all">加入购物车</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="shopping-cart-page" class="page hidden">
+                <div class="container mx-auto px-8 md:px-16 py-12">
+                    <h1 class="text-4xl font-bold mb-8">购物车</h1>
+                    <div class="grid lg:grid-cols-3 gap-12">
+                        <div id="cart-items-container" class="lg:col-span-2 space-y-6">
+                            <!-- Cart items will be rendered here by JS -->
+                        </div>
+                        <aside class="lg:col-span-1">
+                            <div class="bg-white rounded-xl shadow-sm p-6 sticky top-28">
+                                <h2 class="text-xl font-semibold mb-4">订单摘要</h2>
+                                <div class="space-y-3 text-slate-600">
+                                    <div class="flex justify-between">
+                                        <span>商品小计</span>
+                                        <span id="cart-subtotal" class="font-medium text-slate-800">¥ 0.00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>运费</span>
+                                        <span id="cart-shipping" class="font-medium text-slate-800">¥ 0.00</span>
+                                    </div>
+                                </div>
+                                <div class="border-t border-slate-200 my-4"></div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg font-semibold">总计</span>
+                                    <span id="cart-total" class="text-2xl font-bold text-blue-600">¥ 0.00</span>
+                                </div>
+                                <button onclick="handleCheckout()"
+                                    class="mt-6 w-full btn-primary text-white px-8 py-3 rounded-lg font-bold text-base transition-all">
+                                    前往结算
+                                </button>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+
+            <div id="checkout-page" class="page hidden">
+                <div class="container mx-auto px-8 md:px-16 py-12">
+                    <div class="flex items-center mb-8">
+                        <a href="#" onclick="showPage('shopping-cart-page')"
+                            class="text-slate-500 hover:text-blue-600 flex items-center">
+                            <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+                            返回购物车
+                        </a>
+                        <span class="mx-4 text-slate-300">|</span>
+                        <h1 class="text-4xl font-bold">确认订单</h1>
+                    </div>
+
+                    <div class="grid lg:grid-cols-3 gap-12">
+                        <div class="lg:col-span-2 space-y-8">
+                            <div class="bg-white rounded-xl shadow-sm p-8">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h2 class="text-2xl font-semibold">1. 收货地址</h2>
+                                    <button onclick="openAddressModal()"
+                                        class="text-sm font-semibold text-blue-600 hover:underline">管理地址</button>
+                                </div>
+                                <div id="checkout-address-container" class="grid md:grid-cols-2 gap-4">
+                                    <!-- Address options will be rendered here -->
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl shadow-sm p-8">
+                                <h2 class="text-2xl font-semibold mb-6">2. 订单商品</h2>
+                                <div id="checkout-items-container" class="space-y-4">
+                                    <!-- Checkout items will be rendered here -->
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl shadow-sm p-8">
+                                <h2 class="text-2xl font-semibold mb-6">3. 支付及发票</h2>
+                                <div class="space-y-6">
+                                    <div>
+                                        <h3 class="font-semibold mb-3">支付方式</h3>
+                                        <div class="flex space-x-4">
+                                            <label
+                                                class="flex items-center p-4 border rounded-lg cursor-pointer has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 flex-1">
+                                                <input type="radio" name="payment" class="sr-only" checked>
+                                                <i data-lucide="zap" class="w-6 h-6 text-blue-500 mr-3"></i>
+                                                <span class="font-semibold">支付宝</span>
+                                            </label>
+                                            <label
+                                                class="flex items-center p-4 border rounded-lg cursor-pointer has-[:checked]:border-green-500 has-[:checked]:bg-green-50 flex-1">
+                                                <input type="radio" name="payment" class="sr-only">
+                                                <i data-lucide="message-circle" class="w-6 h-6 text-green-500 mr-3"></i>
+                                                <span class="font-semibold">微信支付</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold mb-3">发票信息</h3>
+                                        <p class="text-sm text-slate-600 p-4 bg-slate-50 rounded-lg">
+                                            默认抬头: 智盒工坊（上海）信息科技有限公司 <a href="#"
+                                                onclick="showPage('user-center-page', {viewId: 'invoice-view'})"
+                                                class="ml-2 font-semibold text-blue-600 hover:underline">修改</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <aside class="lg:col-span-1">
+                            <div class="bg-white rounded-xl shadow-sm p-6 sticky top-28">
+                                <h2 class="text-xl font-semibold mb-4">订单摘要</h2>
+                                <div class="space-y-3 text-slate-600">
+                                    <div class="flex justify-between">
+                                        <span>商品小计</span>
+                                        <span id="checkout-subtotal" class="font-medium text-slate-800">¥ 0.00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>运费</span>
+                                        <span id="checkout-shipping" class="font-medium text-slate-800">¥ 0.00</span>
+                                    </div>
+                                </div>
+                                <div class="border-t border-slate-200 my-4"></div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg font-semibold">应付总额</span>
+                                    <span id="checkout-total" class="text-2xl font-bold text-blue-600">¥ 0.00</span>
+                                </div>
+                                <button onclick="handlePayment()"
+                                    class="mt-6 w-full btn-primary text-white px-8 py-3 rounded-lg font-bold text-base transition-all">
+                                    提交订单并支付
+                                </button>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+
+            <div id="user-center-page" class="page hidden">
+                <div class="container mx-auto px-8 md:px-16 py-12">
+                    <div class="grid lg:grid-cols-4 gap-8">
+                        <aside class="lg:col-span-1">
+                            <div class="bg-white p-4 rounded-xl shadow-sm h-fit sticky top-28">
+                                <div class="flex items-center space-x-4 p-4 border-b border-slate-200">
+                                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=64&q=80"
+                                        class="w-16 h-16 rounded-full object-cover" alt="用户头像">
+                                    <div>
+                                        <p class="font-semibold text-slate-900">李婷</p>
+                                        <p class="text-sm text-slate-500">企业认证用户</p>
+                                    </div>
+                                </div>
+                                <nav id="user-center-sidebar" class="py-2"></nav>
+                            </div>
+                        </aside>
+                        <main id="user-center-content" class="lg:col-span-3">
+                            <div id="dashboard-view" class="user-center-view">
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <h1 class="text-3xl font-bold mb-2">欢迎回来, 李婷!</h1>
+                                    <p class="text-slate-600 mb-8">这是您的账户总览，祝您有美好的一天。</p>
+                                    <div class="grid sm:grid-cols-3 gap-6 mb-8">
+                                        <div class="bg-slate-50 p-6 rounded-lg">
+                                            <p class="text-sm text-slate-500">待处理订单</p>
+                                            <p class="text-3xl font-bold mt-1">3</p>
+                                        </div>
+                                        <div class="bg-slate-50 p-6 rounded-lg">
+                                            <p class="text-sm text-slate-500">待收货</p>
+                                            <p class="text-3xl font-bold mt-1">1</p>
+                                        </div>
+                                        <div class="bg-slate-50 p-6 rounded-lg">
+                                            <p class="text-sm text-slate-500">可用优惠券</p>
+                                            <p class="text-3xl font-bold mt-1">5</p>
+                                        </div>
+                                    </div>
+                                    <h2 class="text-xl font-semibold mb-4">最近订单</h2>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-left">
+                                            <thead class="bg-slate-50 text-sm text-slate-600">
+                                                <tr>
+                                                    <th class="p-4 font-semibold">订单号</th>
+                                                    <th class="p-4 font-semibold">下单日期</th>
+                                                    <th class="p-4 font-semibold">总金额</th>
+                                                    <th class="p-4 font-semibold">状态</th>
+                                                    <th class="p-4 font-semibold"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="border-b border-slate-200">
+                                                    <td class="p-4">#...001</td>
+                                                    <td class="p-4">2025-07-20</td>
+                                                    <td class="p-4">¥1,250.00</td>
+                                                    <td class="p-4"><span
+                                                            class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">文件处理中</span>
+                                                    </td>
+                                                    <td class="p-4"><a href="#"
+                                                            onclick="showUserCenterView('order-detail-view')"
+                                                            class="font-semibold text-blue-600">查看</a></td>
+                                                </tr>
+                                                <tr class="border-b border-slate-200">
+                                                    <td class="p-4">#...985</td>
+                                                    <td class="p-4">2025-07-18</td>
+                                                    <td class="p-4">¥3,500.00</td>
+                                                    <td class="p-4"><span
+                                                            class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">已发货</span>
+                                                    </td>
+                                                    <td class="p-4"><a href="#"
+                                                            onclick="showUserCenterView('order-detail-view')"
+                                                            class="font-semibold text-blue-600">查看</a></td>
+                                                </tr>
+                                                <tr class="border-b border-slate-200">
+                                                    <td class="p-4">#...752</td>
+                                                    <td class="p-4">2025-07-15</td>
+                                                    <td class="p-4">¥880.00</td>
+                                                    <td class="p-4"><span
+                                                            class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">已完成</span>
+                                                    </td>
+                                                    <td class="p-4"><a href="#"
+                                                            onclick="showUserCenterView('order-detail-view')"
+                                                            class="font-semibold text-blue-600">查看</a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="orders-view" class="user-center-view hidden">
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <h1 class="text-3xl font-bold mb-6">我的订单</h1>
+                                    <div class="border-b border-slate-200">
+                                        <nav class="-mb-px flex space-x-8" aria-label="Tabs"><button
+                                                onclick="switchOrderTab(this, 'all')"
+                                                class="order-tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">全部订单</button><button
+                                                onclick="switchOrderTab(this, 'in-production')"
+                                                class="order-tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">生产中</button><button
+                                                onclick="switchOrderTab(this, 'shipped')"
+                                                class="order-tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">待收货</button><button
+                                                onclick="switchOrderTab(this, 'completed')"
+                                                class="order-tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">已完成</button>
+                                        </nav>
+                                    </div>
+                                    <div id="orders-list-container" class="mt-6 space-y-6"></div>
+                                </div>
+                            </div>
+                            <div id="address-view" class="user-center-view hidden">
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <div class="flex justify-between items-center mb-8">
+                                        <h1 class="text-3xl font-bold">地址管理</h1><button onclick="openAddressModal()"
+                                            class="btn-primary text-white px-5 py-2 rounded-lg font-semibold flex items-center space-x-2"><i
+                                                data-lucide="plus" class="w-4 h-4"></i><span>新增收货地址</span></button>
+                                    </div>
+                                    <div class="grid md:grid-cols-2 gap-6">
+                                        <div class="border-2 border-blue-500 p-6 rounded-xl relative">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <p class="font-semibold text-slate-900">李婷 <span
+                                                            class="ml-2 text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">默认地址</span>
+                                                    </p>
+                                                    <p class="text-sm text-slate-600 mt-2">138****1234</p>
+                                                    <p class="text-sm text-slate-600" style="line-height: 1.6;">上海市 浦东新区
+                                                        世纪大道100号 东方明珠大厦 88层</p>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="border-t border-slate-200 mt-4 pt-4 flex justify-end space-x-4 text-sm">
+                                                <button
+                                                    class="text-slate-500 hover:text-blue-600 font-semibold">编辑</button><button
+                                                    class="text-slate-500 hover:text-red-600 font-semibold">删除</button>
+                                            </div>
+                                        </div>
+                                        <div class="border border-slate-200 p-6 rounded-xl">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <p class="font-semibold text-slate-900">王经理</p>
+                                                    <p class="text-sm text-slate-600 mt-2">159****5678</p>
+                                                    <p class="text-sm text-slate-600" style="line-height: 1.6;">江苏省 苏州市
+                                                        工业园区 星湖街328号 创意产业园 A栋 201室</p>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="border-t border-slate-200 mt-4 pt-4 flex justify-end space-x-4 text-sm">
+                                                <button
+                                                    class="text-blue-600 hover:text-blue-700 font-semibold">设为默认</button><button
+                                                    class="text-slate-500 hover:text-blue-600 font-semibold">编辑</button><button
+                                                    class="text-slate-500 hover:text-red-600 font-semibold">删除</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="invoice-view" class="user-center-view hidden">
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <div class="flex justify-between items-center mb-6">
+                                        <h1 class="text-3xl font-bold">发票管理</h1><button onclick="openInvoiceModal()"
+                                            class="btn-primary text-white px-5 py-2 rounded-lg font-semibold flex items-center space-x-2"><i
+                                                data-lucide="plus" class="w-4 h-4"></i><span>申请开票</span></button>
+                                    </div>
+                                    <div class="border-b border-slate-200">
+                                        <nav class="-mb-px flex space-x-8" aria-label="Tabs"><button
+                                                onclick="switchTab(this, 'invoice-history')"
+                                                class="tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">开票历史</button><button
+                                                onclick="switchTab(this, 'invoice-info')"
+                                                class="tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">发票抬头</button>
+                                        </nav>
+                                    </div>
+                                    <div id="invoice-history" class="tab-content mt-6">
+                                        <div class="overflow-x-auto">
+                                            <table class="w-full text-left">
+                                                <thead class="bg-slate-50 text-sm text-slate-600">
+                                                    <tr>
+                                                        <th class="p-4 font-semibold">申请日期</th>
+                                                        <th class="p-4 font-semibold">发票号码</th>
+                                                        <th class="p-4 font-semibold">开票金额</th>
+                                                        <th class="p-4 font-semibold">状态</th>
+                                                        <th class="p-4 font-semibold"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="border-b border-slate-200">
+                                                        <td class="p-4">2025-07-21</td>
+                                                        <td class="p-4">FP20250721001</td>
+                                                        <td class="p-4">¥1,250.00</td>
+                                                        <td class="p-4"><span
+                                                                class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">已开具</span>
+                                                        </td>
+                                                        <td class="p-4"><a href="#"
+                                                                class="font-semibold text-blue-600">下载</a></td>
+                                                    </tr>
+                                                    <tr class="border-b border-slate-200">
+                                                        <td class="p-4">2025-07-19</td>
+                                                        <td class="p-4">-</td>
+                                                        <td class="p-4">¥3,500.00</td>
+                                                        <td class="p-4"><span
+                                                                class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">处理中</span>
+                                                        </td>
+                                                        <td class="p-4"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="invoice-info" class="tab-content hidden mt-6">
+                                        <div class="bg-slate-50 p-6 rounded-lg">
+                                            <div class="flex justify-between items-center">
+                                                <h3 class="text-lg font-semibold">默认发票抬头</h3><button
+                                                    class="text-sm font-semibold text-blue-600 hover:underline">编辑</button>
+                                            </div>
+                                            <div class="mt-4 space-y-2 text-sm text-slate-700"
+                                                style="line-height: 1.7;">
+                                                <p><strong>公司名称:</strong> 智盒工坊（上海）信息科技有限公司</p>
+                                                <p><strong>纳税人识别号:</strong> 91310000MA1FN12345</p>
+                                                <p><strong>注册地址:</strong> 上海市浦东新区世纪大道100号</p>
+                                                <p><strong>注册电话:</strong> 021-88888888</p>
+                                                <p><strong>开户银行:</strong> 中国工商银行上海分行</p>
+                                                <p><strong>银行账户:</strong> 6222021001001234567</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="distribution-view" class="user-center-view hidden">
+                                <!-- Apply View -->
+                                <div id="distribution-apply-view">
+                                    <div class="bg-white p-8 rounded-xl shadow-sm">
+                                        <h1 class="text-3xl font-bold text-slate-900">申请成为分销商</h1>
+                                        <p class="mt-2 text-slate-500">加入我们的分销网络，支持个人和企业申请，共享成功，共创未来。</p>
+
+                                        <!-- 分销优势展示 -->
+                                        <div class="mt-8 grid md:grid-cols-3 gap-8">
+                                            <div class="flex items-start space-x-4">
+                                                <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-lg p-3"><i
+                                                        data-lucide="dollar-sign" class="w-6 h-6"></i></div>
+                                                <div>
+                                                    <h4 class="font-semibold">丰厚的佣金</h4>
+                                                    <p class="text-sm text-slate-500 mt-1">根据您的推广业绩，享受行业领先的佣金回报。</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start space-x-4">
+                                                <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-lg p-3"><i
+                                                        data-lucide="bar-chart-2" class="w-6 h-6"></i></div>
+                                                <div>
+                                                    <h4 class="font-semibold">透明的追踪</h4>
+                                                    <p class="text-sm text-slate-500 mt-1">通过您的专属后台，实时追踪客户订单与佣金结算。</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start space-x-4">
+                                                <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-lg p-3"><i
+                                                        data-lucide="award" class="w-6 h-6"></i></div>
+                                                <div>
+                                                    <h4 class="font-semibold">官方物料支持</h4>
+                                                    <p class="text-sm text-slate-500 mt-1">我们提供专业的推广海报和素材，助您轻松开展业务。</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 申请类型选择 -->
+                                        <div class="mt-8 border-t border-slate-200 pt-8">
+                                            <h2 class="text-xl font-semibold mb-6">选择申请类型</h2>
+                                            <div class="grid md:grid-cols-2 gap-4 mb-8">
+                                                <label
+                                                    class="border-2 border-blue-500 bg-blue-50 rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 block relative">
+                                                    <div class="flex items-center justify-between">
+                                                        <div>
+                                                            <div class="flex items-center">
+                                                                <i data-lucide="user"
+                                                                    class="w-5 h-5 text-blue-600 mr-2"></i>
+                                                                <span class="font-semibold text-blue-700">个人申请</span>
+                                                            </div>
+                                                            <p class="text-xs text-slate-600 mt-2">适合个人创业者、自由职业者等</p>
+                                                        </div>
+                                                        <input type="radio" name="apply-type" value="individual"
+                                                            onchange="toggleApplyForm(this.value)"
+                                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                                    </div>
+                                                </label>
+
+                                                <label
+                                                    class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 block">
+                                                    <div class="flex items-center justify-between">
+                                                        <div>
+                                                            <div class="flex items-center">
+                                                                <i data-lucide="building"
+                                                                    class="w-5 h-5 text-slate-600 mr-2"></i>
+                                                                <span class="font-semibold">企业申请</span>
+                                                            </div>
+                                                            <p class="text-xs text-slate-600 mt-2">适合有营业执照的企业、工作室等</p>
+                                                        </div>
+                                                        <input type="radio" name="apply-type" value="company"
+                                                            onchange="toggleApplyForm(this.value)"
+                                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                                    </div>
+                                                </label>
+                                            </div>
+
+                                            <!-- 个人申请表单 -->
+                                            <div id="individual-form" class="max-w-2xl">
+                                                <h3
+                                                    class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-6">
+                                                    个人信息</h3>
+                                                <form class="space-y-6">
+                                                    <div class="grid md:grid-cols-2 gap-6">
+                                                        <div>
+                                                            <label for="individual-name"
+                                                                class="block text-sm font-medium text-slate-700">真实姓名
+                                                                *</label>
+                                                            <input type="text" id="individual-name"
+                                                                name="individual-name" required
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                        </div>
+                                                        <div>
+                                                            <label for="individual-id"
+                                                                class="block text-sm font-medium text-slate-700">身份证号
+                                                                *</label>
+                                                            <input type="text" id="individual-id" name="individual-id"
+                                                                required
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                        </div>
+                                                        <div>
+                                                            <label for="individual-phone"
+                                                                class="block text-sm font-medium text-slate-700">联系电话
+                                                                *</label>
+                                                            <input type="tel" id="individual-phone"
+                                                                name="individual-phone" required
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                        </div>
+                                                        <div>
+                                                            <label for="individual-email"
+                                                                class="block text-sm font-medium text-slate-700">邮箱地址
+                                                                *</label>
+                                                            <input type="email" id="individual-email"
+                                                                name="individual-email" required
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                        </div>
+                                                        <div class="md:col-span-2">
+                                                            <label for="individual-address"
+                                                                class="block text-sm font-medium text-slate-700">联系地址
+                                                                *</label>
+                                                            <textarea id="individual-address" name="individual-address"
+                                                                rows="3" required
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                                        </div>
+                                                        <div class="md:col-span-2">
+                                                            <label for="individual-experience"
+                                                                class="block text-sm font-medium text-slate-700">相关经验</label>
+                                                            <textarea id="individual-experience"
+                                                                name="individual-experience" rows="3"
+                                                                placeholder="请简要描述您的销售经验或相关背景（选填）"
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <button type="button"
+                                                        onclick="handleDistributionApply('individual')"
+                                                        class="btn-primary text-white px-6 py-2.5 rounded-lg font-semibold">提交个人申请</button>
+                                                </form>
+                                            </div>
+
+                                            <!-- 企业申请表单 -->
+                                            <div id="company-form" class="max-w-2xl hidden">
+                                                <h3
+                                                    class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-6">
+                                                    企业信息</h3>
+                                                <form class="space-y-6">
+                                                    <div class="grid md:grid-cols-2 gap-6">
+                                                        <div>
+                                                            <label for="company-name"
+                                                                class="block text-sm font-medium text-slate-700">公司名称
+                                                                *</label>
+                                                            <input type="text" id="company-name" name="company-name"
+                                                                required placeholder="请输入工商注册的全称"
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                        </div>
+                                                        <div>
+                                                            <label for="business-license"
+                                                                class="block text-sm font-medium text-slate-700">营业执照号
+                                                                *</label>
+                                                            <input type="text" id="business-license"
+                                                                name="business-license" required
+                                                                placeholder="请输入18位统一社会信用代码"
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                        </div>
+                                                        <div>
+                                                            <label for="legal-person"
+                                                                class="block text-sm font-medium text-slate-700">法定代表人
+                                                                *</label>
+                                                            <input type="text" id="legal-person" name="legal-person"
+                                                                required
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                        </div>
+                                                        <div>
+                                                            <label for="contact-person"
+                                                                class="block text-sm font-medium text-slate-700">联系人
+                                                                *</label>
+                                                            <input type="text" id="contact-person" name="contact-person"
+                                                                required
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                        </div>
+                                                        <div>
+                                                            <label for="contact-phone"
+                                                                class="block text-sm font-medium text-slate-700">联系电话
+                                                                *</label>
+                                                            <input type="tel" id="contact-phone" name="contact-phone"
+                                                                required
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                        </div>
+                                                        <div>
+                                                            <label for="company-email"
+                                                                class="block text-sm font-medium text-slate-700">企业邮箱
+                                                                *</label>
+                                                            <input type="email" id="company-email" name="company-email"
+                                                                required
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                                        </div>
+                                                        <div class="md:col-span-2">
+                                                            <label for="business-address"
+                                                                class="block text-sm font-medium text-slate-700">营业地址
+                                                                *</label>
+                                                            <textarea id="business-address" name="business-address"
+                                                                rows="3" required
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                                        </div>
+                                                        <div class="md:col-span-2">
+                                                            <label for="business-scope"
+                                                                class="block text-sm font-medium text-slate-700">主营业务
+                                                                *</label>
+                                                            <textarea id="business-scope" name="business-scope" rows="3"
+                                                                required placeholder="请简要描述您的主营业务范围"
+                                                                class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                                        </div>
+                                                        <div class="md:col-span-2">
+                                                            <label
+                                                                class="block text-sm font-medium text-slate-700">营业执照</label>
+                                                            <div
+                                                                class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-md">
+                                                                <div class="space-y-1 text-center">
+                                                                    <i data-lucide="file-up"
+                                                                        class="mx-auto h-12 w-12 text-slate-400"></i>
+                                                                    <div class="flex text-sm text-slate-600">
+                                                                        <label for="dist-license-upload"
+                                                                            class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                                                                            <span>上传文件</span>
+                                                                            <input id="dist-license-upload"
+                                                                                name="dist-license-upload" type="file"
+                                                                                class="sr-only">
+                                                                        </label>
+                                                                        <p class="pl-1">或拖拽到此处</p>
+                                                                    </div>
+                                                                    <p class="text-xs text-slate-500">支持 PDF, JPG, PNG,
+                                                                        不超过10MB</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" onclick="handleDistributionApply('company')"
+                                                        class="btn-primary text-white px-6 py-2.5 rounded-lg font-semibold">提交企业申请</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Pending View -->
+                                <div id="distribution-pending-view" class="hidden">
+                                    <div class="bg-white p-8 rounded-xl shadow-sm">
+                                        <div class="text-center mb-8">
+                                            <i data-lucide="clock" class="w-16 h-16 mx-auto text-blue-500"></i>
+                                            <h2 class="mt-6 text-2xl font-bold">申请审核中</h2>
+                                            <p class="mt-2 text-slate-500">我们将在1-3个工作日内完成审核，请您耐心等待。</p>
+                                        </div>
+
+                                        <!-- 审核进度 -->
+                                        <div class="max-w-2xl mx-auto">
+                                            <h3 class="text-lg font-semibold mb-4">审核进度</h3>
+                                            <div class="space-y-4">
+                                                <div class="flex items-center">
+                                                    <div
+                                                        class="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                                        <i data-lucide="check" class="w-4 h-4 text-white"></i>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <p class="font-medium">申请已提交</p>
+                                                        <p class="text-sm text-slate-500" id="submit-time">2025-01-09
+                                                            14:30</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <div
+                                                        class="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center animate-pulse">
+                                                        <i data-lucide="eye" class="w-4 h-4 text-white"></i>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <p class="font-medium">资料审核中</p>
+                                                        <p class="text-sm text-slate-500">预计1-3个工作日完成</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center opacity-50">
+                                                    <div
+                                                        class="flex-shrink-0 w-8 h-8 bg-slate-300 rounded-full flex items-center justify-center">
+                                                        <i data-lucide="user-check" class="w-4 h-4 text-white"></i>
+                                                    </div>
+                                                    <div class="ml-4">
+                                                        <p class="font-medium">审核通过</p>
+                                                        <p class="text-sm text-slate-500">开通分销权限</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 申请信息摘要 -->
+                                        <div class="mt-8 bg-slate-50 p-6 rounded-lg">
+                                            <h3 class="text-lg font-semibold mb-4">申请信息</h3>
+                                            <div id="application-summary" class="space-y-2 text-sm">
+                                                <!-- 申请信息将通过JS动态填充 -->
+                                            </div>
+                                        </div>
+
+                                        <div class="text-center mt-8">
+                                            <button onclick="simulateApproval()"
+                                                class="bg-slate-200 text-slate-700 px-5 py-2 rounded-lg font-semibold text-sm mr-4">（模拟）审核通过</button>
+                                            <button onclick="simulateRejection()"
+                                                class="bg-red-100 text-red-700 px-5 py-2 rounded-lg font-semibold text-sm">（模拟）审核拒绝</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Rejected View -->
+                                <div id="distribution-rejected-view" class="hidden">
+                                    <div class="bg-white p-8 rounded-xl shadow-sm">
+                                        <div class="text-center mb-8">
+                                            <i data-lucide="x-circle" class="w-16 h-16 mx-auto text-red-500"></i>
+                                            <h2 class="mt-6 text-2xl font-bold text-red-600">申请未通过审核</h2>
+                                            <p class="mt-2 text-slate-500">很抱歉，您的分销申请未能通过审核。</p>
+                                        </div>
+
+                                        <!-- 拒绝原因 -->
+                                        <div class="max-w-2xl mx-auto">
+                                            <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+                                                <h3 class="text-lg font-semibold text-red-800 mb-3">审核意见</h3>
+                                                <div id="rejection-reason" class="text-red-700">
+                                                    <!-- 拒绝原因将通过JS动态填充 -->
+                                                </div>
+                                            </div>
+
+                                            <div class="text-center">
+                                                <button onclick="resetDistributionApplication()"
+                                                    class="btn-primary text-white px-6 py-2.5 rounded-lg font-semibold">重新申请</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Dashboard View (Approved) -->
+                                <div id="distribution-dashboard-view" class="hidden">
+                                    <div class="bg-white p-8 rounded-xl shadow-sm">
+                                        <div class="flex justify-between items-center mb-8">
+                                            <h1 class="text-3xl font-bold">分销管理</h1>
+                                            <button onclick="openWithdrawalModal()"
+                                                class="btn-primary text-white px-5 py-2 rounded-lg font-semibold">申请提现</button>
+                                        </div>
+                                        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                                            <div class="bg-slate-50 p-6 rounded-lg">
+                                                <p class="text-sm text-slate-500">累计佣金</p>
+                                                <p id="dist-total-commission" class="text-3xl font-bold mt-1">¥0.00</p>
+                                            </div>
+                                            <div class="bg-slate-50 p-6 rounded-lg">
+                                                <p class="text-sm text-slate-500">可提现佣金</p>
+                                                <p id="dist-withdrawable-commission"
+                                                    class="text-3xl font-bold mt-1 text-green-600">¥0.00</p>
+                                            </div>
+                                            <div class="bg-slate-50 p-6 rounded-lg">
+                                                <p class="text-sm text-slate-500">我的客户</p>
+                                                <p id="dist-customer-count" class="text-3xl font-bold mt-1">0</p>
+                                            </div>
+                                            <div class="bg-slate-50 p-6 rounded-lg">
+                                                <p class="text-sm text-slate-500">我的等级 / 佣金比例</p>
+                                                <div class="flex items-baseline mt-1">
+                                                    <p id="dist-level" class="text-3xl font-bold text-blue-600">青铜</p>
+                                                    <p id="dist-rate" class="ml-2 text-lg font-semibold text-blue-600">/
+                                                        10%</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid lg:grid-cols-5 gap-8 mb-8">
+                                            <div class="lg:col-span-3 bg-slate-50 p-6 rounded-lg">
+                                                <h3 class="text-lg font-semibold mb-4">我的专属推广</h3>
+                                                <div class="flex items-center space-x-4">
+                                                    <div class="flex-grow">
+                                                        <label class="text-sm font-medium text-slate-700">推广链接</label>
+                                                        <div class="flex items-center mt-1">
+                                                            <input id="referral-link" type="text"
+                                                                value="https://www.iboxify.com/ref?code=USER123"
+                                                                readonly
+                                                                class="flex-grow p-3 bg-white border border-slate-300 rounded-l-md shadow-sm">
+                                                            <button onclick="copyReferralLink(this)"
+                                                                class="bg-white border-y border-r border-slate-300 px-4 py-3 rounded-r-md text-sm font-semibold hover:bg-slate-100 flex items-center space-x-2">
+                                                                <i data-lucide="copy" class="w-4 h-4"></i><span
+                                                                    id="copy-btn-text">复制</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <label class="text-sm font-medium text-slate-700">推广二维码</label>
+                                                        <img id="referral-qr-code" src="" alt="推广二维码"
+                                                            class="w-24 h-24 mt-1 rounded-md border p-1 bg-white object-cover">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="lg:col-span-2 bg-slate-50 p-6 rounded-lg">
+                                                <h3 class="text-lg font-semibold mb-4">收益趋势 (近6个月)</h3>
+                                                <div id="earnings-chart"
+                                                    class="h-32 flex items-end justify-around space-x-2">
+                                                    <!-- Chart bars will be rendered by JS -->
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="border-b border-slate-200">
+                                            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                                <button onclick="switchTab(this, 'dist-orders')"
+                                                    class="tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">分销订单</button>
+                                                <button onclick="switchTab(this, 'dist-customers')"
+                                                    class="tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">我的客户</button>
+                                                <button onclick="switchTab(this, 'dist-withdrawals')"
+                                                    class="tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">提现记录</button>
+                                            </nav>
+                                        </div>
+                                        <div id="dist-orders" class="tab-content mt-6">
+                                            <div class="overflow-x-auto">
+                                                <table class="w-full text-left">
+                                                    <thead class="bg-slate-50 text-sm text-slate-600">
+                                                        <tr>
+                                                            <th class="p-4 font-semibold">订单号</th>
+                                                            <th class="p-4 font-semibold">客户</th>
+                                                            <th class="p-4 font-semibold">下单日期</th>
+                                                            <th class="p-4 font-semibold">订单金额</th>
+                                                            <th class="p-4 font-semibold">佣金</th>
+                                                            <th class="p-4 font-semibold">状态</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="dist-orders-table-body"></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div id="dist-customers" class="tab-content mt-6 hidden">
+                                            <div class="overflow-x-auto">
+                                                <table class="w-full text-left">
+                                                    <thead class="bg-slate-50 text-sm text-slate-600">
+                                                        <tr>
+                                                            <th class="p-4 font-semibold">客户昵称</th>
+                                                            <th class="p-4 font-semibold">注册时间</th>
+                                                            <th class="p-4 font-semibold">累计消费</th>
+                                                            <th class="p-4 font-semibold">最近下单</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="dist-customers-table-body"></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div id="dist-withdrawals" class="tab-content hidden mt-6">
+                                            <div class="overflow-x-auto">
+                                                <table class="w-full text-left">
+                                                    <thead class="bg-slate-50 text-sm text-slate-600">
+                                                        <tr>
+                                                            <th class="p-4 font-semibold">提现单号</th>
+                                                            <th class="p-4 font-semibold">申请日期</th>
+                                                            <th class="p-4 font-semibold">提现金额</th>
+                                                            <th class="p-4 font-semibold">状态</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="dist-withdrawals-table-body"></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-12">
+                                            <h3 class="text-2xl font-bold mb-6">推广物料</h3>
+                                            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                                <div
+                                                    class="bg-white rounded-lg border border-slate-200 overflow-hidden">
+                                                    <img src="https://images.unsplash.com/photo-1607083206325-caf1edba7a0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+                                                        alt="推广海报1" class="w-full h-auto object-cover">
+                                                    <div class="p-4 text-center">
+                                                        <button
+                                                            class="w-full bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-200">下载海报</button>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="bg-white rounded-lg border border-slate-200 overflow-hidden">
+                                                    <img src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80"
+                                                        alt="推广海报2" class="w-full h-auto object-cover">
+                                                    <div class="p-4 text-center">
+                                                        <button
+                                                            class="w-full bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-200">下载海报</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="coupons-view" class="user-center-view hidden">
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <h1 class="text-3xl font-bold mb-8">我的优惠券</h1>
+                                    <div class="grid md:grid-cols-2 gap-6">
+                                        <div
+                                            class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg flex justify-between">
+                                            <div>
+                                                <p class="text-3xl font-bold">¥50</p>
+                                                <p class="text-sm opacity-80">满500元可用</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-semibold">新人专享券</p>
+                                                <p class="text-xs opacity-70 mt-2">有效期至 2025-08-31</p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="bg-gradient-to-r from-slate-300 to-slate-400 text-white p-6 rounded-lg opacity-70 flex justify-between">
+                                            <div>
+                                                <p class="text-3xl font-bold">¥100</p>
+                                                <p class="text-sm opacity-80">满1000元可用</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="font-semibold">已使用</p>
+                                                <p class="text-xs opacity-70 mt-2">使用日期 2025-07-15</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="settings-view" class="user-center-view hidden">
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <h1 class="text-3xl font-bold mb-8">账户设置</h1>
+                                    <div class="max-w-md">
+                                        <h3 class="text-xl font-semibold mb-4">个人资料</h3>
+                                        <form class="space-y-4">
+                                            <div><label
+                                                    class="block text-sm font-medium text-slate-700">昵称</label><input
+                                                    type="text" value="李婷"
+                                                    class="mt-1 block w-full border-slate-300 rounded-md shadow-sm">
+                                            </div>
+                                            <div><label
+                                                    class="block text-sm font-medium text-slate-700">联系电话</label><input
+                                                    type="text" value="138****1234"
+                                                    class="mt-1 block w-full border-slate-300 rounded-md shadow-sm">
+                                            </div><button type="submit"
+                                                class="btn-primary text-white px-5 py-2 rounded-lg font-semibold">保存</button>
+                                        </form>
+                                        <div class="border-t border-slate-200 my-8"></div>
+                                        <h3 class="text-xl font-semibold mb-4">修改密码</h3>
+                                        <form class="space-y-4">
+                                            <div><label
+                                                    class="block text-sm font-medium text-slate-700">当前密码</label><input
+                                                    type="password"
+                                                    class="mt-1 block w-full border-slate-300 rounded-md shadow-sm">
+                                            </div>
+                                            <div><label
+                                                    class="block text-sm font-medium text-slate-700">新密码</label><input
+                                                    type="password"
+                                                    class="mt-1 block w-full border-slate-300 rounded-md shadow-sm">
+                                            </div>
+                                            <div><label
+                                                    class="block text-sm font-medium text-slate-700">确认新密码</label><input
+                                                    type="password"
+                                                    class="mt-1 block w-full border-slate-300 rounded-md shadow-sm">
+                                            </div><button type="submit"
+                                                class="btn-primary text-white px-5 py-2 rounded-lg font-semibold">确认修改</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="order-detail-view" class="user-center-view hidden">
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <div id="order-detail-breadcrumb" class="text-sm text-slate-500 mb-4"></div>
+                                    <h1 id="order-detail-title" class="text-3xl font-bold mb-8">订单详情</h1>
+                                    <div class="grid lg:grid-cols-3 gap-12">
+                                        <div class="lg:col-span-1">
+                                            <h3 class="font-semibold mb-6">订单状态</h3>
+                                            <div id="order-timeline" class="space-y-8"></div>
+                                        </div>
+                                        <div class="lg:col-span-2">
+                                            <div id="contextual-action-box" class="bg-blue-50 p-6 rounded-xl mb-8">
+                                            </div>
+                                            <div id="order-detail-info">
+                                                <!-- Order details will be rendered here -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="after-sales-view" class="user-center-view hidden">
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <div class="flex justify-between items-center mb-6">
+                                        <h1 class="text-3xl font-bold">售后处理</h1>
+                                        <button onclick="openAfterSalesModal()"
+                                            class="btn-primary text-white px-5 py-2 rounded-lg font-semibold flex items-center space-x-2"><i
+                                                data-lucide="plus" class="w-4 h-4"></i><span>申请售后</span></button>
+                                    </div>
+                                    <div class="border-b border-slate-200">
+                                        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                            <button onclick="switchTab(this, 'as-processing')"
+                                                class="tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">处理中</button>
+                                            <button onclick="switchTab(this, 'as-completed')"
+                                                class="tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">已完成</button>
+                                        </nav>
+                                    </div>
+                                    <div id="as-processing" class="tab-content mt-6">
+                                        <div class="overflow-x-auto">
+                                            <table class="w-full text-left">
+                                                <thead class="bg-slate-50 text-sm text-slate-600">
+                                                    <tr>
+                                                        <th class="p-4 font-semibold">售后单号</th>
+                                                        <th class="p-4 font-semibold">关联订单</th>
+                                                        <th class="p-4 font-semibold">问题类型</th>
+                                                        <th class="p-4 font-semibold">申请时间</th>
+                                                        <th class="p-4 font-semibold">状态</th>
+                                                        <th class="p-4 font-semibold"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="border-b border-slate-200">
+                                                        <td class="p-4">SH20250722001</td>
+                                                        <td class="p-4">#...001</td>
+                                                        <td class="p-4">质量问题</td>
+                                                        <td class="p-4">2025-07-22</td>
+                                                        <td class="p-4"><span
+                                                                class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">待审核</span>
+                                                        </td>
+                                                        <td class="p-4"><a href="#"
+                                                                class="font-semibold text-blue-600">查看详情</a></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="as-completed" class="tab-content hidden mt-6">
+                                        <div class="text-center py-12 text-slate-500">
+                                            <i data-lucide="inbox" class="w-12 h-12 mx-auto"></i>
+                                            <p class="mt-2">暂无已完成的售后记录</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            </div>
+
+            <div id="product-center-page" class="page hidden">
+                <div class="bg-white">
+                    <div class="container mx-auto px-8 md:px-16 py-12">
+                        <h1 class="text-5xl font-extrabold text-center mb-4 tracking-tight">开启您的包装定制之旅</h1>
+                        <p class="text-center text-slate-600 max-w-2xl mx-auto mb-4" style="line-height: 1.7;">
+                            请根据您的产品需求，通过筛选或直接浏览，选择最合适的包装结构开始您的定制之旅。</p>
+                        <div class="flex justify-center items-center space-x-6 text-sm text-blue-600 font-medium"><span
+                                class="flex items-center"><i data-lucide="package"
+                                    class="w-4 h-4 mr-1"></i>一个起订</span><span class="flex items-center"><i
+                                    data-lucide="zap" class="w-4 h-4 mr-1"></i>3秒报价</span><span
+                                class="flex items-center"><i data-lucide="clock"
+                                    class="w-4 h-4 mr-1"></i>24小时交付</span><span class="flex items-center"><i
+                                    data-lucide="shopping-cart" class="w-4 h-4 mr-1"></i>京东式体验</span></div>
+                    </div>
+                </div>
+                <div class="container mx-auto px-4 md:px-8 lg:px-16 py-8 md:py-12">
+                    <!-- Mobile Filter Toggle -->
+                    <div class="lg:hidden mb-6">
+                        <button id="mobile-filter-toggle" onclick="toggleMobileFilter()"
+                            class="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
+                            <div class="flex items-center">
+                                <i data-lucide="filter" class="w-5 h-5 mr-2 text-slate-600"></i>
+                                <span class="font-medium text-slate-900">筛选产品</span>
+                                <span id="active-filters-count"
+                                    class="ml-2 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full hidden">5</span>
+                            </div>
+                            <i data-lucide="chevron-down" id="filter-chevron"
+                                class="w-5 h-5 text-slate-400 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid lg:grid-cols-4 gap-6 lg:gap-8">
+                        <!-- Filter Sidebar -->
+                        <aside id="filter-sidebar"
+                            class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-slate-200 lg:h-fit lg:sticky lg:top-28 hidden lg:block">
+                            <div class="p-4 lg:p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-lg lg:text-xl font-semibold">筛选产品</h3>
+                                    <button onclick="clearAllFilters()"
+                                        class="text-sm text-blue-600 hover:text-blue-700 font-medium lg:hidden">清空</button>
+                                </div>
+
+                                <div class="space-y-6">
+                                    <!-- Hierarchical Filter -->
+                                    <div id="hierarchical-filter-container">
+                                        <!-- Accordion menu will be rendered here by JS -->
+                                    </div>
+
+                                    <!-- Mobile Actions -->
+                                    <div class="lg:hidden pt-4 border-t border-slate-200">
+                                        <div class="flex space-x-3">
+                                            <button onclick="clearAllFilters()"
+                                                class="flex-1 bg-slate-100 text-slate-700 px-4 py-2 rounded-lg font-medium hover:bg-slate-200 transition-colors">
+                                                清空筛选
+                                            </button>
+                                            <button onclick="applyFiltersAndClose()"
+                                                class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                                                应用筛选
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </aside>
+
+                        <main class="lg:col-span-3">
+                            <div id="product-center-domains" class="space-y-20">
+                                <!-- Domains and categories will be rendered here by JS -->
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Detail Page -->
+            <div id="product-detail-page" class="page hidden">
+                <div class="container mx-auto px-8 md:px-16 py-8">
+                    <!-- Breadcrumb -->
+                    <nav class="flex items-center space-x-2 text-sm text-slate-500 mb-8">
+                        <a href="#" onclick="showPage('homepage')" class="hover:text-blue-600">首页</a>
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        <a href="#" onclick="showPage('product-center-page')" class="hover:text-blue-600">在线定制</a>
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        <span id="product-detail-breadcrumb" class="text-slate-900 font-medium">双插盒</span>
+                    </nav>
+
+                    <div class="grid lg:grid-cols-2 gap-12 mb-12">
+                        <!-- Product Images -->
+                        <div class="space-y-4">
+                            <div class="bg-slate-100 rounded-xl p-8 aspect-square flex items-center justify-center">
+                                <img id="product-detail-main-image"
+                                    src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+                                    alt="产品主图" class="max-w-full max-h-full object-contain">
+                            </div>
+                            <div class="grid grid-cols-4 gap-2">
+                                <div
+                                    class="bg-slate-100 rounded-lg p-2 aspect-square cursor-pointer border-2 border-blue-500">
+                                    <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
+                                        alt="3D效果图" class="w-full h-full object-contain">
+                                </div>
+                                <div
+                                    class="bg-slate-100 rounded-lg p-2 aspect-square cursor-pointer border-2 border-transparent hover:border-blue-300">
+                                    <img src="https://images.unsplash.com/photo-1586953208448-b95a79798f07?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
+                                        alt="2D展开图" class="w-full h-full object-contain">
+                                </div>
+                                <div
+                                    class="bg-slate-100 rounded-lg p-2 aspect-square cursor-pointer border-2 border-transparent hover:border-blue-300">
+                                    <img src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
+                                        alt="工艺细节" class="w-full h-full object-contain">
+                                </div>
+                                <div
+                                    class="bg-slate-100 rounded-lg p-2 aspect-square cursor-pointer border-2 border-transparent hover:border-blue-300">
+                                    <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
+                                        alt="应用场景" class="w-full h-full object-contain">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Info -->
+                        <div class="space-y-6">
+                            <div>
+                                <h1 id="product-detail-title" class="text-3xl font-bold text-slate-900 mb-2">双插盒</h1>
+                                <p id="product-detail-subtitle" class="text-lg text-slate-600">Tuck End Box</p>
+                                <div class="flex items-center space-x-4 mt-4">
+                                    <span
+                                        class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">一个起订</span>
+                                    <span
+                                        class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">24小时交付</span>
+                                    <span
+                                        class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full">3秒报价</span>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-slate-200 pt-6">
+                                <h3 class="text-lg font-semibold mb-3">产品特点</h3>
+                                <ul id="product-detail-features" class="space-y-2 text-slate-600">
+                                    <li class="flex items-start"><i data-lucide="check"
+                                            class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>上下盖均为插入式，组装便捷
+                                    </li>
+                                    <li class="flex items-start"><i data-lucide="check"
+                                            class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>是最常见的卡盒结构，成本经济
+                                    </li>
+                                    <li class="flex items-start"><i data-lucide="check"
+                                            class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>适合轻质产品包装</li>
+                                    <li class="flex items-start"><i data-lucide="check"
+                                            class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>支持多种印刷工艺</li>
+                                </ul>
+                            </div>
+
+                            <div class="border-t border-slate-200 pt-6">
+                                <h3 class="text-lg font-semibold mb-3">适用场景</h3>
+                                <div id="product-detail-scenarios" class="grid grid-cols-2 gap-4">
+                                    <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                                        <i data-lucide="smartphone" class="w-6 h-6 text-blue-600"></i>
+                                        <span class="text-sm font-medium">电子产品</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                                        <i data-lucide="heart" class="w-6 h-6 text-pink-600"></i>
+                                        <span class="text-sm font-medium">化妆品</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                                        <i data-lucide="gift" class="w-6 h-6 text-purple-600"></i>
+                                        <span class="text-sm font-medium">礼品包装</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                                        <i data-lucide="shopping-bag" class="w-6 h-6 text-green-600"></i>
+                                        <span class="text-sm font-medium">零售商品</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-slate-200 pt-6">
+                                <button
+                                    onclick="goToCustomization('双插盒', 'Tuck End Box | 上下盖均为插入式，组装便捷，是最常见的卡盒结构。', 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80')"
+                                    class="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold text-lg hover:bg-blue-700 transition-colors">
+                                    立即定制此产品
+                                </button>
+                                <p class="text-center text-sm text-slate-500 mt-2">支持一个起订，在线3秒报价</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Details Tabs -->
+                    <div class="bg-white rounded-xl shadow-sm">
+                        <div class="border-b border-slate-200">
+                            <nav class="flex space-x-8 px-8" aria-label="Tabs">
+                                <button onclick="switchProductDetailTab(this, 'specifications')"
+                                    class="product-detail-tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                    产品规格
+                                </button>
+                                <button onclick="switchProductDetailTab(this, 'process')"
+                                    class="product-detail-tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                    工艺介绍
+                                </button>
+                                <button onclick="switchProductDetailTab(this, 'notice')"
+                                    class="product-detail-tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                    下单须知
+                                </button>
+                                <button onclick="switchProductDetailTab(this, 'faq')"
+                                    class="product-detail-tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                    常见问题
+                                </button>
+                            </nav>
+                        </div>
+
+                        <div class="p-8">
+                            <!-- 产品规格 -->
+                            <div id="specifications-content" class="product-detail-tab-content">
+                                <h3 class="text-xl font-semibold mb-6">产品规格参数</h3>
+                                <div class="grid md:grid-cols-2 gap-8">
+                                    <div>
+                                        <h4 class="font-semibold mb-4 text-slate-800">基本参数</h4>
+                                        <div class="space-y-3">
+                                            <div class="flex justify-between py-2 border-b border-slate-100">
+                                                <span class="text-slate-600">产品名称</span>
+                                                <span class="font-medium">双插盒 (Tuck End Box)</span>
+                                            </div>
+                                            <div class="flex justify-between py-2 border-b border-slate-100">
+                                                <span class="text-slate-600">结构类型</span>
+                                                <span class="font-medium">上下插入式</span>
+                                            </div>
+                                            <div class="flex justify-between py-2 border-b border-slate-100">
+                                                <span class="text-slate-600">最小起订量</span>
+                                                <span class="font-medium text-green-600">1个</span>
+                                            </div>
+                                            <div class="flex justify-between py-2 border-b border-slate-100">
+                                                <span class="text-slate-600">交付时间</span>
+                                                <span class="font-medium text-blue-600">最快24小时</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-4 text-slate-800">尺寸范围</h4>
+                                        <div class="space-y-3">
+                                            <div class="flex justify-between py-2 border-b border-slate-100">
+                                                <span class="text-slate-600">最小尺寸</span>
+                                                <span class="font-medium">50×30×20mm</span>
+                                            </div>
+                                            <div class="flex justify-between py-2 border-b border-slate-100">
+                                                <span class="text-slate-600">最大尺寸</span>
+                                                <span class="font-medium">500×400×300mm</span>
+                                            </div>
+                                            <div class="flex justify-between py-2 border-b border-slate-100">
+                                                <span class="text-slate-600">推荐材料</span>
+                                                <span class="font-medium">250-400g白卡纸</span>
+                                            </div>
+                                            <div class="flex justify-between py-2 border-b border-slate-100">
+                                                <span class="text-slate-600">承重范围</span>
+                                                <span class="font-medium">0.1-2kg</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 工艺介绍 -->
+                            <div id="process-content" class="product-detail-tab-content hidden">
+                                <h3 class="text-xl font-semibold mb-6">工艺介绍</h3>
+                                <div class="space-y-8">
+                                    <div>
+                                        <h4 class="font-semibold mb-4 text-slate-800 flex items-center">
+                                            <i data-lucide="scissors" class="w-5 h-5 mr-2 text-blue-600"></i>
+                                            模切工艺
+                                        </h4>
+                                        <p class="text-slate-600 leading-relaxed mb-4">
+                                            采用精密模切设备，确保每个折痕和切线的精准度。双插盒的插舌和插槽设计经过优化，确保组装时的紧密贴合和稳固性。
+                                        </p>
+                                        <div class="bg-blue-50 p-4 rounded-lg">
+                                            <p class="text-sm text-blue-800"><strong>工艺优势：</strong> 精度高、一致性好、组装简便</p>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 class="font-semibold mb-4 text-slate-800 flex items-center">
+                                            <i data-lucide="palette" class="w-5 h-5 mr-2 text-purple-600"></i>
+                                            印刷工艺
+                                        </h4>
+                                        <div class="grid md:grid-cols-2 gap-6">
+                                            <div class="border border-slate-200 p-4 rounded-lg">
+                                                <h5 class="font-medium mb-2">数码印刷</h5>
+                                                <p class="text-sm text-slate-600">适合小批量，色彩鲜艳，交付快速</p>
+                                            </div>
+                                            <div class="border border-slate-200 p-4 rounded-lg">
+                                                <h5 class="font-medium mb-2">胶印工艺</h5>
+                                                <p class="text-sm text-slate-600">适合大批量，成本经济，可加专色</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 class="font-semibold mb-4 text-slate-800 flex items-center">
+                                            <i data-lucide="sparkles" class="w-5 h-5 mr-2 text-yellow-600"></i>
+                                            表面处理
+                                        </h4>
+                                        <div class="grid md:grid-cols-3 gap-4">
+                                            <div class="text-center p-4 bg-slate-50 rounded-lg">
+                                                <div
+                                                    class="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full mx-auto mb-2">
+                                                </div>
+                                                <h5 class="font-medium text-sm">哑光覆膜</h5>
+                                                <p class="text-xs text-slate-500 mt-1">质感柔和，防水防污</p>
+                                            </div>
+                                            <div class="text-center p-4 bg-slate-50 rounded-lg">
+                                                <div
+                                                    class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full mx-auto mb-2">
+                                                </div>
+                                                <h5 class="font-medium text-sm">亮光覆膜</h5>
+                                                <p class="text-xs text-slate-500 mt-1">光泽亮丽，色彩饱满</p>
+                                            </div>
+                                            <div class="text-center p-4 bg-slate-50 rounded-lg">
+                                                <div
+                                                    class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full mx-auto mb-2">
+                                                </div>
+                                                <h5 class="font-medium text-sm">UV上光</h5>
+                                                <p class="text-xs text-slate-500 mt-1">局部亮光，层次丰富</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 下单须知 -->
+                            <div id="notice-content" class="product-detail-tab-content hidden">
+                                <h3 class="text-xl font-semibold mb-6">下单须知</h3>
+                                <div class="space-y-6">
+                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                                        <h4 class="font-semibold text-blue-800 mb-3 flex items-center">
+                                            <i data-lucide="info" class="w-5 h-5 mr-2"></i>
+                                            文件要求
+                                        </h4>
+                                        <ul class="space-y-2 text-sm text-blue-700">
+                                            <li>• 设计文件格式：AI、PDF、CDR、PSD（推荐AI或PDF）</li>
+                                            <li>• 分辨率要求：矢量图或300DPI以上位图</li>
+                                            <li>• 颜色模式：CMYK模式，避免使用RGB</li>
+                                            <li>• 出血要求：四边各留3mm出血</li>
+                                            <li>• 文字要求：所有文字需转曲线或提供字体文件</li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                                        <h4 class="font-semibold text-green-800 mb-3 flex items-center">
+                                            <i data-lucide="clock" class="w-5 h-5 mr-2"></i>
+                                            生产周期
+                                        </h4>
+                                        <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                            <div>
+                                                <p class="font-medium text-green-700 mb-2">急单服务（24小时）</p>
+                                                <ul class="space-y-1 text-green-600">
+                                                    <li>• 数量：1-100个</li>
+                                                    <li>• 工艺：数码印刷 + 基础工艺</li>
+                                                    <li>• 加急费：订单金额的30%</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium text-green-700 mb-2">标准服务（3-5天）</p>
+                                                <ul class="space-y-1 text-green-600">
+                                                    <li>• 数量：不限</li>
+                                                    <li>• 工艺：全工艺支持</li>
+                                                    <li>• 无加急费</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                                        <h4 class="font-semibold text-yellow-800 mb-3 flex items-center">
+                                            <i data-lucide="alert-triangle" class="w-5 h-5 mr-2"></i>
+                                            注意事项
+                                        </h4>
+                                        <ul class="space-y-2 text-sm text-yellow-700">
+                                            <li>• 首次合作建议先制作样品确认效果</li>
+                                            <li>• 大批量订单建议提前3-5天下单</li>
+                                            <li>• 特殊工艺（如烫金、UV）需额外1-2天</li>
+                                            <li>• 节假日期间生产周期会相应延长</li>
+                                            <li>• 如需开具发票，请在下单时备注</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 常见问题 -->
+                            <div id="faq-content" class="product-detail-tab-content hidden">
+                                <h3 class="text-xl font-semibold mb-6">常见问题</h3>
+                                <div class="space-y-4">
+                                    <div class="border border-slate-200 rounded-lg">
+                                        <details class="group">
+                                            <summary
+                                                class="flex justify-between items-center cursor-pointer p-4 hover:bg-slate-50">
+                                                <h4 class="font-medium">双插盒适合装什么产品？</h4>
+                                                <i data-lucide="plus"
+                                                    class="w-5 h-5 text-slate-400 group-open:rotate-45 transition-transform"></i>
+                                            </summary>
+                                            <div class="px-4 pb-4 text-slate-600 leading-relaxed">
+                                                双插盒适合装轻质产品，如化妆品、电子配件、小礼品、药品等。由于其插入式结构，不建议装载过重或易碎的产品。
+                                            </div>
+                                        </details>
+                                    </div>
+
+                                    <div class="border border-slate-200 rounded-lg">
+                                        <details class="group">
+                                            <summary
+                                                class="flex justify-between items-center cursor-pointer p-4 hover:bg-slate-50">
+                                                <h4 class="font-medium">最小尺寸有什么限制？</h4>
+                                                <i data-lucide="plus"
+                                                    class="w-5 h-5 text-slate-400 group-open:rotate-45 transition-transform"></i>
+                                            </summary>
+                                            <div class="px-4 pb-4 text-slate-600 leading-relaxed">
+                                                最小尺寸为50×30×20mm，主要受限于插舌的结构设计。如果需要更小尺寸，建议考虑其他盒型如简易折叠盒。
+                                            </div>
+                                        </details>
+                                    </div>
+
+                                    <div class="border border-slate-200 rounded-lg">
+                                        <details class="group">
+                                            <summary
+                                                class="flex justify-between items-center cursor-pointer p-4 hover:bg-slate-50">
+                                                <h4 class="font-medium">可以做异形切割吗？</h4>
+                                                <i data-lucide="plus"
+                                                    class="w-5 h-5 text-slate-400 group-open:rotate-45 transition-transform"></i>
+                                            </summary>
+                                            <div class="px-4 pb-4 text-slate-600 leading-relaxed">
+                                                可以，我们支持异形切割，如圆角、波浪边等。异形切割需要制作专用刀模，会产生额外的刀模费用，具体费用请咨询客服。
+                                            </div>
+                                        </details>
+                                    </div>
+
+                                    <div class="border border-slate-200 rounded-lg">
+                                        <details class="group">
+                                            <summary
+                                                class="flex justify-between items-center cursor-pointer p-4 hover:bg-slate-50">
+                                                <h4 class="font-medium">如何确保颜色准确？</h4>
+                                                <i data-lucide="plus"
+                                                    class="w-5 h-5 text-slate-400 group-open:rotate-45 transition-transform"></i>
+                                            </summary>
+                                            <div class="px-4 pb-4 text-slate-600 leading-relaxed">
+                                                建议先制作平面色样确认颜色效果。我们使用标准的印刷色卡，如有特殊颜色要求，可提供潘通色号或实物样品进行比色。
+                                            </div>
+                                        </details>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="solutions-page" class="page hidden">
+                <div class="bg-white">
+                    <div class="container mx-auto px-8 md:px-16 py-20 text-center">
+                        <h1 class="text-5xl font-extrabold text-slate-900 tracking-tight">端到端包装解决方案，为您的业务赋能</h1>
+                        <p class="mt-6 text-lg text-slate-600 max-w-3xl mx-auto" style="line-height: 1.7;">
+                            我们不仅仅是一个交易平台，而是您业务增长的技术合作伙伴。智盒工坊通过四大核心支柱，重塑包装定制流程，助您降本增效，提升品牌价值。</p>
+                    </div>
+                </div>
+                <div class="container mx-auto px-8 md:px-16 py-24">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
+                        <div>
+                            <div
+                                class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+                                <i data-lucide="cpu"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mt-6 mb-3">技术驱动</h3>
+                            <p class="text-slate-500" style="line-height: 1.7;">
+                                从智能报价引擎到自动化派单，我们用技术替代繁琐的人工流程，实现秒级响应和最优的供应链匹配。</p>
+                        </div>
+                        <div>
+                            <div
+                                class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+                                <i data-lucide="users"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mt-6 mb-3">服务核心</h3>
+                            <p class="text-slate-500" style="line-height: 1.7;">
+                                专业的印前工程师团队为您审核稿件，确保您的创意100%符合生产标准，杜绝后顾之忧。</p>
+                        </div>
+                        <div>
+                            <div
+                                class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+                                <i data-lucide="link"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mt-6 mb-3">供应链协同</h3>
+                            <p class="text-slate-500" style="line-height: 1.7;">
+                                我们整合并认证数百家优质供应商，通过数字化协同门户，实现生产过程的透明化管理与高效交付。</p>
+                        </div>
+                        <div>
+                            <div
+                                class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+                                <i data-lucide="database"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mt-6 mb-3">数据智能</h3>
+                            <p class="text-slate-500" style="line-height: 1.7;">基于海量订单数据，我们能为您提供行业趋势分析与成本优化建议，让您的决策更科学。
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-24 bg-white p-12 rounded-2xl shadow-sm">
+                        <h2 class="text-4xl font-bold text-center text-slate-900 mb-12">为不同规模的企业量身定制</h2>
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <div class="border border-slate-200 p-8 rounded-xl">
+                                <h4 class="text-xl font-semibold mb-4">新消费品牌</h4>
+                                <p class="text-slate-500" style="line-height: 1.7;">小批量起订，快速响应，助您以最低的试错成本，快速验证产品，抢占市场先机。
+                                </p>
+                            </div>
+                            <div class="border border-slate-200 p-8 rounded-xl">
+                                <h4 class="text-xl font-semibold mb-4">电商卖家</h4>
+                                <p class="text-slate-500" style="line-height: 1.7;">
+                                    提供坚固可靠的快递包装方案，支持多地址发货，简化您的供应链管理，让您专注于销售。</p>
+                            </div>
+                            <div class="border border-slate-200 p-8 rounded-xl">
+                                <h4 class="text-xl font-semibold mb-4">成熟企业</h4>
+                                <p class="text-slate-500" style="line-height: 1.7;">
+                                    提供标准化的采购流程、稳定的品质控制和透明的价格体系，成为您降本增效的可靠伙伴。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="help-center-page" class="page hidden">
+                <div class="bg-white">
+                    <div class="container mx-auto px-8 md:px-16 py-20 text-center">
+                        <h1 class="text-5xl font-extrabold text-slate-900 tracking-tight">帮助中心</h1>
+                        <p class="mt-6 text-lg text-slate-600 max-w-3xl mx-auto">我们在这里解答您的任何疑问。您可以通过搜索或分类查找快速找到答案。</p>
+                        <div class="mt-8 max-w-lg mx-auto">
+                            <div class="relative"><input type="search" placeholder="例如：如何上传设计文件？"
+                                    class="w-full p-4 pr-12 text-lg border-slate-300 rounded-full shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                <div class="absolute inset-y-0 right-0 flex py-1.5 pr-1.5"><button type="submit"
+                                        class="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold text-white btn-primary"><i
+                                            data-lucide="search" class="w-5 h-5"></i></button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container mx-auto px-8 md:px-16 py-24">
+                    <div class="grid lg:grid-cols-4 gap-12">
+                        <div class="lg:col-span-1">
+                            <h2 class="text-2xl font-bold mb-6">问题分类</h2>
+                            <ul class="space-y-2">
+                                <li><a href="#faq-ordering" class="font-semibold text-blue-600">订购流程</a></li>
+                                <li><a href="#faq-design"
+                                        class="font-semibold text-slate-600 hover:text-blue-600">设计与文件</a></li>
+                                <li><a href="#faq-production"
+                                        class="font-semibold text-slate-600 hover:text-blue-600">生产与配送</a></li>
+                                <li><a href="#faq-account"
+                                        class="font-semibold text-slate-600 hover:text-blue-600">账户与支付</a></li>
+                            </ul>
+                        </div>
+                        <div class="lg:col-span-3 space-y-16">
+                            <section id="faq-ordering">
+                                <h3 class="text-3xl font-bold mb-8 border-l-4 border-blue-600 pl-4">订购流程</h3>
+                                <div class="space-y-4">
+                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm">
+                                        <details>
+                                            <summary class="flex justify-between items-center cursor-pointer">
+                                                <h4 class="font-semibold">如何获取报价？</h4><i data-lucide="plus"
+                                                    class="icon text-slate-400"></i>
+                                            </summary>
+                                            <div class="mt-4 text-slate-500" style="line-height: 1.7;">
+                                                在我们的“在线定制”页面，选择您需要的盒型，输入尺寸、材料、工艺和数量，系统将立即为您生成实时、透明的报价。</div>
+                                        </details>
+                                    </div>
+                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm">
+                                        <details>
+                                            <summary class="flex justify-between items-center cursor-pointer">
+                                                <h4 class="font-semibold">最小起订量是多少？</h4><i data-lucide="plus"
+                                                    class="icon text-slate-400"></i>
+                                            </summary>
+                                            <div class="mt-4 text-slate-500" style="line-height: 1.7;">
+                                                我们支持小批量定制，大部分产品的最小起订量为100个。具体起订量会因产品类型和工艺复杂程度而异，您可以在定制页面看到具体的起订要求。</div>
+                                        </details>
+                                    </div>
+                                </div>
+                            </section>
+                            <section id="faq-design">
+                                <h3 class="text-3xl font-bold mb-8 border-l-4 border-blue-600 pl-4">设计与文件</h3>
+                                <div class="space-y-4">
+                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm">
+                                        <details>
+                                            <summary class="flex justify-between items-center cursor-pointer">
+                                                <h4 class="font-semibold">我应该上传什么格式的设计文件？</h4><i data-lucide="plus"
+                                                    class="icon text-slate-400"></i>
+                                            </summary>
+                                            <div class="mt-4 text-slate-500" style="line-height: 1.7;">我们建议您上传矢量格式的文件，如
+                                                Adobe Illustrator (.ai)、.pdf 或 .eps 格式，以确保最佳的印刷质量。对于位图文件，请确保分辨率至少为300
+                                                DPI。</div>
+                                        </details>
+                                    </div>
+                                    <div class="faq-item bg-white p-6 rounded-lg shadow-sm">
+                                        <details>
+                                            <summary class="flex justify-between items-center cursor-pointer">
+                                                <h4 class="font-semibold">你们提供设计服务吗？</h4><i data-lucide="plus"
+                                                    class="icon text-slate-400"></i>
+                                            </summary>
+                                            <div class="mt-4 text-slate-500" style="line-height: 1.7;">
+                                                目前我们不直接提供创意设计服务，但我们专业的印前工程师团队会为您提供“文件规范化”服务。他们会检查您的设计稿，确保其符合生产标准，并进行专业的印前处理，如色彩模式转换（RGB转CMYK）、出血设置和拼版等。
+                                            </div>
+                                        </details>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
 
         <footer class="bg-white border-t border-slate-200 mt-16">
@@ -282,20 +2470,20 @@
                     <div>
                         <h4 class="font-semibold text-slate-500">导航</h4>
                         <ul class="mt-2 space-y-2 text-sm">
-                            <li><a href="products.html"
+                            <li><a href="#" onclick="showPage('product-center-page')"
                                     class="text-slate-600 hover:text-blue-600">在线定制</a></li>
-                            <li><a href="solutions.html"
+                            <li><a href="#" onclick="showPage('solutions-page')"
                                     class="text-slate-600 hover:text-blue-600">解决方案</a></li>
-                            <li><a href="help.html"
+                            <li><a href="#" onclick="showPage('help-center-page')"
                                     class="text-slate-600 hover:text-blue-600">帮助中心</a></li>
                         </ul>
                     </div>
                     <div>
                         <h4 class="font-semibold text-slate-500">支持</h4>
                         <ul class="mt-2 space-y-2 text-sm">
-                            <li><a href="help.html"
+                            <li><a href="#" onclick="showPage('help-center-page')"
                                     class="text-slate-600 hover:text-blue-600">帮助中心</a></li>
-                            <li><a href="help.html"
+                            <li><a href="#" onclick="showPage('help-center-page')"
                                     class="text-slate-600 hover:text-blue-600">联系我们</a></li>
                             <li><a href="#" class="text-slate-600 hover:text-blue-600">服务条款</a></li>
                         </ul>

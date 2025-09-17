@@ -1,9 +1,5 @@
 // --- 全局状态和数据 ---
-let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-function saveCart() {
-    localStorage.setItem('cart', JSON.stringify(cart));
-}
+let cart = [];
 let lastOrderId = null;
 let distributionStatus = 'none'; // 'none', 'pending', 'approved'
 let withdrawalAccounts = []; // To store saved bank accounts
@@ -78,6 +74,7 @@ function renderIcons() {
 }
 
 // --- 页面导航逻辑 ---
+const pages = document.querySelectorAll('.page');
 const userCenterViews = document.querySelectorAll('.user-center-view');
 
 const sidebarTemplate = [
@@ -92,62 +89,27 @@ const sidebarTemplate = [
     { id: 'settings-view', icon: 'user-cog', text: '账户设置' },
 ];
 
-function renderDashboardView() {
-    const view = document.getElementById('dashboard-view');
-    if (!view) return;
+function showPage(pageId, context) {
+    pages.forEach(p => p.classList.add('hidden'));
+    const activePage = document.getElementById(pageId);
+    if (activePage) activePage.classList.remove('hidden');
 
-    const pendingOrders = orders.filter(o => ['placed', 'processing', 'confirming', 'production'].includes(o.statusId)).length;
-    const shippedOrders = orders.filter(o => o.statusId === 'shipped').length;
-    // Assuming a static number for coupons for now
-    const couponCount = 5;
+    if (pageId === 'user-center-page') {
+        const viewId = context?.viewId || 'dashboard-view';
+        showUserCenterView(viewId, context);
+    } else if (pageId === 'shopping-cart-page') {
+        renderCart();
+    } else if (pageId === 'checkout-page') {
+        renderCheckoutPage();
+    } else if (pageId === 'customization-page') {
+        renderMaterialOptions();
+        renderSpecialProcesses();
+    } else if (pageId === 'product-center-page') {
+        initializeFilters();
+    }
 
-    const recentOrders = orders.slice(0, 3);
-
-    view.innerHTML = `
-        <div class="bg-white p-8 rounded-xl shadow-sm">
-            <h1 class="text-3xl font-bold mb-2">欢迎回来, 李婷!</h1>
-            <p class="text-slate-600 mb-8">这是您的账户总览，祝您有美好的一天。</p>
-            <div class="grid sm:grid-cols-3 gap-6 mb-8">
-                <div class="bg-slate-50 p-6 rounded-lg">
-                    <p class="text-sm text-slate-500">待处理订单</p>
-                    <p class="text-3xl font-bold mt-1">${pendingOrders}</p>
-                </div>
-                <div class="bg-slate-50 p-6 rounded-lg">
-                    <p class="text-sm text-slate-500">待收货</p>
-                    <p class="text-3xl font-bold mt-1">${shippedOrders}</p>
-                </div>
-                <div class="bg-slate-50 p-6 rounded-lg">
-                    <p class="text-sm text-slate-500">可用优惠券</p>
-                    <p class="text-3xl font-bold mt-1">${couponCount}</p>
-                </div>
-            </div>
-            <h2 class="text-xl font-semibold mb-4">最近订单</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead class="bg-slate-50 text-sm text-slate-600">
-                        <tr>
-                            <th class="p-4 font-semibold">订单号</th>
-                            <th class="p-4 font-semibold">下单日期</th>
-                            <th class="p-4 font-semibold">总金额</th>
-                            <th class="p-4 font-semibold">状态</th>
-                            <th class="p-4 font-semibold"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${recentOrders.map(order => `
-                            <tr class="border-b border-slate-200">
-                                <td class="p-4">#...${order.id.slice(-3)}</td>
-                                <td class="p-4">${order.date}</td>
-                                <td class="p-4">¥${order.total.toFixed(2)}</td>
-                                <td class="p-4"><span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">${order.status}</span></td>
-                                <td class="p-4"><a href="#" onclick="showUserCenterView('order-detail-view', { orderId: '${order.id}' })" class="font-semibold text-blue-600">查看</a></td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
+    window.scrollTo(0, 0);
+    renderIcons();
 }
 
 function showUserCenterView(viewId, context) {
@@ -156,9 +118,7 @@ function showUserCenterView(viewId, context) {
     if (activeView) activeView.classList.remove('hidden');
     buildSidebar(document.getElementById('user-center-sidebar'), viewId);
 
-    if (viewId === 'dashboard-view') {
-        renderDashboardView();
-    } else if (viewId === 'orders-view') {
+    if (viewId === 'orders-view') {
         renderOrdersPage();
     } else if (viewId === 'order-detail-view') {
         renderOrderDetailPage(context?.orderId);
@@ -169,8 +129,59 @@ function showUserCenterView(viewId, context) {
 }
 
 // Product Detail Page Functions
-function renderProductDetailTab(productId, tabId) {
-    const product = productDetails[productId];
+// Store the currently viewed product ID
+let currentProductDetailId = null;
+
+function showProductDetail(productId) {
+    currentProductDetailId = productId;
+    const product = products.find(p => p.id === productId);
+    if (!product) {
+        alert('产品未找到!');
+        return;
+    }
+
+    // Update main product information
+    document.getElementById('product-detail-title').textContent = product.name;
+    document.getElementById('product-detail-subtitle').textContent = product.id;
+    document.getElementById('product-detail-main-image').src = product.imageUrl.replace('400', '600');
+    document.getElementById('product-detail-breadcrumb').textContent = product.name;
+
+    // Update features
+    const featuresContainer = document.getElementById('product-detail-features');
+    if (product.features && featuresContainer) {
+        featuresContainer.innerHTML = product.features.map(feature =>
+            `<li class="flex items-start"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>${feature}</li>`
+        ).join('');
+    }
+
+    // Update scenarios
+    const scenariosContainer = document.getElementById('product-detail-scenarios');
+    if (product.scenarios && scenariosContainer) {
+        scenariosContainer.innerHTML = product.scenarios.map(scenario =>
+            `<div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                <i data-lucide="${scenario.icon}" class="w-6 h-6 text-${scenario.color}-600"></i>
+                <div>
+                    <p class="text-sm font-medium">${scenario.name}</p>
+                    <p class="text-xs text-slate-500">${scenario.description || ''}</p>
+                </div>
+            </div>`
+        ).join('');
+    }
+
+    const customizeButton = document.querySelector('#product-detail-page .bg-blue-600');
+    if(customizeButton) {
+        customizeButton.onclick = () => goToCustomization(productId);
+    }
+
+    // Show product detail page and render the default tab
+    showPage('product-detail-page');
+    // Click the first tab by default
+    document.querySelector('.product-detail-tab-button').click();
+    renderIcons();
+}
+
+function renderProductDetailTab(tabId) {
+    const product = products.find(p => p.id === currentProductDetailId);
     if (!product) return;
 
     const container = document.getElementById(`${tabId}-content`);
@@ -280,7 +291,7 @@ function renderProductDetailTab(productId, tabId) {
 }
 
 
-function switchProductDetailTab(button, productId, tabId) {
+function switchProductDetailTab(button, tabId) {
     // Update tab buttons
     document.querySelectorAll('.product-detail-tab-button').forEach(btn => {
         btn.classList.remove('active');
@@ -294,7 +305,7 @@ function switchProductDetailTab(button, productId, tabId) {
     const container = document.getElementById(tabId + '-content');
     container.classList.remove('hidden');
 
-    renderProductDetailTab(productId, tabId);
+    renderProductDetailTab(tabId);
 }
 
 function renderProductCenter(filter) {
@@ -356,7 +367,7 @@ function renderProductCenter(filter) {
                     const details = productDetails[product.id] || {};
                     return `
                         <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all">
-                            <div class="image-container bg-slate-100" onclick="window.location.href='product-detail.html?product=${product.id}'">
+                            <div class="image-container bg-slate-100" onclick="showProductDetail('${product.id}')">
                                 <img class="img-3d w-full h-48 object-cover cursor-pointer"
                                     src="${product.imageUrl}"
                                     alt="${product.name} 3D图">
@@ -365,7 +376,7 @@ function renderProductCenter(filter) {
                                 <h3 class="text-lg font-bold flex-grow">${product.name}</h3>
                                 <p class="text-xs text-slate-500 mt-1">${product.id}</p>
                                 <div class="mt-4 space-y-2">
-                                    <button onclick="window.location.href='product-detail.html?product=${product.id}'" class="w-full border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">查看详情</button>
+                                    <button onclick="showProductDetail('${product.id}')" class="w-full border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">查看详情</button>
                                     <button onclick="goToCustomization('${product.id}')" class="w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button>
                                 </div>
                             </div>
@@ -410,33 +421,34 @@ function renderProductCenter(filter) {
     renderIcons();
 }
 
-function findProductInCatalog(productId) {
-    for (const domain in productCatalog) {
-        for (const pCat in productCatalog[domain]) {
-            for (const sCat in productCatalog[domain][pCat]) {
-                const found = productCatalog[domain][pCat][sCat].find(p => p.id === productId);
-                if (found) {
-                    return found;
-                }
-            }
-        }
-    }
-    return null;
-}
-
-function populateCustomizationPage(productId) {
+function goToCustomization(productId) {
     const details = productDetails[productId];
     if (!details) {
-        // handle error, maybe redirect or show a message
+        alert('该产品的定制功能即将上线，敬请期待！');
         return;
     }
 
+    // This part remains the same as it correctly populates the customization page
     const titleElement = document.getElementById('customization-title');
     const headerElement = document.getElementById('customization-header');
     const descElement = document.getElementById('customization-desc');
     const imageElement = document.getElementById('customization-preview-img');
 
-    let productInfo = findProductInCatalog(productId);
+    // Find the product in the catalog to get its name and image
+    let productInfo = null;
+    for (const domain in productCatalog) {
+        for (const pCat in productCatalog[domain]) {
+            for (const sCat in productCatalog[domain][pCat]) {
+                const found = productCatalog[domain][pCat][sCat].find(p => p.id === productId);
+                if (found) {
+                    productInfo = found;
+                    break;
+                }
+            }
+            if (productInfo) break;
+        }
+        if (productInfo) break;
+    }
 
     if (titleElement) titleElement.textContent = productInfo.name;
     if (headerElement) headerElement.textContent = `${productInfo.name} 定制`;
@@ -445,10 +457,8 @@ function populateCustomizationPage(productId) {
         imageElement.src = productInfo.imageUrl.replace('400', '800').replace('300','600');
         imageElement.alt = productInfo.name;
     }
-}
 
-function goToCustomization(productId) {
-    window.location.href = `customization.html?product=${productId}`;
+    showPage('customization-page');
 }
 
 // --- New Hierarchical Filter Logic ---
@@ -570,7 +580,7 @@ function buildSidebar(container, activeViewId) {
     const logoutLink = document.createElement('a');
     logoutLink.href = '#';
     logoutLink.className = 'flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg mt-4 border-t border-slate-200';
-    logoutLink.onclick = (e) => { e.preventDefault(); window.location.href = 'index.html'; };
+    logoutLink.onclick = (e) => { e.preventDefault(); showPage('homepage'); };
     logoutLink.innerHTML = `<i data-lucide="log-out" class="w-5 h-5 mr-3"></i> 退出登录`;
     container.appendChild(logoutLink);
 }
@@ -595,7 +605,7 @@ function closeLoginModal() { loginModal.classList.add('hidden'); }
 function openOrderSuccessModal() { orderSuccessModal.classList.remove('hidden'); renderIcons(); }
 function closeOrderSuccessModalAndGoToUpload() {
     orderSuccessModal.classList.add('hidden');
-    window.location.href = `user-center.html?view=order-detail-view&orderId=${lastOrderId}`;
+    showPage('user-center-page', { viewId: 'order-detail-view', orderId: lastOrderId });
 }
 function openPaymentModal(total) {
     document.getElementById('payment-amount').textContent = `¥ ${total.toFixed(2)}`;
@@ -696,11 +706,11 @@ function switchAuthTab(button, tabId) {
 }
 function handleLogin() {
     closeLoginModal();
-    window.location.href = 'user-center.html';
+    showPage('user-center-page');
 }
 function handleRegister() {
     closeLoginModal();
-    window.location.href = 'user-center.html';
+    showPage('user-center-page');
 }
 
 // --- Tab Switching Logic ---
@@ -818,7 +828,7 @@ function handleAddToCart() {
     };
 
     cart.push(newItem);
-            saveCart();
+
     updateCartIcon();
 
     const cartIconContainer = document.getElementById('cart-icon-container');
@@ -827,7 +837,7 @@ function handleAddToCart() {
         cartIconContainer.classList.remove('cart-shake-animation');
     }, 400);
 
-    window.location.href = 'cart.html';
+    showPage('shopping-cart-page');
 }
 
 function renderCart() {
@@ -840,7 +850,7 @@ function renderCart() {
                 <i data-lucide="shopping-cart" class="w-16 h-16 mx-auto text-slate-300"></i>
                 <h2 class="mt-4 text-2xl font-semibold">您的购物车是空的</h2>
                 <p class="mt-2 text-slate-500">快去“在线定制”页面，添加一些商品吧！</p>
-                <button onclick="window.location.href='products.html'" class="mt-6 btn-primary text-white px-6 py-2 rounded-lg font-semibold">
+                <button onclick="showPage('product-center-page')" class="mt-6 btn-primary text-white px-6 py-2 rounded-lg font-semibold">
                     去定制
                 </button>
             </div>
@@ -885,12 +895,8 @@ function updateCartItemQuantity(itemId, change) {
     const item = cart.find(i => i.id === itemId);
     if (item) {
         const newQuantity = item.quantity + change;
-                if (newQuantity > 0) {
-                    item.quantity = newQuantity;
-                    saveCart();
-                } else {
-                    removeCartItem(itemId);
-                }
+        if (newQuantity > 0) item.quantity = newQuantity;
+        else removeCartItem(itemId);
     }
     renderCart();
     updateCartIcon();
@@ -898,7 +904,6 @@ function updateCartItemQuantity(itemId, change) {
 
 function removeCartItem(itemId) {
     cart = cart.filter(i => i.id !== itemId);
-            saveCart();
     renderCart();
     updateCartIcon();
 }
@@ -908,11 +913,7 @@ function handleCheckout() {
         alert('您的购物车是空的！');
         return;
     }
-    document.getElementById('shopping-cart-page').classList.add('hidden');
-    const checkoutPage = document.getElementById('checkout-page');
-    checkoutPage.classList.remove('hidden');
-    renderCheckoutPage();
-    window.scrollTo(0, 0);
+    showPage('checkout-page');
 }
 
 function renderCheckoutPage() {
@@ -975,12 +976,12 @@ function confirmPayment() {
     };
 
     orders.unshift(newOrder);
-    lastOrderId = newOrder.id;
+    localStorage.setItem('lastOrder', JSON.stringify(newOrder));
 
-    openOrderSuccessModal();
     cart = [];
-            saveCart();
-    updateCartIcon();
+    // We don't call updateCartIcon() here because we are navigating away.
+
+    window.location.href = 'order-success.html';
 }
 
 // --- 订单页面逻辑 ---
@@ -1881,756 +1882,93 @@ function updateQuote() {
     }
 }
 
-function initializeSmartDesignPage() {
-    if (window.lucide) {
-        lucide.createIcons();
-    }
+function renderOrderSuccessPage() {
+    const container = document.getElementById('order-success-content');
+    if (!container) return;
 
-    const generateBtn = document.getElementById('generate-btn');
-    const gallery = document.getElementById('ai-results-gallery');
-    const initialPrompt = document.getElementById('initial-prompt');
-    const proofingModal = document.getElementById('proofing-modal');
-    const closeProofingModalBtn = document.getElementById('close-proofing-modal');
-    const modalDesignImage = document.getElementById('modal-design-image');
-    const toast = document.getElementById('toast-notification');
-
-    const baseProofingCostEl = document.getElementById('base-proofing-cost');
-    const finishingCostEl = document.getElementById('finishing-cost-summary');
-    const serviceCostEl = document.getElementById('service-cost-summary');
-    const totalCostEl = document.getElementById('total-cost-summary');
-    const expertFeeRow = document.getElementById('expert-fee-row');
-    const expertCostSummary = document.getElementById('expert-cost-summary');
-
-    const innerTrayCheckbox = document.getElementById('inner-tray-checkbox');
-    const innerTrayOptions = document.getElementById('inner-tray-options');
-    const addAccessoriesCheckbox = document.getElementById('add-accessories-checkbox');
-    const accessoriesOptions = document.getElementById('accessories-options');
-
-    const proofingModeRadios = document.querySelectorAll('input[name="proofing-mode"]');
-    const manualSpecsContainer = document.getElementById('manual-specs-container');
-
-    const mockResults = [
-        { image: 'https://images.pexels.com/photos/7262900/pexels-photo-7262900.jpeg?auto=compress&cs=tinysrgb&w=400' },
-        { image: 'https://images.pexels.com/photos/7262995/pexels-photo-7262995.jpeg?auto=compress&cs=tinysrgb&w=400' },
-        { image: 'https://images.pexels.com/photos/7262990/pexels-photo-7262990.jpeg?auto=compress&cs=tinysrgb&w=400' },
-        { image: 'https://images.pexels.com/photos/7262890/pexels-photo-7262890.jpeg?auto=compress&cs=tinysrgb&w=400' },
-        { image: 'https://images.pexels.com/photos/7262817/pexels-photo-7262817.jpeg?auto=compress&cs=tinysrgb&w=400' },
-        { image: 'https://images.pexels.com/photos/7262779/pexels-photo-7262779.jpeg?auto=compress&cs=tinysrgb&w=400' },
-    ];
-
-    // --- User Input Animation ---
-    const inputsForAnimation = [document.getElementById('product-name'), document.getElementById('style-keywords')];
-    inputsForAnimation.forEach(input => {
-        input.addEventListener('input', () => {
-            if(input.value.length > 2) {
-                generateBtn.classList.add('button-pulse');
-            } else {
-                generateBtn.classList.remove('button-pulse');
-            }
-        });
-    });
-
-    function showToast(message) {
-        toast.textContent = message;
-        toast.classList.remove('opacity-0', 'translate-y-10');
-        setTimeout(() => {
-            toast.classList.add('opacity-0', 'translate-y-10');
-        }, 2500);
-    }
-
-    function handleProofingModeChange() {
-        const selectedMode = document.querySelector('input[name="proofing-mode"]:checked').value;
-        if (selectedMode === 'expert') {
-            manualSpecsContainer.classList.add('disabled');
-            expertFeeRow.classList.remove('hidden');
-            baseProofingCostEl.parentElement.classList.add('hidden');
-            finishingCostEl.parentElement.classList.add('hidden');
-            serviceCostEl.parentElement.classList.add('hidden');
-        } else {
-            manualSpecsContainer.classList.remove('disabled');
-            expertFeeRow.classList.add('hidden');
-            baseProofingCostEl.parentElement.classList.remove('hidden');
-            finishingCostEl.parentElement.classList.remove('hidden');
-            serviceCostEl.parentElement.classList.remove('hidden');
-        }
-        updateCost();
-    }
-
-    function addEventListenersForCostUpdate() {
-        proofingModeRadios.forEach(radio => radio.addEventListener('change', handleProofingModeChange));
-
-        const costInputs = [
-            ...document.querySelectorAll('input[name="finishing-option"], input[name="service-option"], input[name="inner-tray-material"], input[name="standard-accessory"]'),
-            document.getElementById('proofing-quantity')
-        ];
-
-        costInputs.forEach(el => {
-            el.addEventListener('change', updateCost);
-            el.addEventListener('input', updateCost); // for quantity
-        });
-
-        innerTrayCheckbox.addEventListener('change', () => {
-            innerTrayOptions.classList.toggle('hidden', !innerTrayCheckbox.checked);
-            updateCost();
-        });
-
-        addAccessoriesCheckbox.addEventListener('change', () => {
-            accessoriesOptions.classList.toggle('hidden', !addAccessoriesCheckbox.checked);
-            updateCost();
-        });
-    }
-
-    function updateCost() {
-        const selectedMode = document.querySelector('input[name="proofing-mode"]:checked').value;
-        const quantity = parseInt(document.getElementById('proofing-quantity').value) || 1;
-
-        if (selectedMode === 'expert') {
-            const depositPrice = 100.00;
-            expertCostSummary.textContent = `¥ ${depositPrice.toFixed(2)}`;
-            totalCostEl.textContent = `¥ ${depositPrice.toFixed(2)}`;
-            return;
-        }
-
-        let finishingPrice = 0;
-        let servicePrice = 0;
-        const basePrice = 150.00;
-
-        document.querySelectorAll('input[name="finishing-option"]:checked').forEach(checkbox => {
-            finishingPrice += parseFloat(checkbox.value);
-        });
-
-        document.querySelectorAll('input[name="service-option"]:checked').forEach(checkbox => {
-            const id = checkbox.id;
-            if(id !== 'inner-tray-checkbox' && id !== 'add-accessories-checkbox') {
-                 servicePrice += parseFloat(checkbox.value);
-            }
-        });
-
-        if (innerTrayCheckbox.checked) {
-            const selectedTray = document.querySelector('input[name="inner-tray-material"]:checked');
-            if(selectedTray) {
-                servicePrice += parseFloat(selectedTray.value);
-            }
-        }
-
-        if (addAccessoriesCheckbox.checked) {
-             document.querySelectorAll('input[name="standard-accessory"]:checked').forEach(checkbox => {
-                servicePrice += parseFloat(checkbox.value);
-            });
-        }
-
-        const totalPerItemCost = basePrice + finishingPrice + servicePrice;
-        const totalPrice = totalPerItemCost * quantity;
-
-        baseProofingCostEl.textContent = `¥ ${(basePrice * quantity).toFixed(2)}`;
-        finishingCostEl.textContent = `¥ ${(finishingPrice * quantity).toFixed(2)}`;
-        serviceCostEl.textContent = `¥ ${(servicePrice * quantity).toFixed(2)}`;
-        totalCostEl.textContent = `¥ ${totalPrice.toFixed(2)}`;
-    }
-
-    function openProofingModal(imageUrl, boxType) {
-        modalDesignImage.src = imageUrl.replace('w=400', 'w=800');
-
-        const boxTypeSelect = document.getElementById('box-type-select');
-        if (boxTypeSelect) {
-            boxTypeSelect.value = boxType;
-        }
-
-        document.getElementById('proofing-mode-manual').checked = true;
-        handleProofingModeChange();
-
-        addEventListenersForCostUpdate();
-        updateCost();
-        proofingModal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        if(window.lucide) lucide.createIcons();
-    }
-
-    function closeProofingModal() {
-        proofingModal.classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-
-    closeProofingModalBtn.addEventListener('click', closeProofingModal);
-
-    proofingModal.addEventListener('click', (e) => {
-        if (e.target === proofingModal) {
-            closeProofingModal();
-        }
-    });
-
-
-    generateBtn.addEventListener('click', () => {
-        const selectedBoxType = document.querySelector('input[name="box-type"]:checked + label .text-xs').textContent;
-        generateBtn.classList.remove('button-pulse');
-
-        initialPrompt.classList.add('hidden');
-        gallery.innerHTML = `
-            <div class="col-span-full h-full flex flex-col items-center justify-center text-center p-10">
-                <i data-lucide="loader-2" class="w-16 h-16 text-blue-500 animate-spin"></i>
-                <h3 class="mt-4 text-xl font-semibold">AI正在挥洒创意...</h3>
-                <p class="mt-2 text-slate-500">通常需要10-30秒，请稍候。</p>
-            </div>
+    const lastOrder = JSON.parse(localStorage.getItem('lastOrder'));
+    if (!lastOrder) {
+        container.innerHTML = `
+            <i data-lucide="alert-circle" class="w-20 h-20 mx-auto text-red-500"></i>
+            <h1 class="text-3xl font-bold mt-6">无法加载订单信息</h1>
+            <p class="text-slate-500 mt-2">无法从缓存中找到您的订单。请前往个人中心查看。</p>
+            <a href="user-center.html?view=orders-view"
+                class="mt-6 w-full inline-block btn-primary text-white py-3 rounded-lg font-bold text-base">前往我的订单</a>
         `;
-        if (window.lucide) {
-            lucide.createIcons();
-        }
+        renderIcons();
+        return;
+    }
 
-        setTimeout(() => {
-            gallery.innerHTML = '';
-            mockResults.sort(() => 0.5 - Math.random()).forEach(result => {
-                const card = document.createElement('div');
-                card.className = "group relative bg-white rounded-lg shadow-md overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1";
-                card.innerHTML = `
-                    <img src="${result.image}" alt="AI generated packaging design" class="w-full h-64 object-cover" loading="lazy">
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-4 translate-y-20 group-hover:translate-y-0 transition-transform duration-300">
-                        <div class="flex justify-center space-x-2">
-                             <button class="bg-white/80 text-slate-900 p-2 rounded-full hover:bg-white backdrop-blur-sm" title="放大预览">
-                                <i data-lucide="zoom-in" class="w-5 h-5"></i>
-                            </button>
-                            <button class="favorite-btn bg-white/80 text-slate-900 p-2 rounded-full hover:bg-white backdrop-blur-sm" title="收藏">
-                                <i data-lucide="heart" class="w-5 h-5"></i>
-                            </button>
-                             <button data-image-url="${result.image}" data-box-type="${selectedBoxType}" class="select-design-btn flex-grow bg-blue-600/90 text-white font-semibold py-2 px-4 rounded-full hover:bg-blue-600 backdrop-blur-sm">
-                                选择此方案
-                            </button>
-                        </div>
-                    </div>
-                `;
-                gallery.appendChild(card);
-            });
-             if (window.lucide) {
-                lucide.createIcons();
-            }
-        }, 2000);
-    });
+    const firstItem = lastOrder.items[0];
+    container.innerHTML = `
+        <i data-lucide="check-circle-2" class="w-20 h-20 mx-auto text-green-500"></i>
+        <h1 class="text-3xl font-bold mt-6">订单提交成功!</h1>
+        <p class="text-slate-500 mt-2">您的订单 #${lastOrder.id} 已成功提交，感谢您的惠顾。</p>
 
-    gallery.addEventListener('click', (e) => {
-        const selectBtn = e.target.closest('.select-design-btn');
-        if (selectBtn) {
-            const imageUrl = selectBtn.dataset.imageUrl;
-            const boxType = selectBtn.dataset.boxType;
-            openProofingModal(imageUrl, boxType);
-            return;
-        }
+        <div class="my-8 text-left border-y border-slate-200 py-6">
+            <h2 class="text-lg font-semibold mb-4">订单摘要</h2>
+            <div class="flex items-start space-x-4">
+                <img src="${firstItem.imageUrl}" alt="${firstItem.name}" class="w-24 h-24 rounded-md object-cover border">
+                <div class="flex-grow">
+                    <p class="font-semibold">${firstItem.name} ${lastOrder.items.length > 1 ? `等 ${lastOrder.items.length} 件商品` : ''}</p>
+                    <p class="text-sm text-slate-500 mt-1">${firstItem.specs}</p>
+                    <p class="text-sm text-slate-500">数量: ${firstItem.quantity}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-lg font-bold">¥${lastOrder.total.toFixed(2)}</p>
+                </div>
+            </div>
+        </div>
 
-        const favoriteBtn = e.target.closest('.favorite-btn');
-        if (favoriteBtn) {
-            const heartIcon = favoriteBtn.querySelector('i');
-            heartIcon.style.fill = 'red';
-            heartIcon.style.color = 'red';
-            showToast('已将您的杰作收藏！');
-        }
-    });
+        <p class="text-slate-600">为确保生产顺利，请前往订单详情页上传生产文件及商标授权文件。</p>
+        <a href="user-center.html?view=order-detail-view&orderId=${lastOrder.id}"
+            class="mt-6 w-full inline-block btn-primary text-white py-3 rounded-lg font-bold text-base">前往上传文件</a>
+    `;
+    renderIcons();
 }
-function initializeSmartMatcherPage() {
-    const boxTypeData = {
-        "天地盖盒": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><rect x="3" y="11" width="18" height="9" rx="1"></rect><path d="M4 11V9a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"></path></svg>`, fulfillsNeeds: ["高级质感", "结构保护", "奢华体验", "品牌形象"] },
-        "翻盖书型盒": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v15H6.5A2.5 2.5 0 0 1 4 14.5v-10A2.5 2.5 0 0 1 6.5 2z"></path></svg>`, fulfillsNeeds: ["品牌价值", "奢华体验", "创意结构", "开箱体验"] },
-        "抽屉盒": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><rect x="3" y="7" width="18" height="14" rx="2" ry="2"></rect><path d="M7 12h2"></path><path d="M3 8.5h18"></path><path d="M5 3h14v4H5z"></path></svg>`, fulfillsNeeds: ["高级质感", "创意结构", "仪式感", "精致小巧", "强保护性"] },
-        "手提袋": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="M8 18a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H9.25a2 2 0 0 0-1.9 1.4L6 9Z"></path><path d="M12 14v-4"></path><path d="M10 12h4"></path><path d="M14 6V5a2 2 0 0 0-2-2h-1a2 2 0 0 0-2 2v1"></path></svg>`, fulfillsNeeds: ["便携精美", "品牌宣传"] },
-        "双插盒": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>`, fulfillsNeeds: ["产品保护", "陈列效果", "成本控制"] },
-        "锁底盒": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><path d="m3.27 6.96 8.73 5.05 8.73-5.05"></path><path d="M12 22.08V12"></path><path d="m7 19-5-2.88"></path><path d="m17 19 5-2.88"></path></svg>`, fulfillsNeeds: ["结构强度", "产品保护", "陈列效果"] },
-        "纸管": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>`, fulfillsNeeds: ["高阻隔性", "保持风味", "创意结构"] },
-        "异形盒": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path></svg>`, fulfillsNeeds: ["设计感强", "创意结构", "品牌特色"] },
-        "瓦楞盒": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="M2.5 10.5c0-.9.8-1.7 1.7-1.7h15.6c.9 0 1.7.8 1.7 1.7v9.8c0 .9-.8 1.7-1.7 1.7H4.2c-.9 0-1.7-.8-1.7-1.7Z"></path><path d="m6.2 8.8-1.6-2.6a1 1 0 0 1 .8-1.6h13.1c.8 0 1.5.6 1.5 1.4v.1c0 .1 0 .2-.1.3l-1.6 2.8"></path></svg>`, fulfillsNeeds: ["运输保护", "结构强度", "成本控制"] },
-        "飞机盒": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="M22 17.5H2l-1.5-3.3A.5.5 0 0 1 1 14V5a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v9a.5.5 0 0 1-.5.5Z"></path><path d="M14 17.5V3"></path></svg>`, fulfillsNeeds: ["运输保护", "结构强度", "开箱体验"] },
-        "飞机盒(大号)": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="M22 17.5H2l-1.5-3.3A.5.5 0 0 1 1 14V5a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v9a.5.5 0 0 1-.5.5Z"></path><path d="M14 17.5V3"></path></svg>`, fulfillsNeeds: ["运输保护", "结构强度", "大尺寸", "开箱体验"] },
-        "手提盒": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="M21 10h-2.2a2 2 0 0 1-1.8-1l-1.4-2.4a2 2 0 0 0-1.8-1H9.2a2 2 0 0 0-1.8 1L6 8.9A2 2 0 0 1 4.2 10H2v10h19V10Z"></path></svg>`, fulfillsNeeds: ["结构支撑", "开窗展示", "品牌特色"] },
-        "西点盒": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="M20 15.5a2.5 2.5 0 0 1-5 0V9h5v6.5Z"></path><path d="M20 9H4v11h11"></path><path d="M10 9V3.5a2.5 2.5 0 0 1 5 0V9"></path><path d="M4 20h-2v-5a2 2 0 0 1 2-2h2v7Z"></path></svg>`, fulfillsNeeds: ["结构支撑", "开窗展示", "食品级材质"] },
-        "八边封袋": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="M20 14.5a.5.5 0 0 0-.5-.5H11a2 2 0 0 1 0-4h1.5a.5.5 0 0 0 0-1H11a2 2 0 0 1-2-2V4.5a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5v1.5a2 2 0 0 1-2 2H4.5a.5.5 0 0 0 0 1H6a2 2 0 0 1 0 4H4.5a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 .5-.5v-2Z"></path></svg>`, fulfillsNeeds: ["高阻隔性", "保持风味"] },
-        "自立袋": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="M12 21a9 9 0 0 1-9-9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a9 9 0 0 1-9 9Z"></path><path d="M9 10v-.5A1.5 1.5 0 0 1 10.5 8h3A1.5 1.5 0 0 1 15 9.5V10"></path></svg>`, fulfillsNeeds: ["密封防潮", "激发食欲", "成本控制"] },
-        "首饰袋": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="M6.33 6.67a4 4 0 1 1 5.34 0"></path><path d="M17.67 6.67a4 4 0 1 0-5.34 0"></path><path d="M12 18a4 4 0 0 0 4-4H8a4 4 0 0 0 4 4Z"></path><path d="M18.33 13.33a4 4 0 1 1-5.33 0"></path><path d="M5.67 13.33a4 4 0 1 0 5.33 0"></path><path d="M12 6a4 4 0 0 0-4 4h8a4 4 0 0 0-4-4Z"></path></svg>`, fulfillsNeeds: ["精致小巧", "强保护性"] },
-        "锁底盒 (带挂钩)": { icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2 flex-shrink-0"><path d="M12 4V2"></path><path d="M14 2H10"></path><path d="M21 8.3V16a2 2 0 0 1-1 1.73l-7 4a2 2 0 0 1-2 0l-7-4A2 2 0 0 1 3 16V8.3c0-.6.3-1.2.8-1.5l7-4c.3-.2.6-.2.9 0l7 4c.5.3.8.9.8 1.5Z"></path><path d="m3.27 6.96 8.73 5.05 8.73-5.05"></path><path d="M12 22.08V12"></path></svg>`, fulfillsNeeds: ["陈列效果", "产品保护"] }
-    };
-
-    const industryData = [
-        {
-            industry: "美妆护肤",
-            icon: "gem",
-            color: "pink-500",
-            subcategories: [
-                { name: "护肤品套盒", image: "https://images.pexels.com/photos/7262911/pexels-photo-7262911.jpeg?auto=compress&cs=tinysrgb&w=800", description: "通过传递奢华开箱体验，让您的客户在收到产品的第一刻就感受到品牌价值。坚固的结构确保产品安全送达，避免售后烦恼。", proTip: "提示：配合使用烫金或击凸工艺，可显著提升高级感。", needs: ["高级质感", "结构保护", "品牌价值", "奢华体验"], purposes: ["礼品赠送", "品牌宣传"], size: "中", recommended: ["天地盖盒", "翻盖书型盒", "抽屉盒", "手提袋"] },
-                { name: "单品包装", image: "https://images.pexels.com/photos/7262898/pexels-photo-7262898.jpeg?auto=compress&cs=tinysrgb&w=800", description: "在零售货架上脱颖而出，精准的包装结构完美保护您的产品。精致的工艺是体现产品专业性的最佳方式。", proTip: "提示：选择合适的纸张克重是平衡成本与挺度的关键。", needs: ["产品保护", "陈列效果", "工艺精致"], purposes: ["零售陈列", "产品内包装"], size: "小", recommended: ["双插盒", "锁底盒", "纸管"] },
-                { name: "彩妆产品", image: "https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=800", description: "用设计感十足的小包装抓住消费者的眼球。独特的结构和亮眼的工艺能有效提升产品的吸引力和购买转化率。", proTip: "提示：局部UV或镭射膜工艺能让您的彩妆在货架上闪闪发光。", needs: ["设计感强", "小巧精致", "特殊工艺"], purposes: ["零售陈列"], size: "小", recommended: ["双插盒", "抽屉盒", "异形盒"] }
-            ]
-        },
-        {
-            industry: "3C数码",
-            icon: "smartphone",
-            color: "blue-500",
-            subcategories: [
-                { name: "手机及配件", image: "https://images.pexels.com/photos/163036/phone-camera-smartphone-instagram-163036.jpeg?auto=compress&cs=tinysrgb&w=800", description: "用简洁而富有科技感的设计传递品牌信任感。精准的内托设计不仅提供卓越保护，更是专业性的体现。", proTip: "提示：防刮花哑膜配合局部UV，是体现科技感的经典搭配。", needs: ["结构强度", "精准内托", "科技感"], purposes: ["零售陈列", "产品内包装"], size: "中", recommended: ["天地盖盒", "翻盖书型盒", "抽屉盒"] },
-                { name: "消费电子", image: "https://images.pexels.com/photos/1036936/pexels-photo-1036936.jpeg?auto=compress&cs=tinysrgb&w=800", description: "优秀的包装是产品的第一“说明书”。通过开窗设计或清晰的图文展示，让消费者在货架前就能快速了解产品亮点。", proTip: "提示：带挂钩的锁底盒结构，非常适合在商超货架上进行挂式陈列。", needs: ["产品保护", "展示功能", "开窗设计"], purposes: ["零售陈列"], size: "中", recommended: ["锁底盒 (带挂钩)", "天地盖盒", "抽屉盒"] }
-            ]
-        },
-        {
-            industry: "电子产品",
-            icon: "cpu",
-            color: "indigo-500",
-            subcategories: [
-                { name: "家用电器", image: "https://images.pexels.com/photos/3825529/pexels-photo-3825529.jpeg?auto=compress&cs=tinysrgb&w=800", description: "为您的电器产品提供“盔甲”般的保护。坚固的瓦楞包装能有效应对复杂的物流挑战，降低运输损耗。", proTip: "提示：根据产品重量选择三层或五层瓦楞纸板，能实现成本和保护性的最佳平衡。", needs: ["运输保护", "结构强度", "配件固定", "成本控制"], purposes: ["电商快递"], size: "大", recommended: ["瓦楞盒", "飞机盒(大号)"] },
-                { name: "个护健康", image: "https://images.pexels.com/photos/7691238/pexels-photo-7691238.jpeg?auto=compress&cs=tinysrgb&w=800", description: "包装不仅是保护，更是传递健康生活理念的媒介。内外盒的精致结合，能显著提升用户对品牌的信赖感。", proTip: "提示：使用触感膜或环保特种纸，能更好地传递自然、健康的品牌理念。", needs: ["科技感", "品牌形象", "精准内托", "陈列效果"], purposes: ["零售陈列", "礼品赠送"], size: "中", recommended: ["天地盖盒", "抽屉盒", "翻盖书型盒"] },
-                { name: "办公设备", image: "https://images.pexels.com/photos/7643759/pexels-photo-7643759.jpeg?auto=compress&cs=tinysrgb&w=800", description: "高效、专业的包装方案能简化您的仓储和运输流程。清晰的版面设计，让产品信息一目了然。", proTip: "提示：采用统一的视觉设计系统，能有效强化您在B端市场的品牌形象。", needs: ["功能性", "品牌一致性", "信息清晰", "仓储方便"], purposes: ["零售陈列", "电商快递"], size: "中", recommended: ["锁底盒", "飞机盒", "双插盒"] }
-            ]
-        },
-        {
-            industry: "食品饮料",
-            icon: "utensils-crossed",
-            color: "orange-500",
-            subcategories: [
-                { name: "烘焙糕点", image: "https://images.pexels.com/photos/1854037/pexels-photo-1854037.jpeg?auto=compress&cs=tinysrgb&w=800", description: "让美味“看得见”。开窗设计能激发顾客的食欲，而食品级安全材质则让这份美味更安心。", proTip: "提示：PET透明开窗膜比普通PVC膜更环保，能提升品牌好感度。", needs: ["食品级材质", "结构支撑", "开窗展示", "品牌特色"], purposes: ["零售陈列", "礼品赠送"], size: "中", recommended: ["手提盒", "天地盖盒", "西点盒"] },
-                { name: "茶叶/咖啡", image: "https://images.pexels.com/photos/4109936/pexels-photo-4109936.jpeg?auto=compress&cs=tinysrgb&w=800", description: "为您的精品风味保驾护航。高阻隔性的包装能锁住香气，典雅的设计则讲述着品牌的故事与文化。", proTip: "提示：纸管包装不仅结构独特，其密封性也特别适合茶叶、花茶等产品。", needs: ["高阻隔性", "保持风味", "品牌文化"], purposes: ["礼品赠送", "品牌宣传"], size: "小", recommended: ["纸管", "抽屉盒", "八边封袋"] },
-                { name: "休闲零食", image: "https://images.pexels.com/photos/5638668/pexels-photo-5638668.jpeg?auto=compress&cs=tinysrgb&w=800", description: "在琳琅满目的货架上，用鲜活的设计抓住消费者的胃。可靠的密封性确保产品在赏味期内的新鲜口感。", proTip: "提示：复合材质的自立袋是兼顾展示效果、密封性和成本的优选方案。", needs: ["密封防潮", "激发食欲", "成本控制"], purposes: ["零售陈列", "产品内包装"], size: "小", recommended: ["自立袋", "锁底盒", "双插盒"] }
-            ]
-        },
-        {
-            industry: "礼品与节庆",
-            icon: "gift",
-            color: "red-500",
-            subcategories: [
-                { name: "节日礼盒", image: "https://images.pexels.com/photos/5708266/pexels-photo-5708266.jpeg?auto=compress&cs=tinysrgb&w=800", description: "包装是情感的载体。富有创意的结构和充满节日氛围的设计，能让您的心意加倍。", proTip: "提示：翻盖书型盒配合磁铁暗扣，能营造出富有仪式感的“开箱”体验。", needs: ["创意结构", "节日氛围", "仪式感"], purposes: ["礼品赠送"], size: "中", recommended: ["翻盖书型盒", "异形盒", "天地盖盒"] },
-                { name: "伴手礼", image: "https://images.pexels.com/photos/6621469/pexels-photo-6621469.jpeg?auto=compress&cs=tinysrgb&w=800", description: "一份得体的伴手礼，是品牌形象的流动广告。便携精美的设计，能让这份心意被轻松带到更远的地方。", proTip: "提示：小巧的抽屉盒配上手提袋，是一套经典且高性价比的伴手礼组合。", needs: ["便携精美", "主题体现", "性价比"], purposes: ["礼品赠送"], size: "小", recommended: ["手提袋", "抽屉盒", "双插盒"] }
-            ]
-        },
-        {
-            industry: "服装配饰",
-            icon: "shirt",
-            color: "gray-500",
-            subcategories: [
-                { name: "高端服装", image: "https://images.pexels.com/photos/994523/pexels-photo-994523.jpeg?auto=compress&cs=tinysrgb&w=800", description: "对于高端品牌，包装本身就是奢侈体验的重要一环。大尺寸的精品盒能完美承载您的产品，传递品牌价值。", proTip: "提示：大尺寸天地盖盒配合丝带或定制腰封，是高端服装包装的常用选择。", needs: ["品牌形象", "大尺寸", "奢华体验"], purposes: ["礼品赠送", "品牌宣传"], size: "大", recommended: ["天地盖盒", "飞机盒(大号)", "手提袋"] },
-                { name: "珠宝首饰", image: "https://images.pexels.com/photos/1458869/pexels-photo-1458869.jpeg?auto=compress&cs=tinysrgb&w=800", description: "方寸之间，尽显精致。坚固的结构与柔软的内托为您的珍贵饰品提供周全保护，彰显不凡品味。", proTip: "提示：植绒或EVA材质的内托，能有效固定首饰并防止刮花。", needs: ["精致小巧", "强保护性", "高级内托"], purposes: ["礼品赠送", "零售陈列"], size: "小", recommended: ["抽屉盒", "天地盖盒", "首饰袋"] }
-            ]
-        },
-        {
-            industry: "电商零售",
-            icon: "shopping-cart",
-            color: "sky-500",
-            subcategories: [
-                { name: "快递运输盒", image: "https://images.pexels.com/photos/7709292/pexels-photo-7709292.jpeg?auto=compress&cs=tinysrgb&w=800", description: "坚固、耐用、轻便是电商包装的核心。我们的方案能有效保护商品，降低运输损耗，提升客户满意度。", proTip: "提示：飞机盒一体成型，无需胶带封箱，能显著提升打包效率。", needs: ["坚固耐用", "轻便", "易于打包"], purposes: ["电商快递"], size: "大", recommended: ["飞机盒", "瓦楞盒"] },
-                { name: "订阅盒", image: "https://images.pexels.com/photos/6698513/pexels-photo-6698513.jpeg?auto=compress&cs=tinysrgb&w=800", description: "每月一次的“惊喜”，从打开包装的瞬间开始。通过独特的结构和品牌化的设计，创造难忘的开箱体验，提升用户粘性。", proTip: "提示：在飞机盒内侧进行单色印刷，是低成本提升品牌感和开箱体验的妙招。", needs: ["品牌塑造", "开箱体验", "结构多样"], purposes: ["电商快递", "品牌宣传"], size: "中", recommended: ["飞机盒", "翻盖书型盒"] }
-            ]
-        }
-    ];
-     const quickEntries = [
-        { name: "我是电商卖家", icon: "shopping-cart", filters: { industry: "电商零售", purposes: ["电商快递"], sizes: [] } },
-        { name: "我要做节日礼品", icon: "gift", filters: { industry: "礼品与节庆", purposes: ["礼品赠送"], sizes: [] } },
-        { name: "我是新消费品牌", icon: "gem", filters: { industry: "美妆护肤", purposes: [], sizes: ["小", "中"] } }
-    ];
-
-    const filters = {
-        industry: null,
-        purposes: [],
-        sizes: []
-    };
-
-    const industryFilterContainer = document.getElementById('industry-filter');
-    const purposeFilterContainer = document.getElementById('purpose-filter');
-    const sizeFilterContainer = document.getElementById('size-filter');
-    const resultsContainer = document.getElementById('results-container');
-    const noResultsContainer = document.getElementById('no-results');
-    const resetBtn = document.getElementById('reset-filters-btn');
-    const quickEntryContainer = document.getElementById('quick-entry-container');
-    const inspirationLink = document.getElementById('inspiration-link');
-
-
-    function renderQuickEntries() {
-        quickEntryContainer.innerHTML = quickEntries.map(entry => `
-            <button data-entry-name="${entry.name}" class="quick-entry-btn flex items-center bg-white border border-slate-300 rounded-full px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:border-slate-400 transition-colors">
-                <i data-lucide="${entry.icon}" class="w-4 h-4 mr-2 text-slate-500"></i>
-                <span>${entry.name}</span>
-            </button>
-        `).join('');
-    }
-
-    function renderIndustries() {
-        industryFilterContainer.innerHTML = industryData.map(item => `
-            <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500">
-                <input type="radio" name="industry" value="${item.industry}" class="sr-only">
-                <i data-lucide="${item.icon}" class="w-5 h-5 text-${item.color} mr-3"></i>
-                <span class="font-medium text-sm">${item.industry}</span>
-            </label>
-        `).join('');
-    }
-
-    function renderPurposes() {
-        let subcategoriesToScan = industryData.flatMap(i => i.subcategories);
-        if (filters.industry) {
-             const industry = industryData.find(i => i.industry === filters.industry);
-             subcategoriesToScan = industry ? industry.subcategories : [];
-        }
-
-        const availablePurposes = subcategoriesToScan.flatMap(sub => sub.purposes);
-        const uniquePurposes = [...new Set(availablePurposes)].sort();
-
-        purposeFilterContainer.innerHTML = uniquePurposes.map(pur => `
-            <button type="button" class="filter-btn text-sm border rounded-full px-3 py-1.5 transition-colors hover:border-slate-400" data-purpose="${pur}">
-                ${pur}
-            </button>
-        `).join('');
-
-        filters.purposes.forEach(pur => {
-            const btn = purposeFilterContainer.querySelector(`[data-purpose="${pur}"]`);
-            if (btn) btn.classList.add('active');
-        });
-    }
-
-    function renderSizes() {
-        const sizes = ['小', '中', '大'];
-        sizeFilterContainer.innerHTML = sizes.map(size => `
-            <button type="button" class="filter-btn text-sm border rounded-full px-4 py-1.5 transition-colors hover:border-slate-400" data-size="${size}">
-                ${size}
-            </button>
-        `).join('');
-
-        filters.sizes.forEach(size => {
-            const btn = sizeFilterContainer.querySelector(`[data-size="${size}"]`);
-            if (btn) btn.classList.add('active');
-        });
-    }
-
-    function renderResults() {
-        let results = industryData.flatMap(i => i.subcategories);
-
-        if (filters.industry) {
-            const industry = industryData.find(i => i.industry === filters.industry);
-            results = industry ? industry.subcategories : [];
-        }
-
-        if (filters.purposes.length > 0) {
-            results = results.filter(sub => filters.purposes.every(pur => sub.purposes.includes(pur)));
-        }
-
-        if (filters.sizes.length > 0) {
-            results = results.filter(sub => filters.sizes.includes(sub.size));
-        }
-
-        resultsContainer.innerHTML = '';
-        if (results.length > 0) {
-            noResultsContainer.classList.add('hidden');
-            inspirationLink.classList.remove('hidden');
-            results.forEach(sub => {
-                const card = document.createElement('div');
-                card.className = "bg-white rounded-xl shadow-md overflow-hidden flex flex-col";
-                card.innerHTML = `
-                    <img src="${sub.image}" alt="${sub.name}" class="w-full h-48 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x250/e2e8f0/94a3b8?text=Image+not+found';">
-                    <div class="p-6 flex flex-col flex-grow">
-                        <h3 class="font-bold text-xl mb-2">${sub.name}</h3>
-                        <p class="text-slate-600 text-sm mb-4 flex-grow">${sub.description}</p>
-
-                        <div class="mb-4">
-                            <h4 class="font-semibold text-xs mb-2 text-slate-500 uppercase tracking-wider">核心需求:</h4>
-                            <div class="needs-container flex flex-wrap gap-2 text-xs">
-                                ${sub.needs.map(need => `<span class="need-tag bg-slate-100 text-slate-700 px-2 py-1 rounded-full transition-all duration-200" data-need="${need}">${need}</span>`).join('')}
-                            </div>
-                        </div>
-
-                        <!-- 3. 专家提示 -->
-                        <div class="mb-6 p-3 bg-amber-50 border-l-4 border-amber-400 text-amber-800 text-xs">
-                            <span class="font-bold">专家提示:</span> ${sub.proTip}
-                        </div>
-
-                        <div class="mt-auto">
-                            <h4 class="font-semibold text-xs mb-3 text-slate-500 uppercase tracking-wider">推荐盒型 (点击定制):</h4>
-                            <div class="grid gap-2 grid-cols-2">
-                                ${sub.recommended.map((rec, index) => {
-                                    const box = boxTypeData[rec] || {};
-                                    const fulfills = box.fulfillsNeeds || [];
-                                    const icon = box.icon || '';
-                                    const isPrimary = index === 0;
-                                    const primaryClasses = 'bg-blue-600 text-white hover:bg-blue-700';
-                                    const secondaryClasses = 'bg-white text-blue-600 border border-blue-500 hover:bg-blue-50';
-                                    return `<button
-                                                data-box-type="${rec}"
-                                                data-fulfills='${JSON.stringify(fulfills)}'
-                                                class="recommended-box-btn w-full text-sm font-semibold py-2 px-3 rounded-lg transition-colors flex items-center justify-center ${isPrimary ? primaryClasses : secondaryClasses}">
-                                                ${icon}
-                                                <span>${rec}</span>
-                                            </button>`
-                                }).join('')}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                resultsContainer.appendChild(card);
-            });
-        } else {
-             noResultsContainer.classList.remove('hidden');
-             inspirationLink.classList.add('hidden');
-        }
-
-        if (window.lucide) {
-            lucide.createIcons();
-        }
-    }
-
-    function resetAllFilters() {
-         filters.industry = null;
-        filters.purposes = [];
-        filters.sizes = [];
-
-        const currentIndustry = document.querySelector('input[name="industry"]:checked');
-        if(currentIndustry) currentIndustry.checked = false;
-
-        renderPurposes(); // Re-render with all purposes
-        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-
-        updateFiltersAndRender();
-    }
-
-    function updateFiltersAndRender() {
-        const selectedIndustryInput = document.querySelector('input[name="industry"]:checked');
-        filters.industry = selectedIndustryInput ? selectedIndustryInput.value : null;
-
-        filters.purposes = Array.from(document.querySelectorAll('#purpose-filter .filter-btn.active')).map(btn => btn.dataset.purpose);
-        filters.sizes = Array.from(document.querySelectorAll('#size-filter .filter-btn.active')).map(btn => btn.dataset.size);
-
-        renderResults();
-    }
-
-    function navigateToCustomization(boxType) {
-        // Map generic box type names from matcher to specific product IDs
-        const productMapping = {
-            "天地盖盒": "P-02-JP-TD", // Defaulting to the '精品盒' version
-            "翻盖书型盒": "P-02-JP-SX",
-            "抽屉盒": "P-02-JP-CT", // Defaulting to the '精品盒' version
-            "手提袋": null, // No direct equivalent in product data, handle gracefully
-            "双插盒": "P-01-KH-SC",
-            "锁底盒": "P-01-KH-SD", // Mapping to manual lock bottom
-            "纸管": null, // Not available
-            "异形盒": null, // Not available
-            "瓦楞盒": null, // No generic corrugated box, only airplane box
-            "飞机盒": "P-01-KH-FJ",
-            "飞机盒(大号)": "P-01-KH-FJ", // Map to the same for now
-            "手提盒": null, // Not available
-            "西点盒": null, // Not available
-            "八边封袋": null, // Not available
-            "自立袋": null, // Not available
-            "首饰袋": null, // Not available
-            "锁底盒 (带挂钩)": "P-01-KH-DS" // Mapping to a similar type
-        };
-
-        const productId = productMapping[boxType];
-
-        if (productId) {
-            // Store an object to be more descriptive about the action
-            localStorage.setItem('navigateTo', JSON.stringify({
-                action: 'goToCustomization',
-                productId: productId
-            }));
-            window.location.href = 'index.html';
-        } else {
-            alert(`“${boxType}”的在线定制功能即将上线，敬请期待！`);
-        }
-    }
-
-    // --- Event Listeners ---
-
-    // Quick Entry
-    quickEntryContainer.addEventListener('click', e => {
-        const target = e.target.closest('.quick-entry-btn');
-        if (target) {
-            const entryName = target.dataset.entryName;
-            const entry = quickEntries.find(e => e.name === entryName);
-            if (entry) {
-                resetAllFilters();
-                // Apply filters from quick entry
-                if (entry.filters.industry) {
-                    const industryRadio = document.querySelector(`input[name="industry"][value="${entry.filters.industry}"]`);
-                    if(industryRadio) industryRadio.checked = true;
-                    renderPurposes(); // re-render purposes for the selected industry
-                }
-
-                entry.filters.purposes.forEach(pur => {
-                    const btn = purposeFilterContainer.querySelector(`[data-purpose="${pur}"]`);
-                    if(btn) btn.classList.add('active');
-                });
-                 entry.filters.sizes.forEach(size => {
-                    const btn = sizeFilterContainer.querySelector(`[data-size="${size}"]`);
-                    if(btn) btn.classList.add('active');
-                });
-
-                updateFiltersAndRender();
-            }
-        }
-    });
-
-    // Filter changes
-    industryFilterContainer.addEventListener('change', e => {
-        if(e.target.name === 'industry') {
-            // Reset sub-filters when industry changes
-            filters.purposes = [];
-            filters.sizes = [];
-            renderPurposes();
-            renderSizes();
-            updateFiltersAndRender();
-        }
-    });
-
-    purposeFilterContainer.addEventListener('click', e => {
-        if (e.target.classList.contains('filter-btn')) {
-            e.target.classList.toggle('active');
-            updateFiltersAndRender();
-        }
-    });
-
-    sizeFilterContainer.addEventListener('click', e => {
-        if (e.target.classList.contains('filter-btn')) {
-            e.target.classList.toggle('active');
-            updateFiltersAndRender();
-        }
-    });
-
-    // Reset button
-    resetBtn.addEventListener('click', resetAllFilters);
-
-    // --- Interactive Results Card Events ---
-    resultsContainer.addEventListener('click', e => {
-        const target = e.target.closest('.recommended-box-btn');
-        if (target) {
-            const boxType = target.dataset.boxType;
-            if (boxType) {
-                navigateToCustomization(boxType);
-            }
-        }
-    });
-
-    resultsContainer.addEventListener('mouseover', e => {
-        const target = e.target.closest('.recommended-box-btn');
-        if (target) {
-            const card = target.closest('.bg-white');
-            const needsToHighlight = JSON.parse(target.dataset.fulfills || '[]');
-            const needTags = card.querySelectorAll('.need-tag');
-            needTags.forEach(tag => {
-                if (needsToHighlight.includes(tag.dataset.need)) {
-                    tag.classList.add('highlight');
-                }
-            });
-        }
-    });
-
-    resultsContainer.addEventListener('mouseout', e => {
-        const target = e.target.closest('.recommended-box-btn');
-        if (target) {
-            const card = target.closest('.bg-white');
-            card.querySelectorAll('.need-tag').forEach(tag => {
-                tag.classList.remove('highlight');
-            });
-        }
-    });
-
-
-    // Initial Render
-    renderQuickEntries();
-    renderIndustries();
-    renderPurposes();
-    renderSizes();
-    renderResults();
-    if (window.lucide) {
-        lucide.createIcons();
-    }
-}
-
 
 // --- 初始化 ---
 document.addEventListener('DOMContentLoaded', () => {
-    const path = window.location.pathname.split('/').pop();
-    const urlParams = new URLSearchParams(window.location.search);
-
-    if (path === 'products.html' || path === '' || path === 'index.html') {
-        if (document.getElementById('hierarchical-filter-container')) {
-            initializeFilters();
+    // 检查是否有来自 smart-matcher 的导航请求
+    const navigateToAction = localStorage.getItem('navigateTo');
+    if (navigateToAction) {
+        localStorage.removeItem('navigateTo'); // 清除以防重复触发
+        try {
+            const { action, productId } = JSON.parse(navigateToAction);
+            if (action === 'goToCustomization' && productId) {
+                goToCustomization(productId);
+                return; // 阻止后续的默认页面加载
+            }
+        } catch (e) {
+            console.error("Error parsing navigateTo action:", e);
         }
-    } else if (path === 'product-detail.html') {
-        const productId = urlParams.get('product');
-        if (!productId) {
-            document.body.innerHTML = '<h1>产品未找到</h1>';
-            return;
-        }
-        const product = productDetails[productId];
-        const productInfo = findProductInCatalog(productId);
-
-        if (!product || !productInfo) {
-            document.body.innerHTML = '<h1>产品信息不存在</h1>';
-            return;
-        }
-
-        // Update main product information
-        document.getElementById('product-detail-title').textContent = productInfo.name;
-        document.getElementById('product-detail-subtitle').textContent = productInfo.id;
-        document.getElementById('product-detail-main-image').src = productInfo.imageUrl.replace('400', '600');
-        document.getElementById('product-detail-breadcrumb').textContent = productInfo.name;
-
-        // Update features
-        const featuresContainer = document.getElementById('product-detail-features');
-        if (product.features && featuresContainer) {
-            featuresContainer.innerHTML = product.features.map(feature =>
-                `<li class="flex items-start"><i data-lucide="check" class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>${feature}</li>`
-            ).join('');
-        }
-
-        // Update scenarios
-        const scenariosContainer = document.getElementById('product-detail-scenarios');
-        if (product.scenarios && scenariosContainer) {
-            scenariosContainer.innerHTML = product.scenarios.map(scenario =>
-                `<div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
-                    <i data-lucide="${scenario.icon}" class="w-6 h-6 text-${scenario.color}-600"></i>
-                    <div>
-                        <p class="text-sm font-medium">${scenario.name}</p>
-                        <p class="text-xs text-slate-500">${scenario.description || ''}</p>
-                    </div>
-                </div>`
-            ).join('');
-        }
-
-        // Add event listeners for tabs
-        document.querySelectorAll('.product-detail-tab-button').forEach(button => {
-            button.addEventListener('click', () => {
-                switchProductDetailTab(button, productId, button.dataset.tab);
-            });
-        });
-
-        // Customize button
-        const customizeButton = document.querySelector('#product-detail-page .bg-blue-600');
-        if(customizeButton) {
-            customizeButton.onclick = () => goToCustomization(productId);
-        }
-
-        // Click the first tab by default
-        if (document.querySelector('.product-detail-tab-button')) {
-            document.querySelector('.product-detail-tab-button').click();
-        }
-
-    } else if (path === 'customization.html') {
-        const productId = urlParams.get('product');
-        if (productId) {
-            populateCustomizationPage(productId);
-        }
-        renderMaterialOptions();
-        renderSpecialProcesses();
-    } else if (path === 'cart.html') {
-        renderCart();
-        // Add event listener for going back to cart
-        const backToCartLink = document.querySelector('a[href="cart.html"]');
-        if(backToCartLink && backToCartLink.textContent.includes('返回购物车')){
-             backToCartLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.getElementById('checkout-page').classList.add('hidden');
-                document.getElementById('shopping-cart-page').classList.remove('hidden');
-                window.scrollTo(0, 0);
-            });
-        }
-    } else if (path === 'user-center.html') {
-        const view = urlParams.get('view') || 'dashboard-view';
-        const orderId = urlParams.get('orderId');
-        showUserCenterView(view, { orderId });
-    } else if (path === 'smart-matcher.html') {
-        initializeSmartMatcherPage();
-    } else if (path === 'smart-design.html') {
-        initializeSmartDesignPage();
     }
 
+    // 检查是否有目标页面需要跳转
+    const targetPage = localStorage.getItem('targetPage');
+    if (targetPage) {
+        localStorage.removeItem('targetPage');
+        showPage(targetPage);
+    } else {
+        showPage('homepage');
+    }
     updateCartIcon();
+    initializeFilters();
     renderIcons();
+
+    // Handle window resize for mobile filter
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 1024) {
+            // Show sidebar on desktop
+            document.getElementById('filter-sidebar').classList.remove('hidden');
+        } else {
+            // Hide sidebar on mobile by default
+            document.getElementById('filter-sidebar').classList.add('hidden');
+            document.getElementById('filter-chevron').style.transform = 'rotate(0deg)';
+        }
+    });
+
+    if (window.location.pathname.endsWith('order-success.html')) {
+        renderOrderSuccessPage();
+    }
 });

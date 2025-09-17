@@ -99,28 +99,31 @@
                 </svg>
                 <span class="text-xl font-bold text-slate-900">智盒工坊</span>
             </a>
-            <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                <a href="index.html" class="text-slate-700 hover:text-blue-600">首页</a>
-                <a href="products.html" class="text-slate-700 hover:text-blue-600">在线定制</a>
-                <a href="smart-matcher.html" class="text-slate-700 hover:text-blue-600">智能方案匹配</a>
-                <a href="smart-design.html" class="text-blue-600">AI设计打样</a>
-                <a href="solutions.html" class="text-slate-700 hover:text-blue-600">解决方案</a>
-                <a href="user-center.html" class="text-slate-700 hover:text-blue-600">个人中心</a>
-                <a href="help.html" class="text-slate-700 hover:text-blue-600">帮助中心</a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" onclick="localStorage.setItem('targetPage', 'homepage');" class="text-slate-600 hover:text-blue-600">首页</a>
+                <a href="index.html" onclick="localStorage.setItem('targetPage', 'product-center-page');"
+                    class="text-slate-600 hover:text-blue-600">在线定制</a>
+                <a href="smart-matcher.html" class="text-slate-600 hover:text-blue-600">智能包装方案匹配器</a>
+                <a href="smart-design.html" class="text-blue-600 font-semibold">智能包装设计及打样服务</a>
+                <a href="index.html" onclick="localStorage.setItem('targetPage', 'user-center-page');"
+                    class="text-slate-600 hover:text-blue-600">个人中心</a>
+                <a href="index.html" onclick="localStorage.setItem('targetPage', 'solutions-page');" class="text-slate-600 hover:text-blue-600">解决方案</a>
+                <a href="index.html" onclick="localStorage.setItem('targetPage', 'help-center-page');"
+                    class="text-slate-600 hover:text-blue-600">帮助中心</a>
             </div>
             <div class="flex items-center space-x-4">
-                <a href="#" onclick="openLoginModal()" class="text-slate-600 hover:text-blue-600 text-sm">登录/注册</a>
-                <a href="cart.html" id="cart-icon-container"
+                <a href="index.html" onclick="localStorage.setItem('targetPage', 'homepage');" class="text-slate-600 hover:text-blue-600 text-sm">登录/注册</a>
+                <a href="index.html" onclick="localStorage.setItem('targetPage', 'shopping-cart-page');" id="cart-icon-container"
                     class="relative flex items-center text-slate-600 hover:text-blue-600 transition-colors font-medium">
                     <i data-lucide="shopping-cart" class="w-5 h-5 mr-1"></i>
                     <span>我的购物车</span>
                     <span id="cart-badge"
                         class="ml-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                 </a>
-                <a href="products.html"
-                    class="btn-primary text-white px-5 py-2 rounded-lg font-semibold shadow-sm transition-all hidden sm:block">
+                <button onclick="window.location.href='index.html'; localStorage.setItem('targetPage', 'product-center-page');"
+                    class="bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold shadow-sm transition-all hidden sm:block hover:bg-blue-500">
                     立即定制
-                </a>
+                </button>
             </div>
         </nav>
     </header>
@@ -585,8 +588,251 @@
         已将您的杰作收藏！
     </div>
 
-    <script src="js/product-data.js"></script>
-    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+            const generateBtn = document.getElementById('generate-btn');
+            const gallery = document.getElementById('ai-results-gallery');
+            const initialPrompt = document.getElementById('initial-prompt');
+            const proofingModal = document.getElementById('proofing-modal');
+            const closeProofingModalBtn = document.getElementById('close-proofing-modal');
+            const modalDesignImage = document.getElementById('modal-design-image');
+            const toast = document.getElementById('toast-notification');
+
+            const baseProofingCostEl = document.getElementById('base-proofing-cost');
+            const finishingCostEl = document.getElementById('finishing-cost-summary');
+            const serviceCostEl = document.getElementById('service-cost-summary');
+            const totalCostEl = document.getElementById('total-cost-summary');
+            const expertFeeRow = document.getElementById('expert-fee-row');
+            const expertCostSummary = document.getElementById('expert-cost-summary');
+
+            const innerTrayCheckbox = document.getElementById('inner-tray-checkbox');
+            const innerTrayOptions = document.getElementById('inner-tray-options');
+            const addAccessoriesCheckbox = document.getElementById('add-accessories-checkbox');
+            const accessoriesOptions = document.getElementById('accessories-options');
+
+            const proofingModeRadios = document.querySelectorAll('input[name="proofing-mode"]');
+            const manualSpecsContainer = document.getElementById('manual-specs-container');
+
+            const mockResults = [
+                { image: 'https://images.pexels.com/photos/7262900/pexels-photo-7262900.jpeg?auto=compress&cs=tinysrgb&w=400' },
+                { image: 'https://images.pexels.com/photos/7262995/pexels-photo-7262995.jpeg?auto=compress&cs=tinysrgb&w=400' },
+                { image: 'https://images.pexels.com/photos/7262990/pexels-photo-7262990.jpeg?auto=compress&cs=tinysrgb&w=400' },
+                { image: 'https://images.pexels.com/photos/7262890/pexels-photo-7262890.jpeg?auto=compress&cs=tinysrgb&w=400' },
+                { image: 'https://images.pexels.com/photos/7262817/pexels-photo-7262817.jpeg?auto=compress&cs=tinysrgb&w=400' },
+                { image: 'https://images.pexels.com/photos/7262779/pexels-photo-7262779.jpeg?auto=compress&cs=tinysrgb&w=400' },
+            ];
+
+            // --- User Input Animation ---
+            const inputsForAnimation = [document.getElementById('product-name'), document.getElementById('style-keywords')];
+            inputsForAnimation.forEach(input => {
+                input.addEventListener('input', () => {
+                    if(input.value.length > 2) {
+                        generateBtn.classList.add('button-pulse');
+                    } else {
+                        generateBtn.classList.remove('button-pulse');
+                    }
+                });
+            });
+
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.remove('opacity-0', 'translate-y-10');
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', 'translate-y-10');
+                }, 2500);
+            }
+
+            function handleProofingModeChange() {
+                const selectedMode = document.querySelector('input[name="proofing-mode"]:checked').value;
+                if (selectedMode === 'expert') {
+                    manualSpecsContainer.classList.add('disabled');
+                    expertFeeRow.classList.remove('hidden');
+                    baseProofingCostEl.parentElement.classList.add('hidden');
+                    finishingCostEl.parentElement.classList.add('hidden');
+                    serviceCostEl.parentElement.classList.add('hidden');
+                } else {
+                    manualSpecsContainer.classList.remove('disabled');
+                    expertFeeRow.classList.add('hidden');
+                    baseProofingCostEl.parentElement.classList.remove('hidden');
+                    finishingCostEl.parentElement.classList.remove('hidden');
+                    serviceCostEl.parentElement.classList.remove('hidden');
+                }
+                updateCost();
+            }
+
+            function addEventListenersForCostUpdate() {
+                proofingModeRadios.forEach(radio => radio.addEventListener('change', handleProofingModeChange));
+
+                const costInputs = [
+                    ...document.querySelectorAll('input[name="finishing-option"], input[name="service-option"], input[name="inner-tray-material"], input[name="standard-accessory"]'),
+                    document.getElementById('proofing-quantity')
+                ];
+
+                costInputs.forEach(el => {
+                    el.addEventListener('change', updateCost);
+                    el.addEventListener('input', updateCost); // for quantity
+                });
+
+                innerTrayCheckbox.addEventListener('change', () => {
+                    innerTrayOptions.classList.toggle('hidden', !innerTrayCheckbox.checked);
+                    updateCost();
+                });
+
+                addAccessoriesCheckbox.addEventListener('change', () => {
+                    accessoriesOptions.classList.toggle('hidden', !addAccessoriesCheckbox.checked);
+                    updateCost();
+                });
+            }
+
+            function updateCost() {
+                const selectedMode = document.querySelector('input[name="proofing-mode"]:checked').value;
+                const quantity = parseInt(document.getElementById('proofing-quantity').value) || 1;
+
+                if (selectedMode === 'expert') {
+                    const depositPrice = 100.00;
+                    expertCostSummary.textContent = `¥ ${depositPrice.toFixed(2)}`;
+                    totalCostEl.textContent = `¥ ${depositPrice.toFixed(2)}`;
+                    return;
+                }
+
+                let finishingPrice = 0;
+                let servicePrice = 0;
+                const basePrice = 150.00;
+
+                document.querySelectorAll('input[name="finishing-option"]:checked').forEach(checkbox => {
+                    finishingPrice += parseFloat(checkbox.value);
+                });
+
+                document.querySelectorAll('input[name="service-option"]:checked').forEach(checkbox => {
+                    const id = checkbox.id;
+                    if(id !== 'inner-tray-checkbox' && id !== 'add-accessories-checkbox') {
+                         servicePrice += parseFloat(checkbox.value);
+                    }
+                });
+
+                if (innerTrayCheckbox.checked) {
+                    const selectedTray = document.querySelector('input[name="inner-tray-material"]:checked');
+                    if(selectedTray) {
+                        servicePrice += parseFloat(selectedTray.value);
+                    }
+                }
+
+                if (addAccessoriesCheckbox.checked) {
+                     document.querySelectorAll('input[name="standard-accessory"]:checked').forEach(checkbox => {
+                        servicePrice += parseFloat(checkbox.value);
+                    });
+                }
+
+                const totalPerItemCost = basePrice + finishingPrice + servicePrice;
+                const totalPrice = totalPerItemCost * quantity;
+
+                baseProofingCostEl.textContent = `¥ ${(basePrice * quantity).toFixed(2)}`;
+                finishingCostEl.textContent = `¥ ${(finishingPrice * quantity).toFixed(2)}`;
+                serviceCostEl.textContent = `¥ ${(servicePrice * quantity).toFixed(2)}`;
+                totalCostEl.textContent = `¥ ${totalPrice.toFixed(2)}`;
+            }
+
+            function openProofingModal(imageUrl, boxType) {
+                modalDesignImage.src = imageUrl.replace('w=400', 'w=800');
+
+                const boxTypeSelect = document.getElementById('box-type-select');
+                if (boxTypeSelect) {
+                    boxTypeSelect.value = boxType;
+                }
+
+                document.getElementById('proofing-mode-manual').checked = true;
+                handleProofingModeChange();
+
+                addEventListenersForCostUpdate();
+                updateCost();
+                proofingModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                if(window.lucide) lucide.createIcons();
+            }
+
+            function closeProofingModal() {
+                proofingModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+
+            closeProofingModalBtn.addEventListener('click', closeProofingModal);
+
+            proofingModal.addEventListener('click', (e) => {
+                if (e.target === proofingModal) {
+                    closeProofingModal();
+                }
+            });
+
+
+            generateBtn.addEventListener('click', () => {
+                const selectedBoxType = document.querySelector('input[name="box-type"]:checked + label .text-xs').textContent;
+                generateBtn.classList.remove('button-pulse');
+
+                initialPrompt.classList.add('hidden');
+                gallery.innerHTML = `
+                    <div class="col-span-full h-full flex flex-col items-center justify-center text-center p-10">
+                        <i data-lucide="loader-2" class="w-16 h-16 text-blue-500 animate-spin"></i>
+                        <h3 class="mt-4 text-xl font-semibold">AI正在挥洒创意...</h3>
+                        <p class="mt-2 text-slate-500">通常需要10-30秒，请稍候。</p>
+                    </div>
+                `;
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+
+                setTimeout(() => {
+                    gallery.innerHTML = '';
+                    mockResults.sort(() => 0.5 - Math.random()).forEach(result => {
+                        const card = document.createElement('div');
+                        card.className = "group relative bg-white rounded-lg shadow-md overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1";
+                        card.innerHTML = `
+                            <img src="${result.image}" alt="AI generated packaging design" class="w-full h-64 object-cover" loading="lazy">
+                            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-4 translate-y-20 group-hover:translate-y-0 transition-transform duration-300">
+                                <div class="flex justify-center space-x-2">
+                                     <button class="bg-white/80 text-slate-900 p-2 rounded-full hover:bg-white backdrop-blur-sm" title="放大预览">
+                                        <i data-lucide="zoom-in" class="w-5 h-5"></i>
+                                    </button>
+                                    <button class="favorite-btn bg-white/80 text-slate-900 p-2 rounded-full hover:bg-white backdrop-blur-sm" title="收藏">
+                                        <i data-lucide="heart" class="w-5 h-5"></i>
+                                    </button>
+                                     <button data-image-url="${result.image}" data-box-type="${selectedBoxType}" class="select-design-btn flex-grow bg-blue-600/90 text-white font-semibold py-2 px-4 rounded-full hover:bg-blue-600 backdrop-blur-sm">
+                                        选择此方案
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        gallery.appendChild(card);
+                    });
+                     if (window.lucide) {
+                        lucide.createIcons();
+                    }
+                }, 2000);
+            });
+
+            gallery.addEventListener('click', (e) => {
+                const selectBtn = e.target.closest('.select-design-btn');
+                if (selectBtn) {
+                    const imageUrl = selectBtn.dataset.imageUrl;
+                    const boxType = selectBtn.dataset.boxType;
+                    openProofingModal(imageUrl, boxType);
+                    return;
+                }
+
+                const favoriteBtn = e.target.closest('.favorite-btn');
+                if (favoriteBtn) {
+                    const heartIcon = favoriteBtn.querySelector('i');
+                    heartIcon.style.fill = 'red';
+                    heartIcon.style.color = 'red';
+                    showToast('已将您的杰作收藏！');
+                }
+            });
+        });
+    </script>
 
     <!-- Footer -->
     <footer class="bg-slate-900 text-white py-12 mt-20">
