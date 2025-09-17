@@ -132,13 +132,76 @@
                                 </div>
                             </div>
                             <div id="invoice-view" class="user-center-view hidden">
-                                <!-- ... content ... -->
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <div class="flex justify-between items-center mb-8">
+                                        <h1 class="text-3xl font-bold">发票管理</h1>
+                                        <button onclick="openInvoiceModal()"
+                                            class="btn-primary text-white px-5 py-2 rounded-lg font-semibold flex items-center space-x-2">
+                                            <i data-lucide="plus" class="w-4 h-4"></i>
+                                            <span>申请开票</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Tabs -->
+                                    <div class="border-b border-slate-200">
+                                        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                            <button onclick="switchTab(this, 'invoicable-content')"
+                                                class="tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                                可开发票
+                                            </button>
+                                            <button onclick="switchTab(this, 'issued-content')"
+                                                class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                                已开发票
+                                            </button>
+                                        </nav>
+                                    </div>
+
+                                    <!-- Tab Content -->
+                                    <div id="invoicable-content" class="tab-content mt-6">
+                                        <!-- Content will be rendered by JS -->
+                                    </div>
+                                    <div id="issued-content" class="tab-content mt-6 hidden">
+                                        <!-- Content will be rendered by JS -->
+                                    </div>
+                                </div>
                             </div>
                             <div id="distribution-view" class="user-center-view hidden">
                                 <!-- ... content ... -->
                             </div>
                             <div id="coupons-view" class="user-center-view hidden">
-                                <!-- ... content ... -->
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <div class="flex justify-between items-center mb-8">
+                                        <h1 class="text-3xl font-bold">我的优惠券</h1>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="text" placeholder="输入优惠码兑换"
+                                                class="border-slate-300 rounded-lg shadow-sm">
+                                            <button
+                                                class="btn-secondary bg-slate-100 text-slate-700 px-5 py-2 rounded-lg font-semibold">兑换</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tabs -->
+                                    <div class="border-b border-slate-200">
+                                        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                            <button onclick="switchCouponTab(this, 'valid')"
+                                                class="coupon-tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                                未使用
+                                            </button>
+                                            <button onclick="switchCouponTab(this, 'used')"
+                                                class="coupon-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                                已使用
+                                            </button>
+                                            <button onclick="switchCouponTab(this, 'expired')"
+                                                class="coupon-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                                已过期
+                                            </button>
+                                        </nav>
+                                    </div>
+
+                                    <div id="coupons-list-container" class="mt-6">
+                                        <!-- Coupons will be rendered here by JS -->
+                                    </div>
+                                </div>
                             </div>
                             <div id="settings-view" class="user-center-view hidden">
                                 <div class="bg-white p-8 rounded-xl shadow-sm">
@@ -185,7 +248,19 @@
                                 <!-- ... content ... -->
                             </div>
                             <div id="after-sales-view" class="user-center-view hidden">
-                                <!-- ... content ... -->
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <div class="flex justify-between items-center mb-8">
+                                        <h1 class="text-3xl font-bold">售后处理</h1>
+                                        <button onclick="openAfterSalesModal()"
+                                            class="btn-primary text-white px-5 py-2 rounded-lg font-semibold flex items-center space-x-2">
+                                            <i data-lucide="plus" class="w-4 h-4"></i>
+                                            <span>申请售后</span>
+                                        </button>
+                                    </div>
+                                    <div id="after-sales-list-container">
+                                        <!-- After-sales requests will be rendered here by JS -->
+                                    </div>
+                                </div>
                             </div>
                         </main>
                     </div>

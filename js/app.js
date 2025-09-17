@@ -13,6 +13,32 @@ let orders = JSON.parse(localStorage.getItem('orders')) || [
     { id: '20250718985', date: '2025-07-18', total: 3500.00, status: '已发货', statusId: 'shipped', items: [{ name: '双插盒', specs: '100x80x40mm | 350g白卡纸 | 烫金', quantity: 1000, imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
     { id: '20250715752', date: '2025-07-15', total: 880.00, status: '已完成', statusId: 'completed', items: [{ name: '抽屉盒', specs: '120x120x60mm | 精品灰板 | 无工艺', quantity: 200, imageUrl: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
 ];
+
+// --- 发票数据 ---
+const invoicableOrders = [
+    { id: '20250718985', date: '2025-07-18', total: 3500.00, items: '双插盒 x 1000' },
+    { id: '20250715752', date: '2025-07-15', total: 880.00, items: '抽屉盒 x 200' },
+];
+const issuedInvoices = [
+    { id: 'INV-202506-001', date: '2025-06-25', total: 4200.00, type: '增值税普通发票', status: '已开具', link: '#' },
+];
+
+// --- 售后数据 ---
+const afterSalesRequests = [
+    { id: 'AS-202507-001', orderId: '20250718985', requestDate: '2025-07-22', type: '退货退款', reason: '部分产品有瑕疵', status: '处理中', statusId: 'processing' },
+    { id: 'AS-202507-002', orderId: '20250715752', requestDate: '2025-07-20', type: '换货', reason: '尺寸错误', status: '已完成', statusId: 'completed' },
+];
+
+// --- 优惠券数据 ---
+const coupons = [
+    { id: 'NEW-USER-2025', value: 50, type: 'fixed', name: '新人专享券', description: '满300元可用', expiry: '2025-12-31', status: 'valid' },
+    { id: 'SUMMER-SALE', value: 0.88, type: 'percentage', name: '夏日特惠折扣', description: '全场通用，最高抵扣100元', expiry: '2025-08-31', status: 'valid' },
+    { id: 'VIP-EXCLUSIVE', value: 100, type: 'fixed', name: 'VIP客户专享', description: '满1000元可用', expiry: '2025-09-30', status: 'valid' },
+    { id: 'USED-001', value: 20, type: 'fixed', name: '订单满减券', description: '满200元可用', expiry: '2025-07-15', status: 'used' },
+    { id: 'EXPIRED-001', value: 0.95, type: 'percentage', name: '全场折扣', description: '全场通用', expiry: '2025-06-30', status: 'expired' },
+];
+
+
 const distributionData = {
     stats: {
         level: "青铜分销员",
@@ -124,7 +150,166 @@ function showUserCenterView(viewId, context) {
         renderSettingsView();
     } else if (viewId === 'distribution-view') {
         renderDistributionParentView();
+    } else if (viewId === 'invoice-view') {
+        renderInvoiceView();
+    } else if (viewId === 'after-sales-view') {
+        renderAfterSalesView();
+    } else if (viewId === 'coupons-view') {
+        renderCouponsView();
     }
+}
+
+function switchCouponTab(button, status) {
+    const parent = button.closest('.bg-white');
+    parent.querySelectorAll('.coupon-tab-button').forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+    renderCouponsView(status);
+}
+
+function renderCouponsView(filterStatus = 'valid') {
+    const container = document.getElementById('coupons-list-container');
+    if (!container) return;
+
+    const filteredCoupons = coupons.filter(c => c.status === filterStatus);
+
+    if (filteredCoupons.length === 0) {
+        container.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="ticket" class="w-12 h-12 mx-auto"></i><p class="mt-2">暂无此类优惠券</p></div>`;
+    } else {
+        container.innerHTML = `<div class="grid md:grid-cols-2 gap-6">${filteredCoupons.map(coupon => `
+            <div class="coupon-card ${coupon.status} relative flex items-center bg-white border-l-8 rounded-lg shadow-sm overflow-hidden">
+                <div class="p-5 flex-grow">
+                    <h4 class="font-bold text-lg text-slate-800">${coupon.name}</h4>
+                    <p class="text-sm text-slate-500 mt-1">${coupon.description}</p>
+                    <p class="text-xs text-slate-400 mt-3">有效期至: ${coupon.expiry}</p>
+                </div>
+                <div class="flex-shrink-0 w-32 text-center text-white p-4">
+                    ${coupon.type === 'fixed' ?
+                    `<span class="text-4xl font-bold">${coupon.value}</span><span class="font-semibold">元</span>` :
+                    `<span class="text-4xl font-bold">${coupon.value * 10}</span><span class="font-semibold">折</span>`
+                    }
+                </div>
+                ${coupon.status !== 'valid' ? `<div class="absolute top-2 right-2 transform rotate-12"><span class="text-xs font-bold uppercase border-2 px-2 py-1 rounded-md">${coupon.status === 'used' ? '已使用' : '已过期'}</span></div>` : ''}
+            </div>
+        `).join('')}</div>`;
+    }
+    renderIcons();
+}
+
+function renderAfterSalesView() {
+    const container = document.getElementById('after-sales-list-container');
+    if (!container) return;
+
+    if (afterSalesRequests.length === 0) {
+        container.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="wrench" class="w-12 h-12 mx-auto"></i><p class="mt-2">暂无售后记录</p></div>`;
+    } else {
+        container.innerHTML = `
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50 text-slate-600">
+                    <tr>
+                        <th class="p-4 font-semibold">服务单号</th>
+                        <th class="p-4 font-semibold">关联订单</th>
+                        <th class="p-4 font-semibold">申请日期</th>
+                        <th class="p-4 font-semibold">售后类型</th>
+                        <th class="p-4 font-semibold">问题描述</th>
+                        <th class="p-4 font-semibold text-center">状态</th>
+                        <th class="p-4 font-semibold text-center">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${afterSalesRequests.map(req => `
+                        <tr class="border-b border-slate-200">
+                            <td class="p-4">${req.id}</td>
+                            <td class="p-4"><a href="user-center.html?viewId=order-detail-view&orderId=${req.orderId}" class="text-blue-600 hover:underline">${req.orderId}</a></td>
+                            <td class="p-4">${req.requestDate}</td>
+                            <td class="p-4">${req.type}</td>
+                            <td class="p-4 text-slate-500">${req.reason}</td>
+                            <td class="p-4 text-center">
+                                <span class="text-xs font-medium px-2 py-1 rounded-full ${req.statusId === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                                    ${req.status}
+                                </span>
+                            </td>
+                            <td class="p-4 text-center"><button class="font-semibold text-blue-600 hover:underline">查看详情</button></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    renderIcons();
+}
+
+function renderInvoiceView() {
+    const invoicableContainer = document.getElementById('invoicable-content');
+    const issuedContainer = document.getElementById('issued-content');
+    if (!invoicableContainer || !issuedContainer) return;
+
+    // Render Invoicable Orders
+    if (invoicableOrders.length === 0) {
+        invoicableContainer.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="file-x-2" class="w-12 h-12 mx-auto"></i><p class="mt-2">暂无可开发票的订单</p></div>`;
+    } else {
+        invoicableContainer.innerHTML = `
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50 text-slate-600">
+                    <tr>
+                        <th class="p-4 font-semibold">订单号</th>
+                        <th class="p-4 font-semibold">订单日期</th>
+                        <th class="p-4 font-semibold">订单内容</th>
+                        <th class="p-4 font-semibold text-right">金额</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${invoicableOrders.map(order => `
+                        <tr class="border-b border-slate-200">
+                            <td class="p-4">${order.id}</td>
+                            <td class="p-4">${order.date}</td>
+                            <td class="p-4 text-slate-500">${order.items}</td>
+                            <td class="p-4 text-right font-medium">¥${order.total.toFixed(2)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    // Render Issued Invoices
+    if (issuedInvoices.length === 0) {
+        issuedContainer.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="file-x-2" class="w-12 h-12 mx-auto"></i><p class="mt-2">暂无已开发票记录</p></div>`;
+    } else {
+        issuedContainer.innerHTML = `
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50 text-slate-600">
+                    <tr>
+                        <th class="p-4 font-semibold">发票号码</th>
+                        <th class="p-4 font-semibold">开票日期</th>
+                        <th class="p-4 font-semibold">发票类型</th>
+                        <th class="p-4 font-semibold text-right">金额</th>
+                        <th class="p-4 font-semibold text-center">状态</th>
+                        <th class="p-4 font-semibold text-center">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${issuedInvoices.map(invoice => `
+                        <tr class="border-b border-slate-200">
+                            <td class="p-4">${invoice.id}</td>
+                            <td class="p-4">${invoice.date}</td>
+                            <td class="p-4 text-slate-500">${invoice.type}</td>
+                            <td class="p-4 text-right font-medium">¥${invoice.total.toFixed(2)}</td>
+                            <td class="p-4 text-center"><span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">${invoice.status}</span></td>
+                            <td class="p-4 text-center"><a href="${invoice.link}" class="font-semibold text-blue-600 hover:underline">下载</a></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    // Click the first tab to ensure it's active and content is shown
+    const firstTab = document.querySelector('#invoice-view .tab-button');
+    if (firstTab) {
+        switchTab(firstTab, 'invoicable-content');
+    }
+
+    renderIcons();
 }
 
 function renderAddressView() {
