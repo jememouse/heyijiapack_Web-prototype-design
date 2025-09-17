@@ -1776,24 +1776,31 @@ function updateQuote() {
         const processKey = item.id.replace('-process', '');
         const config = specialProcessesConfig[processKey];
 
-        item.querySelectorAll('.process-instance').forEach(instance => {
-            const widthInput = instance.querySelector('[data-param="width"]');
-            const heightInput = instance.querySelector('[data-param="height"]');
-            const w = parseFloat(widthInput?.value) || 0;
-            const h = parseFloat(heightInput?.value) || 0;
-
-            if (w > 0 && h > 0) {
-                let pricePerSqMm = config.pricePerSqMm;
-                // Special handling for hot stamping type
-                if (processKey === 'hotStamping') {
-                    const typeInput = instance.querySelector('[data-param="type"]');
-                    if (typeInput && typeInput.value === '立体烫金') {
-                        pricePerSqMm = config.pricePerSqMm3D;
-                    }
-                }
-                additionalCost += (w * h * pricePerSqMm) * quantity;
+        if (processKey === 'embossedTexture') {
+            const surfaceArea = 2 * (length * width + length * height + width * height);
+            if (surfaceArea > 0) {
+                additionalCost += (surfaceArea * config.pricePerSqMm) * quantity;
             }
-        });
+        } else {
+            item.querySelectorAll('.process-instance').forEach(instance => {
+                const widthInput = instance.querySelector('[data-param="width"]');
+                const heightInput = instance.querySelector('[data-param="height"]');
+                const w = parseFloat(widthInput?.value) || 0;
+                const h = parseFloat(heightInput?.value) || 0;
+
+                if (w > 0 && h > 0) {
+                    let pricePerSqMm = config.pricePerSqMm;
+                    // Special handling for hot stamping type
+                    if (processKey === 'hotStamping') {
+                        const typeInput = instance.querySelector('[data-param="type"]');
+                        if (typeInput && typeInput.value === '立体烫金') {
+                            pricePerSqMm = config.pricePerSqMm3D;
+                        }
+                    }
+                    additionalCost += (w * h * pricePerSqMm) * quantity;
+                }
+            });
+        }
     });
 
     document.querySelectorAll('input[name="accessories"]:checked').forEach(el => {
