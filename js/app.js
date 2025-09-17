@@ -38,7 +38,6 @@ const coupons = [
     { id: 'EXPIRED-001', value: 0.95, type: 'percentage', name: '全场折扣', description: '全场通用', expiry: '2025-06-30', status: 'expired' },
 ];
 
-
 const distributionData = {
     stats: {
         level: "青铜分销员",
