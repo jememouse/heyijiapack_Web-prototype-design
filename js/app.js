@@ -13,6 +13,26 @@ let orders = JSON.parse(localStorage.getItem('orders')) || [
     { id: '20250718985', date: '2025-07-18', total: 3500.00, status: '已发货', statusId: 'shipped', items: [{ name: '双插盒', specs: '100x80x40mm | 350g白卡纸 | 烫金', quantity: 1000, imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
     { id: '20250715752', date: '2025-07-15', total: 880.00, status: '已完成', statusId: 'completed', items: [{ name: '抽屉盒', specs: '120x120x60mm | 精品灰板 | 无工艺', quantity: 200, imageUrl: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
 ];
+let invoices = [
+    { id: 'INV-20250720', orderId: '20250720001', date: '2025-07-21', total: 1250.00, status: '已开具' },
+    { id: 'INV-20250718', orderId: '20250718985', date: '2025-07-19', total: 3500.00, status: '已开具' },
+];
+
+let afterSales = [
+    { id: 'AS-20250716', orderId: '20250715752', date: '2025-07-16', type: '退货', status: '已完成' },
+];
+
+let coupons = {
+    available: [
+        { id: 'C001', name: '满1000减100', description: '满1000元可用', expiry: '2025-12-31' },
+        { id: 'C002', name: '9折优惠券', description: '最高抵扣200元', expiry: '2025-10-31' },
+        { id: 'C003', name: '新人专享50元券', description: '无门槛', expiry: '2025-08-31' },
+    ],
+    used: [
+        { id: 'C004', name: '满500减50', description: '已使用', usedDate: '2025-07-20' },
+    ],
+    expired: []
+};
 const distributionData = {
     stats: {
         level: "青铜分销员",
@@ -118,8 +138,91 @@ function showUserCenterView(viewId, context) {
         renderOrderDetailPage(context?.orderId);
     } else if (viewId === 'distribution-view') {
         renderDistributionParentView();
+    } else if (viewId === 'address-view') {
+        renderAddressView();
+    } else if (viewId === 'invoice-view') {
+        renderInvoiceView();
+    } else if (viewId === 'after-sales-view') {
+        renderAfterSalesView();
+    } else if (viewId === 'coupons-view') {
+        renderCouponsView();
     }
     renderIcons();
+}
+
+function renderAddressView() {
+    const container = document.getElementById('address-list');
+    if (!container) return;
+    container.innerHTML = userAddresses.map(addr => `
+        <div class="border rounded-lg p-4 flex justify-between items-start">
+            <div>
+                <p class="font-semibold">${addr.name} ${addr.isDefault ? '<span class="ml-2 text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">默认</span>' : ''}</p>
+                <p class="text-sm text-slate-500 mt-1">${addr.phone}</p>
+                <p class="text-sm text-slate-600 mt-2">${addr.address}</p>
+            </div>
+            <div class="flex space-x-4">
+                <button class="text-sm font-semibold text-blue-600 hover:underline">编辑</button>
+                <button class="text-sm font-semibold text-red-500 hover:underline">删除</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderInvoiceView() {
+    const container = document.getElementById('invoice-list');
+    if (!container) return;
+    container.innerHTML = invoices.map(inv => `
+        <div class="border rounded-lg p-4 flex justify-between items-center">
+            <div>
+                <p class="font-semibold">订单 #${inv.orderId}</p>
+                <p class="text-sm text-slate-500 mt-1">开票日期: ${inv.date} | 金额: ¥${inv.total.toFixed(2)}</p>
+            </div>
+            <div>
+                <span class="text-sm font-medium ${inv.status === '已开具' ? 'text-green-600' : 'text-yellow-600'}">${inv.status}</span>
+                <button class="ml-4 text-sm font-semibold text-blue-600 hover:underline">查看详情</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderAfterSalesView() {
+    const container = document.getElementById('after-sales-list');
+    if (!container) return;
+    container.innerHTML = afterSales.map(as => `
+        <div class="border rounded-lg p-4 flex justify-between items-center">
+            <div>
+                <p class="font-semibold">订单 #${as.orderId} - ${as.type}</p>
+                <p class="text-sm text-slate-500 mt-1">申请日期: ${as.date}</p>
+            </div>
+            <div>
+                <span class="text-sm font-medium ${as.status === '已完成' ? 'text-green-600' : 'text-yellow-600'}">${as.status}</span>
+                <button class="ml-4 text-sm font-semibold text-blue-600 hover:underline">查看详情</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderCouponsView() {
+    const availableContainer = document.getElementById('available-coupons');
+    if (availableContainer) {
+        availableContainer.innerHTML = coupons.available.map(c => `
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                <p class="font-semibold">${c.name}</p>
+                <p class="text-sm text-slate-600">${c.description}</p>
+                <p class="text-xs text-slate-500 mt-2">有效期至: ${c.expiry}</p>
+            </div>
+        `).join('');
+    }
+    const usedContainer = document.getElementById('used-coupons');
+    if (usedContainer) {
+        usedContainer.innerHTML = coupons.used.map(c => `
+            <div class="bg-slate-50 border-l-4 border-slate-400 p-4 mb-4">
+                <p class="font-semibold text-slate-500">${c.name}</p>
+                <p class="text-sm text-slate-500">${c.description}</p>
+                <p class="text-xs text-slate-400 mt-2">使用日期: ${c.usedDate}</p>
+            </div>
+        `).join('');
+    }
 }
 
 // Product Detail Page Functions
@@ -557,7 +660,17 @@ const withdrawalModal = document.getElementById('withdrawal-modal');
 
 function openAddressModal() { addressModal.classList.remove('hidden'); renderIcons(); }
 function closeAddressModal() { addressModal.classList.add('hidden'); }
-function openInvoiceModal() { invoiceModal.classList.remove('hidden'); renderIcons(); }
+function openInvoiceModal() {
+    const orderSelect = document.getElementById('invoice-order');
+    if (orderSelect) {
+        orderSelect.innerHTML = orders
+            .filter(o => o.statusId === 'completed')
+            .map(o => `<option value="${o.id}">订单 #${o.id} - ¥${o.total.toFixed(2)}</option>`)
+            .join('');
+    }
+    invoiceModal.classList.remove('hidden');
+    renderIcons();
+}
 function closeInvoiceModal() { invoiceModal.classList.add('hidden'); }
 function openAfterSalesModal() { afterSalesModal.classList.remove('hidden'); renderIcons(); }
 function closeAfterSalesModal() { afterSalesModal.classList.add('hidden'); }
@@ -1776,31 +1889,24 @@ function updateQuote() {
         const processKey = item.id.replace('-process', '');
         const config = specialProcessesConfig[processKey];
 
-        if (processKey === 'embossedTexture') {
-            const surfaceArea = 2 * (length * width + length * height + width * height);
-            if (surfaceArea > 0) {
-                additionalCost += (surfaceArea * config.pricePerSqMm) * quantity;
-            }
-        } else {
-            item.querySelectorAll('.process-instance').forEach(instance => {
-                const widthInput = instance.querySelector('[data-param="width"]');
-                const heightInput = instance.querySelector('[data-param="height"]');
-                const w = parseFloat(widthInput?.value) || 0;
-                const h = parseFloat(heightInput?.value) || 0;
+        item.querySelectorAll('.process-instance').forEach(instance => {
+            const widthInput = instance.querySelector('[data-param="width"]');
+            const heightInput = instance.querySelector('[data-param="height"]');
+            const w = parseFloat(widthInput?.value) || 0;
+            const h = parseFloat(heightInput?.value) || 0;
 
-                if (w > 0 && h > 0) {
-                    let pricePerSqMm = config.pricePerSqMm;
-                    // Special handling for hot stamping type
-                    if (processKey === 'hotStamping') {
-                        const typeInput = instance.querySelector('[data-param="type"]');
-                        if (typeInput && typeInput.value === '立体烫金') {
-                            pricePerSqMm = config.pricePerSqMm3D;
-                        }
+            if (w > 0 && h > 0) {
+                let pricePerSqMm = config.pricePerSqMm;
+                // Special handling for hot stamping type
+                if (processKey === 'hotStamping') {
+                    const typeInput = instance.querySelector('[data-param="type"]');
+                    if (typeInput && typeInput.value === '立体烫金') {
+                        pricePerSqMm = config.pricePerSqMm3D;
                     }
-                    additionalCost += (w * h * pricePerSqMm) * quantity;
                 }
-            });
-        }
+                additionalCost += (w * h * pricePerSqMm) * quantity;
+            }
+        });
     });
 
     document.querySelectorAll('input[name="accessories"]:checked').forEach(el => {
@@ -1909,6 +2015,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 filterSidebar.classList.add('hidden');
                 document.getElementById('filter-chevron').style.transform = 'rotate(0deg)';
             }
+        });
+    }
+
+    // Handle User Center Modals
+    const addressForm = document.getElementById('address-form');
+    if (addressForm) {
+        addressForm.addEventListener('submit', e => {
+            e.preventDefault();
+            // In a real app, you would save the address to a server.
+            // Here we just close the modal.
+            alert('地址已保存！');
+            closeAddressModal();
+        });
+    }
+
+    const invoiceForm = document.getElementById('invoice-form');
+    if (invoiceForm) {
+        invoiceForm.addEventListener('submit', e => {
+            e.preventDefault();
+            // In a real app, you would submit the invoice request to a server.
+            // Here we just close the modal.
+            alert('发票申请已提交！');
+            closeInvoiceModal();
+        });
+
+        const invoiceTypeRadios = document.querySelectorAll('input[name="invoice-type"]');
+        invoiceTypeRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                const companyDetails = document.getElementById('company-invoice-details');
+                if (document.querySelector('input[name="invoice-type"]:checked').value === 'company') {
+                    companyDetails.classList.remove('hidden');
+                } else {
+                    companyDetails.classList.add('hidden');
+                }
+            });
         });
     }
 });
