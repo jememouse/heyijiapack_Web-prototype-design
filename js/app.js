@@ -112,14 +112,82 @@ function showUserCenterView(viewId, context) {
     if (activeView) activeView.classList.remove('hidden');
     buildSidebar(document.getElementById('user-center-sidebar'), viewId);
 
-    if (viewId === 'orders-view') {
+    if (viewId === 'dashboard-view') {
+        renderDashboard();
+    } else if (viewId === 'orders-view') {
         renderOrdersPage();
     } else if (viewId === 'order-detail-view') {
         renderOrderDetailPage(context?.orderId);
+    } else if (viewId === 'address-view') {
+        renderAddressView();
+    } else if (viewId === 'settings-view') {
+        renderSettingsView();
     } else if (viewId === 'distribution-view') {
         renderDistributionParentView();
     }
+}
+
+function renderAddressView() {
+    const container = document.getElementById('address-list-container');
+    if (!container) return;
+
+    container.innerHTML = userAddresses.map(addr => `
+        <div class="border ${addr.isDefault ? 'border-2 border-blue-500' : 'border-slate-200'} p-6 rounded-xl relative">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="font-semibold text-slate-900">${addr.name} ${addr.isDefault ? `
+                        <span class="ml-2 text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">默认地址</span>
+                    ` : ''}</p>
+                    <p class="text-sm text-slate-600 mt-2">${addr.phone}</p>
+                    <p class="text-sm text-slate-600" style="line-height: 1.6;">${addr.address}</p>
+                </div>
+            </div>
+            <div class="border-t border-slate-200 mt-4 pt-4 flex justify-end space-x-4 text-sm">
+                ${!addr.isDefault ? `<button class="text-blue-600 hover:text-blue-700 font-semibold">设为默认</button>` : ''}
+                <button class="text-slate-500 hover:text-blue-600 font-semibold">编辑</button>
+                <button class="text-slate-500 hover:text-red-600 font-semibold">删除</button>
+            </div>
+        </div>
+    `).join('');
     renderIcons();
+}
+
+const currentUser = {
+    nickname: '李婷',
+    phone: '138****1234',
+};
+
+function renderSettingsView() {
+    const nicknameInput = document.getElementById('settings-nickname');
+    const phoneInput = document.getElementById('settings-phone');
+    if (nicknameInput) nicknameInput.value = currentUser.nickname;
+    if (phoneInput) phoneInput.value = currentUser.phone;
+}
+
+function renderDashboard() {
+    const pendingOrders = orders.filter(o => o.statusId === 'processing' || o.statusId === 'placed' || o.statusId === 'confirming' || o.statusId === 'production').length;
+    const shippedOrders = orders.filter(o => o.statusId === 'shipped').length;
+
+    const dashboardView = document.getElementById('dashboard-view');
+    dashboardView.querySelector('.grid .bg-slate-50:nth-child(1) p:last-child').textContent = pendingOrders;
+    dashboardView.querySelector('.grid .bg-slate-50:nth-child(2) p:last-child').textContent = shippedOrders;
+
+    const tbody = document.getElementById('recent-orders-tbody');
+    if (!tbody) return;
+
+    const recentOrders = orders.slice(0, 3);
+    tbody.innerHTML = recentOrders.map(order => `
+        <tr class="border-b border-slate-200">
+            <td class="p-4">${order.id}</td>
+            <td class="p-4">${order.date}</td>
+            <td class="p-4">¥${order.total.toFixed(2)}</td>
+            <td class="p-4"><span
+                    class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">${order.status}</span>
+            </td>
+            <td class="p-4"><a href="user-center.html?viewId=order-detail-view&orderId=${order.id}"
+                    class="font-semibold text-blue-600">查看</a></td>
+        </tr>
+    `).join('');
 }
 
 // Product Detail Page Functions

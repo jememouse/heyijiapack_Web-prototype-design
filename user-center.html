@@ -109,40 +109,8 @@
                                                     <th class="p-4 font-semibold"></th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr class="border-b border-slate-200">
-                                                    <td class="p-4">#...001</td>
-                                                    <td class="p-4">2025-07-20</td>
-                                                    <td class="p-4">¥1,250.00</td>
-                                                    <td class="p-4"><span
-                                                            class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">文件处理中</span>
-                                                    </td>
-                                                    <td class="p-4"><a href="#"
-                                                            onclick="showUserCenterView('order-detail-view')"
-                                                            class="font-semibold text-blue-600">查看</a></td>
-                                                </tr>
-                                                <tr class="border-b border-slate-200">
-                                                    <td class="p-4">#...985</td>
-                                                    <td class="p-4">2025-07-18</td>
-                                                    <td class="p-4">¥3,500.00</td>
-                                                    <td class="p-4"><span
-                                                            class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">已发货</span>
-                                                    </td>
-                                                    <td class="p-4"><a href="#"
-                                                            onclick="showUserCenterView('order-detail-view')"
-                                                            class="font-semibold text-blue-600">查看</a></td>
-                                                </tr>
-                                                <tr class="border-b border-slate-200">
-                                                    <td class="p-4">#...752</td>
-                                                    <td class="p-4">2025-07-15</td>
-                                                    <td class="p-4">¥880.00</td>
-                                                    <td class="p-4"><span
-                                                            class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">已完成</span>
-                                                    </td>
-                                                    <td class="p-4"><a href="#"
-                                                            onclick="showUserCenterView('order-detail-view')"
-                                                            class="font-semibold text-blue-600">查看</a></td>
-                                                </tr>
+                                            <tbody id="recent-orders-tbody">
+                                                <!-- Recent orders will be rendered here by JS -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -152,7 +120,16 @@
                                 <!-- ... content ... -->
                             </div>
                             <div id="address-view" class="user-center-view hidden">
-                                <!-- ... content ... -->
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <div class="flex justify-between items-center mb-8">
+                                        <h1 class="text-3xl font-bold">地址管理</h1><button onclick="openAddressModal()"
+                                            class="btn-primary text-white px-5 py-2 rounded-lg font-semibold flex items-center space-x-2"><i
+                                                data-lucide="plus" class="w-4 h-4"></i><span>新增收货地址</span></button>
+                                    </div>
+                                    <div id="address-list-container" class="grid md:grid-cols-2 gap-6">
+                                        <!-- Address list will be rendered here by JS -->
+                                    </div>
+                                </div>
                             </div>
                             <div id="invoice-view" class="user-center-view hidden">
                                 <!-- ... content ... -->
@@ -164,7 +141,45 @@
                                 <!-- ... content ... -->
                             </div>
                             <div id="settings-view" class="user-center-view hidden">
-                                <!-- ... content ... -->
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <h1 class="text-3xl font-bold mb-8">账户设置</h1>
+                                    <div class="max-w-md">
+                                        <h3 class="text-xl font-semibold mb-4">个人资料</h3>
+                                        <form class="space-y-4">
+                                            <div><label for="settings-nickname"
+                                                    class="block text-sm font-medium text-slate-700">昵称</label><input
+                                                    type="text" id="settings-nickname"
+                                                    class="mt-1 block w-full border-slate-300 rounded-md shadow-sm">
+                                            </div>
+                                            <div><label for="settings-phone"
+                                                    class="block text-sm font-medium text-slate-700">联系电话</label><input
+                                                    type="text" id="settings-phone"
+                                                    class="mt-1 block w-full border-slate-300 rounded-md shadow-sm">
+                                            </div><button type="submit"
+                                                class="btn-primary text-white px-5 py-2 rounded-lg font-semibold">保存</button>
+                                        </form>
+                                        <div class="border-t border-slate-200 my-8"></div>
+                                        <h3 class="text-xl font-semibold mb-4">修改密码</h3>
+                                        <form class="space-y-4">
+                                            <div><label
+                                                    class="block text-sm font-medium text-slate-700">当前密码</label><input
+                                                    type="password"
+                                                    class="mt-1 block w-full border-slate-300 rounded-md shadow-sm">
+                                            </div>
+                                            <div><label
+                                                    class="block text-sm font-medium text-slate-700">新密码</label><input
+                                                    type="password"
+                                                    class="mt-1 block w-full border-slate-300 rounded-md shadow-sm">
+                                            </div>
+                                            <div><label
+                                                    class="block text-sm font-medium text-slate-700">确认新密码</label><input
+                                                    type="password"
+                                                    class="mt-1 block w-full border-slate-300 rounded-md shadow-sm">
+                                            </div><button type="submit"
+                                                class="btn-primary text-white px-5 py-2 rounded-lg font-semibold">确认修改</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                             <div id="order-detail-view" class="user-center-view hidden">
                                 <!-- ... content ... -->
