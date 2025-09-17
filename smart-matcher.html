@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>智能包装方案匹配器 - 智盒工坊 (iboxify)</title>
-    
+
     <!-- SEO Meta Tags -->
     <meta name="description" content="智盒工坊智能包装方案匹配器，通过AI算法为您的产品推荐最适合的包装解决方案，提升品牌形象，优化成本效益。">
     <meta name="keywords" content="智能包装匹配, 包装方案推荐, AI包装设计, 包装选择器, 智能推荐系统">
@@ -102,7 +102,7 @@
                         重置
                     </button>
                 </div>
-                
+
                 <div class="space-y-6">
                     <!-- 按行业 -->
                     <div>
@@ -299,7 +299,7 @@
                      const industry = industryData.find(i => i.industry === filters.industry);
                      subcategoriesToScan = industry ? industry.subcategories : [];
                 }
-                
+
                 const availablePurposes = subcategoriesToScan.flatMap(sub => sub.purposes);
                 const uniquePurposes = [...new Set(availablePurposes)].sort();
 
@@ -314,7 +314,7 @@
                     if (btn) btn.classList.add('active');
                 });
             }
-            
+
             function renderSizes() {
                 const sizes = ['小', '中', '大'];
                 sizeFilterContainer.innerHTML = sizes.map(size => `
@@ -336,7 +336,7 @@
                     const industry = industryData.find(i => i.industry === filters.industry);
                     results = industry ? industry.subcategories : [];
                 }
-                
+
                 if (filters.purposes.length > 0) {
                     results = results.filter(sub => filters.purposes.every(pur => sub.purposes.includes(pur)));
                 }
@@ -357,19 +357,19 @@
                             <div class="p-6 flex flex-col flex-grow">
                                 <h3 class="font-bold text-xl mb-2">${sub.name}</h3>
                                 <p class="text-slate-600 text-sm mb-4 flex-grow">${sub.description}</p>
-                                
+
                                 <div class="mb-4">
                                     <h4 class="font-semibold text-xs mb-2 text-slate-500 uppercase tracking-wider">核心需求:</h4>
                                     <div class="needs-container flex flex-wrap gap-2 text-xs">
                                         ${sub.needs.map(need => `<span class="need-tag bg-slate-100 text-slate-700 px-2 py-1 rounded-full transition-all duration-200" data-need="${need}">${need}</span>`).join('')}
                                     </div>
                                 </div>
-                                
+
                                 <!-- 3. 专家提示 -->
                                 <div class="mb-6 p-3 bg-amber-50 border-l-4 border-amber-400 text-amber-800 text-xs">
                                     <span class="font-bold">专家提示:</span> ${sub.proTip}
                                 </div>
-                                
+
                                 <div class="mt-auto">
                                     <h4 class="font-semibold text-xs mb-3 text-slate-500 uppercase tracking-wider">推荐盒型 (点击定制):</h4>
                                     <div class="grid gap-2 grid-cols-2">
@@ -380,8 +380,8 @@
                                             const isPrimary = index === 0;
                                             const primaryClasses = 'bg-blue-600 text-white hover:bg-blue-700';
                                             const secondaryClasses = 'bg-white text-blue-600 border border-blue-500 hover:bg-blue-50';
-                                            return `<button 
-                                                        data-box-type="${rec}" 
+                                            return `<button
+                                                        data-box-type="${rec}"
                                                         data-fulfills='${JSON.stringify(fulfills)}'
                                                         class="recommended-box-btn w-full text-sm font-semibold py-2 px-3 rounded-lg transition-colors flex items-center justify-center ${isPrimary ? primaryClasses : secondaryClasses}">
                                                         ${icon}
@@ -398,23 +398,23 @@
                      noResultsContainer.classList.remove('hidden');
                      inspirationLink.classList.add('hidden');
                 }
-                
+
                 if (window.lucide) {
                     lucide.createIcons();
                 }
             }
-            
+
             function resetAllFilters() {
                  filters.industry = null;
                 filters.purposes = [];
                 filters.sizes = [];
-                
+
                 const currentIndustry = document.querySelector('input[name="industry"]:checked');
                 if(currentIndustry) currentIndustry.checked = false;
-                
+
                 renderPurposes(); // Re-render with all purposes
                 document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-                
+
                 updateFiltersAndRender();
             }
 
@@ -424,7 +424,7 @@
 
                 filters.purposes = Array.from(document.querySelectorAll('#purpose-filter .filter-btn.active')).map(btn => btn.dataset.purpose);
                 filters.sizes = Array.from(document.querySelectorAll('#size-filter .filter-btn.active')).map(btn => btn.dataset.size);
-                
+
                 renderResults();
             }
 
@@ -439,7 +439,7 @@
                     "锁底盒": "P-01-KH-SD", // Mapping to manual lock bottom
                     "纸管": null, // Not available
                     "异形盒": null, // Not available
-                    "瓦楞盒": null, // No generic corrugated box, only airplane box
+                    "瓦楞盒": "P-01-KH-FJ", // Mapping to airplane box as it's a type of corrugated box
                     "飞机盒": "P-01-KH-FJ",
                     "飞机盒(大号)": "P-01-KH-FJ", // Map to the same for now
                     "手提盒": null, // Not available
@@ -480,7 +480,7 @@
                             if(industryRadio) industryRadio.checked = true;
                             renderPurposes(); // re-render purposes for the selected industry
                         }
-                        
+
                         entry.filters.purposes.forEach(pur => {
                             const btn = purposeFilterContainer.querySelector(`[data-purpose="${pur}"]`);
                             if(btn) btn.classList.add('active');
@@ -502,7 +502,7 @@
                     filters.purposes = [];
                     filters.sizes = [];
                     renderPurposes();
-                    renderSizes(); 
+                    renderSizes();
                     updateFiltersAndRender();
                 }
             });
@@ -513,14 +513,14 @@
                     updateFiltersAndRender();
                 }
             });
-            
+
             sizeFilterContainer.addEventListener('click', e => {
                 if (e.target.classList.contains('filter-btn')) {
                     e.target.classList.toggle('active');
                     updateFiltersAndRender();
                 }
             });
-            
+
             // Reset button
             resetBtn.addEventListener('click', resetAllFilters);
 
@@ -534,7 +534,7 @@
                     }
                 }
             });
-            
+
             resultsContainer.addEventListener('mouseover', e => {
                 const target = e.target.closest('.recommended-box-btn');
                 if (target) {
@@ -548,7 +548,7 @@
                     });
                 }
             });
-            
+
             resultsContainer.addEventListener('mouseout', e => {
                 const target = e.target.closest('.recommended-box-btn');
                 if (target) {
@@ -598,4 +598,3 @@
     </footer>
 </body>
 </html>
-
