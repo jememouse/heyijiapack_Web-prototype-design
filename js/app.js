@@ -766,6 +766,7 @@ function openWithdrawalModal() {
 }
 function closeWithdrawalModal() {
     withdrawalModal.classList.add('hidden');
+    console.log('Modal classes after hide:', withdrawalModal.classList);
     document.getElementById('add-account-form').classList.add('hidden');
 }
 
@@ -795,12 +796,17 @@ function showAddAccountForm() {
 }
 
 function saveWithdrawalAccount() {
-    const bankName = document.getElementById('bank-name').value;
-    const branchName = document.getElementById('branch-name').value;
-    const accountNumber = document.getElementById('account-number').value;
+    const bankName = document.getElementById('bank-name').value.trim();
+    const branchName = document.getElementById('branch-name').value.trim();
+    const accountNumber = document.getElementById('account-number').value.trim();
 
     if (!bankName || !branchName || !accountNumber) {
         alert('请填写完整的账户信息');
+        return;
+    }
+
+    if(!/^\d{16,19}$/.test(accountNumber)) {
+        alert('请输入有效的银行卡号');
         return;
     }
 
@@ -820,21 +826,39 @@ function saveWithdrawalAccount() {
 }
 
 function handleWithdrawal() {
-    if (withdrawalAccounts.length === 0) {
-        alert('请先添加一个提现账户');
+    const amountInput = document.getElementById('withdrawal-amount-input');
+    const amount = parseFloat(amountInput.value);
+
+    const withdrawableAmount = parseFloat(document.getElementById('withdrawal-modal-amount').textContent.replace('¥', ''));
+
+    if (isNaN(amount) || amount <= 0) {
+        console.error('请输入有效的提现金额');
         return;
     }
-    if (!document.querySelector('input[name="withdrawal-account"]:checked')) {
-        alert('请选择一个提现账户');
+
+    if (amount > withdrawableAmount) {
+        console.error('提现金额不能超过可提现佣金');
         return;
     }
-    const amount = document.getElementById('withdrawal-amount-input').value;
-    if (!amount || parseFloat(amount) <= 0) {
-        alert('请输入有效的提现金额');
+
+    if (withdrawalAccounts.length === 0 || !document.querySelector('input[name="withdrawal-account"]:checked')) {
+        console.error('请选择一个提现账户');
         return;
     }
-    alert('提现申请已提交！');
+
+    // In a real app, this would be an API call. Here we simulate it.
+    distributionData.withdrawals.unshift({
+        id: `W-${Date.now()}`,
+        date: new Date().toLocaleDateString('zh-CN'),
+        amount: amount,
+        status: '处理中'
+    });
+
+    // This is a simplified update. A real app would handle this server-side.
+    distributionData.stats.withdrawn = (distributionData.stats.withdrawn || 0) + amount;
+
     closeWithdrawalModal();
+    renderDistributionDashboard(); // Re-render to update tables and balances
 }
 
 // --- Auth Modal Logic ---
@@ -1313,27 +1337,29 @@ function updateOrderStatus(orderId, newStatusId) {
 
 // --- Distribution Logic ---
 function renderDistributionParentView() {
-    const applyView = document.getElementById('distribution-apply-view');
-    const pendingView = document.getElementById('distribution-pending-view');
-    const rejectedView = document.getElementById('distribution-rejected-view');
-    const dashboardView = document.getElementById('distribution-dashboard-view');
+    const parent = document.getElementById('distribution-view');
+    if (!parent) return;
 
-    // 隐藏所有视图
-    applyView.classList.add('hidden');
-    pendingView.classList.add('hidden');
-    rejectedView.classList.add('hidden');
-    dashboardView.classList.add('hidden');
+    // Hide all sub-views first
+    const subViews = parent.querySelectorAll('.user-center-view > div');
+    if(subViews.length > 0) {
+        subViews.forEach(v => v.classList.add('hidden'));
+    }
 
     if (distributionStatus === 'none') {
-        applyView.classList.remove('hidden');
+        const applyView = parent.querySelector('#distribution-apply-view');
+        if(applyView) applyView.classList.remove('hidden');
     } else if (distributionStatus === 'pending') {
-        pendingView.classList.remove('hidden');
+        const pendingView = parent.querySelector('#distribution-pending-view');
+        if(pendingView) pendingView.classList.remove('hidden');
         renderPendingView();
     } else if (distributionStatus === 'rejected') {
-        rejectedView.classList.remove('hidden');
+        const rejectedView = parent.querySelector('#distribution-rejected-view');
+        if(rejectedView) rejectedView.classList.remove('hidden');
         renderRejectedView();
     } else if (distributionStatus === 'approved') {
-        dashboardView.classList.remove('hidden');
+        const dashboardView = parent.querySelector('#distribution-dashboard-view');
+        if(dashboardView) dashboardView.classList.remove('hidden');
         renderDistributionDashboard();
     }
     renderIcons();
@@ -1513,56 +1539,70 @@ function renderDistributionDashboard() {
     document.getElementById('dist-withdrawable-commission').textContent = `¥${withdrawableCommission.toFixed(2)}`;
     document.getElementById('dist-customer-count').textContent = distributionData.customers.length;
     document.getElementById('dist-level').textContent = distributionData.stats.level;
-    document.getElementById('dist-rate').textContent = `/ ${distributionData.stats.commissionRate}`;
+    document.getElementById('dist-rate').textContent = `${distributionData.stats.commissionRate}`;
 
-    const referralLink = document.getElementById('referral-link').value;
-    document.getElementById('referral-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=96x96&data=${encodeURIComponent(referralLink)}`;
+    const referralLinkInput = document.getElementById('referral-link');
+    if (referralLinkInput) {
+        const referralLink = referralLinkInput.value;
+        const qrCodeImg = document.getElementById('referral-qr-code');
+        if(qrCodeImg) {
+            qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=96x96&data=${encodeURIComponent(referralLink)}`;
+        }
+    }
 
     // Render Earnings Chart
     const chartContainer = document.getElementById('earnings-chart');
-    const maxEarning = Math.max(...distributionData.monthlyEarnings.map(e => e.earnings), 1); // Avoid division by zero
-    chartContainer.innerHTML = distributionData.monthlyEarnings.map(item => `
-        <div class="flex-1 flex flex-col items-center justify-end" title="${item.month}: ¥${item.earnings.toFixed(2)}">
-            <div class="w-full bg-blue-200 rounded-t-sm hover:bg-blue-400 transition-colors" style="height: ${(item.earnings / maxEarning) * 100}%;"></div>
-            <p class="text-xs text-slate-500 mt-1">${item.month}</p>
-        </div>
-    `).join('');
+    if (chartContainer) {
+        const maxEarning = Math.max(...distributionData.monthlyEarnings.map(e => e.earnings), 1); // Avoid division by zero
+        chartContainer.innerHTML = distributionData.monthlyEarnings.map(item => `
+            <div class="flex-1 flex flex-col items-center justify-end" title="${item.month}: ¥${item.earnings.toFixed(2)}">
+                <div class="w-full bg-blue-200 rounded-t-sm hover:bg-blue-400 transition-colors" style="height: ${(item.earnings / maxEarning) * 100}%;"></div>
+                <p class="text-xs text-slate-500 mt-1">${item.month}</p>
+            </div>
+        `).join('');
+    }
 
     // Render Tables
     const ordersBody = document.getElementById('dist-orders-table-body');
-    ordersBody.innerHTML = distributionData.orders.map(o => `
-        <tr class="border-b border-slate-200">
-            <td class="p-4 text-sm">${o.id}</td>
-            <td class="p-4 text-sm">${o.customer}</td>
-            <td class="p-4 text-sm">${o.date}</td>
-            <td class="p-4 text-sm">¥${o.total.toFixed(2)}</td>
-            <td class="p-4 text-sm font-semibold text-green-600">+¥${o.commission.toFixed(2)}</td>
-            <td class="p-4 text-sm">${o.status === '已结算' ? `<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>` : `<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>`}</td>
-        </tr>
-    `).join('');
+    if (ordersBody) {
+        ordersBody.innerHTML = distributionData.orders.map(o => `
+            <tr class="border-b border-slate-200">
+                <td class="p-4 text-sm">${o.id}</td>
+                <td class="p-4 text-sm">${o.customer}</td>
+                <td class="p-4 text-sm">${o.date}</td>
+                <td class="p-4 text-sm">¥${o.total.toFixed(2)}</td>
+                <td class="p-4 text-sm font-semibold text-green-600">+¥${o.commission.toFixed(2)}</td>
+                <td class="p-4 text-sm">${o.status === '已结算' ? `<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>` : `<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>`}</td>
+            </tr>
+        `).join('');
+    }
 
     const customersBody = document.getElementById('dist-customers-table-body');
-    customersBody.innerHTML = distributionData.customers.map(c => `
-        <tr class="border-b border-slate-200">
-            <td class="p-4 text-sm">${c.name}</td>
-            <td class="p-4 text-sm">${c.joinDate}</td>
-            <td class="p-4 text-sm">¥${c.totalSpent.toFixed(2)}</td>
-            <td class="p-4 text-sm">${c.lastOrderDate}</td>
-        </tr>
-    `).join('');
+    if (customersBody) {
+        customersBody.innerHTML = distributionData.customers.map(c => `
+            <tr class="border-b border-slate-200">
+                <td class="p-4 text-sm">${c.name}</td>
+                <td class="p-4 text-sm">${c.joinDate}</td>
+                <td class="p-4 text-sm">¥${c.totalSpent.toFixed(2)}</td>
+                <td class="p-4 text-sm">${c.lastOrderDate}</td>
+            </tr>
+        `).join('');
+    }
 
     const withdrawalsBody = document.getElementById('dist-withdrawals-table-body');
-    withdrawalsBody.innerHTML = distributionData.withdrawals.map(w => `
-        <tr class="border-b border-slate-200">
-            <td class="p-4 text-sm">${w.id}</td>
-            <td class="p-4 text-sm">${w.date}</td>
-            <td class="p-4 text-sm">¥${w.amount.toFixed(2)}</td>
-            <td class="p-4 text-sm"><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">${w.status}</span></td>
-        </tr>
-    `).join('');
-
-    if (withdrawalsBody.innerHTML === '') {
-        withdrawalsBody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-slate-500">暂无提现记录</td></tr>`;
+    if (withdrawalsBody) {
+        if (distributionData.withdrawals.length === 0) {
+            withdrawalsBody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-slate-500">暂无提现记录</td></tr>`;
+        } else {
+            withdrawalsBody.innerHTML = distributionData.withdrawals.map(w => `
+                <tr class="border-b border-slate-200">
+                    <td class="p-4 text-sm">${w.id}</td>
+                    <td class="p-4 text-sm">${w.date}</td>
+                    <td class="p-4 text-sm">¥${w.amount.toFixed(2)}</td>
+                    <td class="p-4 text-sm"><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">${w.status}</span></td>
+                </tr>
+            `).join('');
+        }
     }
 }
 

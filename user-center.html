@@ -169,7 +169,132 @@
                                 </div>
                             </div>
                             <div id="distribution-view" class="user-center-view hidden">
-                                <!-- Content will be rendered by renderDistributionParentView() in app.js -->
+                                <div id="distribution-apply-view" class="hidden">
+                                    <div class="bg-white p-8 rounded-xl shadow-sm text-center">
+                                        <h1 class="text-3xl font-bold mb-4">成为我们的分销伙伴</h1>
+                                        <p class="text-slate-600 max-w-2xl mx-auto mb-8">加入我们的分销计划，推广我们的产品，赚取丰厚的佣金。我们提供全方位的支持，助您轻松开启事业。
+                                        </p>
+                                        <button onclick="handleDistributionApply('individual')" class="btn-primary text-white px-8 py-3 rounded-lg font-bold text-lg">立即申请</button>
+                                    </div>
+                                </div>
+                                <div id="distribution-pending-view" class="hidden">
+                                    <div class="bg-white p-8 rounded-xl shadow-sm text-center">
+                                        <h1 class="text-2xl font-bold mb-4">您的申请正在审核中</h1>
+                                        <p class="text-slate-600 mb-2">我们已收到您的分销申请，通常会在1-3个工作日内完成审核。</p>
+                                        <p class="text-sm text-slate-500">提交时间: <span id="submit-time"></span></p>
+                                    </div>
+                                </div>
+                                 <div id="distribution-rejected-view" class="hidden">
+                                    <div class="bg-white p-8 rounded-xl shadow-sm text-center">
+                                        <h1 class="text-2xl font-bold text-red-600 mb-4">您的申请未通过</h1>
+                                        <div id="rejection-reason" class="text-slate-600 bg-slate-50 p-4 rounded-lg"></div>
+                                        <button onclick="resetDistributionApplication()" class="mt-6 btn-primary text-white px-6 py-2 rounded-lg font-semibold">重新申请</button>
+                                    </div>
+                                </div>
+                                <div id="distribution-dashboard-view" class="space-y-8">
+                                    <div class="bg-white p-8 rounded-xl shadow-sm">
+                                        <div class="flex justify-between items-center mb-6">
+                                            <h1 class="text-3xl font-bold">分销看板</h1>
+                                            <div class="text-right">
+                                                <p class="font-semibold text-lg" id="dist-level">青铜分销员</p>
+                                                <p class="text-sm text-slate-500">当前佣金比例: <span id="dist-rate" class="font-bold text-blue-600">10%</span></p>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid md:grid-cols-3 gap-6 text-center mb-8">
+                                            <div class="bg-slate-50 p-6 rounded-lg">
+                                                <p class="text-sm text-slate-500">可提现佣金</p>
+                                                <p class="text-3xl font-bold mt-1 text-green-600" id="dist-withdrawable-commission">¥0.00</p>
+                                                <button onclick="openWithdrawalModal()" class="mt-2 text-sm font-semibold text-blue-600 hover:underline">立即提现</button>
+                                            </div>
+                                            <div class="bg-slate-50 p-6 rounded-lg">
+                                                <p class="text-sm text-slate-500">累计总佣金</p>
+                                                <p class="text-3xl font-bold mt-1" id="dist-total-commission">¥0.00</p>
+                                            </div>
+                                            <div class="bg-slate-50 p-6 rounded-lg">
+                                                <p class="text-sm text-slate-500">我的客户</p>
+                                                <p class="text-3xl font-bold mt-1" id="dist-customer-count">0</p>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <h2 class="text-xl font-semibold mb-4">我的推广工具</h2>
+                                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 flex items-center justify-between">
+                                                <div class="flex-grow">
+                                                    <label for="referral-link" class="block text-sm font-medium text-slate-700">我的专属推广链接</label>
+                                                    <input type="text" id="referral-link" value="https://www.example.com?ref=12345" readonly class="mt-1 block w-full bg-white rounded-md border-slate-300 shadow-sm sm:text-sm">
+                                                </div>
+                                                <div class="ml-6 text-center">
+                                                     <img id="referral-qr-code" src="" alt="QR Code" class="w-24 h-24 mb-2">
+                                                     <button onclick="copyReferralLink(this)" class="text-sm font-semibold text-blue-600 hover:underline">复制链接</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-8">
+                                            <h2 class="text-xl font-semibold mb-4">收益概览 (近6个月)</h2>
+                                            <div id="earnings-chart" class="h-64 bg-slate-50 rounded-lg p-4 flex items-end space-x-4">
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-8">
+                                            <div class="border-b border-slate-200">
+                                                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                                    <button onclick="switchTab(this, 'dist-orders-tab')" class="tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">分销订单</button>
+                                                    <button onclick="switchTab(this, 'dist-customers-tab')" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300">我的客户</button>
+                                                    <button onclick="switchTab(this, 'dist-withdrawals-tab')" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300">提现记录</button>
+                                                </nav>
+                                            </div>
+                                            <div id="dist-orders-tab" class="tab-content mt-6">
+                                                <div class="overflow-x-auto">
+                                                    <table class="w-full text-left">
+                                                        <thead class="bg-slate-50 text-sm text-slate-600">
+                                                            <tr>
+                                                                <th class="p-4 font-semibold">订单号</th>
+                                                                <th class="p-4 font-semibold">客户</th>
+                                                                <th class="p-4 font-semibold">日期</th>
+                                                                <th class="p-4 font-semibold">金额</th>
+                                                                <th class="p-4 font-semibold">佣金</th>
+                                                                <th class="p-4 font-semibold">状态</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="dist-orders-table-body"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div id="dist-customers-tab" class="tab-content mt-6 hidden">
+                                                 <div class="overflow-x-auto">
+                                                    <table class="w-full text-left">
+                                                        <thead class="bg-slate-50 text-sm text-slate-600">
+                                                            <tr>
+                                                                <th class="p-4 font-semibold">客户名称</th>
+                                                                <th class="p-4 font-semibold">加入时间</th>
+                                                                <th class="p-4 font-semibold">累计消费</th>
+                                                                <th class="p-4 font-semibold">最近下单</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="dist-customers-table-body"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div id="dist-withdrawals-tab" class="tab-content mt-6 hidden">
+                                                 <div class="overflow-x-auto">
+                                                    <table class="w-full text-left">
+                                                        <thead class="bg-slate-50 text-sm text-slate-600">
+                                                            <tr>
+                                                                <th class="p-4 font-semibold">提现单号</th>
+                                                                <th class="p-4 font-semibold">日期</th>
+                                                                <th class="p-4 font-semibold">金额</th>
+                                                                <th class="p-4 font-semibold">状态</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="dist-withdrawals-table-body"></tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div id="coupons-view" class="user-center-view hidden">
                                 <div class="bg-white p-8 rounded-xl shadow-sm">
@@ -443,6 +568,48 @@
                 <div class="flex justify-end space-x-4 pt-4">
                     <button type="button" onclick="closeInvoiceModal()" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg font-medium">取消</button>
                     <button type="submit" class="btn-primary text-white px-4 py-2 rounded-lg font-medium">提交申请</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Withdrawal Modal -->
+    <div id="withdrawal-modal" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-8">
+            <h2 class="text-2xl font-bold mb-2">申请提现</h2>
+            <p class="text-sm text-slate-500 mb-6">可提现佣金: <span id="withdrawal-modal-amount" class="font-bold text-green-600">¥0.00</span></p>
+
+            <form id="withdrawal-form" class="space-y-4">
+                <div>
+                    <label for="withdrawal-amount-input" class="block text-sm font-medium text-slate-700">提现金额</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-slate-500 sm:text-sm">¥</span>
+                        </div>
+                        <input type="number" id="withdrawal-amount-input" class="w-full pl-7 pr-12 border-slate-300 rounded-lg" placeholder="0.00">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700">选择提现账户</label>
+                    <div id="withdrawal-account-list" class="mt-2 space-y-2">
+                        <!-- Accounts rendered by JS -->
+                    </div>
+                </div>
+
+                <div id="add-account-form" class="hidden pt-4 border-t">
+                    <h3 class="text-lg font-semibold mb-2">添加新账户</h3>
+                    <div class="space-y-2">
+                        <input type="text" id="bank-name" placeholder="银行名称 (例如, 中国工商银行)" class="w-full border-slate-300 rounded-lg">
+                        <input type="text" id="branch-name" placeholder="支行名称" class="w-full border-slate-300 rounded-lg">
+                        <input type="text" id="account-number" placeholder="银行卡号" class="w-full border-slate-300 rounded-lg">
+                        <button type="button" onclick="saveWithdrawalAccount()" class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">保存账户</button>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-4 pt-4">
+                    <button type="button" onclick="closeWithdrawalModal()" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg font-medium">取消</button>
+                    <button type="button" onclick="handleWithdrawal()" class="btn-primary text-white px-4 py-2 rounded-lg font-medium">确认提现</button>
                 </div>
             </form>
         </div>
