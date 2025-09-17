@@ -1,0 +1,8 @@
+# Dependencies
+/node_modules
+
+# Test Results
+/test-results/
+
+# Screenshots
+/jules-scratch/

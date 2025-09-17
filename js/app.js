@@ -9,72 +9,10 @@ const userAddresses = [
     { id: 2, name: '王经理', phone: '159****5678', address: '江苏省 苏州市 工业园区 星湖街328号 创意产业园 A栋 201室', isDefault: false },
 ];
 let orders = JSON.parse(localStorage.getItem('orders')) || [
-    {
-        id: '20250720001',
-        date: '2025-07-20',
-        total: 1250.00,
-        status: '文件处理中',
-        statusId: 'processing',
-        shippingAddress: '上海市 浦东新区 世纪大道100号 东方明珠大厦 88层',
-        paymentMethod: '支付宝',
-        items: [{
-            name: '飞机盒',
-            specs: '200x150x50mm | E瓦楞 | 哑光覆膜',
-            quantity: 500,
-            unitPrice: 2.50,
-            imageUrl: 'https://images.unsplash.com/photo-1607083206325-caf1edba7a0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80'
-        }]
-    },
-    {
-        id: '20250718985',
-        date: '2025-07-18',
-        total: 3500.00,
-        status: '已发货',
-        statusId: 'shipped',
-        shippingAddress: '江苏省 苏州市 工业园区 星湖街328号 创意产业园 A栋 201室',
-        paymentMethod: '微信支付',
-        items: [
-            { name: '双插盒', specs: '100x80x40mm | 350g白卡纸 | 烫金', quantity: 1000, unitPrice: 3.20, imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' },
-            { name: '感谢卡', specs: '100x80mm | 300g铜版纸', quantity: 1000, unitPrice: 0.30, imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }
-        ]
-    },
-    {
-        id: '20250715752',
-        date: '2025-07-15',
-        total: 880.00,
-        status: '已完成',
-        statusId: 'completed',
-        shippingAddress: '上海市 浦东新区 世纪大道100号 东方明珠大厦 88层',
-        paymentMethod: '银行转账',
-        items: [{
-            name: '抽屉盒',
-            specs: '120x120x60mm | 精品灰板 | 无工艺',
-            quantity: 200,
-            unitPrice: 4.40,
-            imageUrl: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80'
-        }]
-    },
+    { id: '20250720001', date: '2025-07-20', total: 1250.00, status: '文件处理中', statusId: 'processing', items: [{ name: '飞机盒', specs: '200x150x50mm | E瓦楞 | 哑光覆膜', quantity: 500, imageUrl: 'https://images.unsplash.com/photo-1607083206325-caf1edba7a0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
+    { id: '20250718985', date: '2025-07-18', total: 3500.00, status: '已发货', statusId: 'shipped', items: [{ name: '双插盒', specs: '100x80x40mm | 350g白卡纸 | 烫金', quantity: 1000, imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
+    { id: '20250715752', date: '2025-07-15', total: 880.00, status: '已完成', statusId: 'completed', items: [{ name: '抽屉盒', specs: '120x120x60mm | 精品灰板 | 无工艺', quantity: 200, imageUrl: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
 ];
-let invoices = [
-    { id: 'INV-20250720', orderId: '20250720001', date: '2025-07-21', total: 1250.00, status: '已开具' },
-    { id: 'INV-20250718', orderId: '20250718985', date: '2025-07-19', total: 3500.00, status: '已开具' },
-];
-
-let afterSales = [
-    { id: 'AS-20250716', orderId: '20250715752', date: '2025-07-16', type: '退货', status: '已完成' },
-];
-
-let coupons = {
-    available: [
-        { id: 'C001', name: '满1000减100', description: '满1000元可用', expiry: '2025-12-31' },
-        { id: 'C002', name: '9折优惠券', description: '最高抵扣200元', expiry: '2025-10-31' },
-        { id: 'C003', name: '新人专享50元券', description: '无门槛', expiry: '2025-08-31' },
-    ],
-    used: [
-        { id: 'C004', name: '满500减50', description: '已使用', usedDate: '2025-07-20' },
-    ],
-    expired: []
-};
 const distributionData = {
     stats: {
         level: "青铜分销员",
@@ -174,125 +112,14 @@ function showUserCenterView(viewId, context) {
     if (activeView) activeView.classList.remove('hidden');
     buildSidebar(document.getElementById('user-center-sidebar'), viewId);
 
-    if (viewId === 'dashboard-view') {
-        renderDashboardView();
-    } else if (viewId === 'orders-view') {
-        renderOrdersPage('all');
+    if (viewId === 'orders-view') {
+        renderOrdersPage();
     } else if (viewId === 'order-detail-view') {
         renderOrderDetailPage(context?.orderId);
     } else if (viewId === 'distribution-view') {
         renderDistributionParentView();
-    } else if (viewId === 'address-view') {
-        renderAddressView();
-    } else if (viewId === 'invoice-view') {
-        renderInvoiceView();
-    } else if (viewId === 'after-sales-view') {
-        renderAfterSalesView();
-    } else if (viewId === 'coupons-view') {
-        renderCouponsView();
     }
     renderIcons();
-}
-
-function renderDashboardView() {
-    const container = document.getElementById('dashboard-recent-orders');
-    if (!container) return;
-
-    const recentOrders = orders.slice(0, 3);
-
-    container.innerHTML = recentOrders.map(order => {
-        const statusColors = {
-            processing: 'bg-yellow-100 text-yellow-800',
-            shipped: 'bg-blue-100 text-blue-800',
-            completed: 'bg-green-100 text-green-800',
-        };
-        const statusColor = statusColors[order.statusId] || 'bg-slate-100 text-slate-800';
-
-        return `
-            <tr class="border-b border-slate-200">
-                <td class="p-4">${order.id}</td>
-                <td class="p-4">${order.date}</td>
-                <td class="p-4">¥${order.total.toFixed(2)}</td>
-                <td class="p-4"><span class="${statusColor} text-xs font-medium px-2 py-1 rounded-full">${order.status}</span></td>
-                <td class="p-4"><a href="#" onclick="showUserCenterView('order-detail-view', { orderId: '${order.id}' })" class="font-semibold text-blue-600">查看</a></td>
-            </tr>
-        `;
-    }).join('');
-}
-
-function renderAddressView() {
-    const container = document.getElementById('address-list');
-    if (!container) return;
-    container.innerHTML = userAddresses.map(addr => `
-        <div class="border rounded-lg p-4 flex justify-between items-start">
-            <div>
-                <p class="font-semibold">${addr.name} ${addr.isDefault ? '<span class="ml-2 text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">默认</span>' : ''}</p>
-                <p class="text-sm text-slate-500 mt-1">${addr.phone}</p>
-                <p class="text-sm text-slate-600 mt-2">${addr.address}</p>
-            </div>
-            <div class="flex space-x-4">
-                <button class="text-sm font-semibold text-blue-600 hover:underline">编辑</button>
-                <button class="text-sm font-semibold text-red-500 hover:underline">删除</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function renderInvoiceView() {
-    const container = document.getElementById('invoice-list');
-    if (!container) return;
-    container.innerHTML = invoices.map(inv => `
-        <div class="border rounded-lg p-4 flex justify-between items-center">
-            <div>
-                <p class="font-semibold">订单 #${inv.orderId}</p>
-                <p class="text-sm text-slate-500 mt-1">开票日期: ${inv.date} | 金额: ¥${inv.total.toFixed(2)}</p>
-            </div>
-            <div>
-                <span class="text-sm font-medium ${inv.status === '已开具' ? 'text-green-600' : 'text-yellow-600'}">${inv.status}</span>
-                <button class="ml-4 text-sm font-semibold text-blue-600 hover:underline">查看详情</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function renderAfterSalesView() {
-    const container = document.getElementById('after-sales-list');
-    if (!container) return;
-    container.innerHTML = afterSales.map(as => `
-        <div class="border rounded-lg p-4 flex justify-between items-center">
-            <div>
-                <p class="font-semibold">订单 #${as.orderId} - ${as.type}</p>
-                <p class="text-sm text-slate-500 mt-1">申请日期: ${as.date}</p>
-            </div>
-            <div>
-                <span class="text-sm font-medium ${as.status === '已完成' ? 'text-green-600' : 'text-yellow-600'}">${as.status}</span>
-                <button class="ml-4 text-sm font-semibold text-blue-600 hover:underline">查看详情</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function renderCouponsView() {
-    const availableContainer = document.getElementById('available-coupons');
-    if (availableContainer) {
-        availableContainer.innerHTML = coupons.available.map(c => `
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
-                <p class="font-semibold">${c.name}</p>
-                <p class="text-sm text-slate-600">${c.description}</p>
-                <p class="text-xs text-slate-500 mt-2">有效期至: ${c.expiry}</p>
-            </div>
-        `).join('');
-    }
-    const usedContainer = document.getElementById('used-coupons');
-    if (usedContainer) {
-        usedContainer.innerHTML = coupons.used.map(c => `
-            <div class="bg-slate-50 border-l-4 border-slate-400 p-4 mb-4">
-                <p class="font-semibold text-slate-500">${c.name}</p>
-                <p class="text-sm text-slate-500">${c.description}</p>
-                <p class="text-xs text-slate-400 mt-2">使用日期: ${c.usedDate}</p>
-            </div>
-        `).join('');
-    }
 }
 
 // Product Detail Page Functions
@@ -699,6 +526,8 @@ function initializeFilters() {
     renderIcons();
 }
 
+
+
 function buildSidebar(container, activeViewId) {
     if (!container) return;
     container.innerHTML = '';
@@ -730,17 +559,7 @@ const withdrawalModal = document.getElementById('withdrawal-modal');
 
 function openAddressModal() { addressModal.classList.remove('hidden'); renderIcons(); }
 function closeAddressModal() { addressModal.classList.add('hidden'); }
-function openInvoiceModal() {
-    const orderSelect = document.getElementById('invoice-order');
-    if (orderSelect) {
-        orderSelect.innerHTML = orders
-            .filter(o => o.statusId === 'completed')
-            .map(o => `<option value="${o.id}">订单 #${o.id} - ¥${o.total.toFixed(2)}</option>`)
-            .join('');
-    }
-    invoiceModal.classList.remove('hidden');
-    renderIcons();
-}
+function openInvoiceModal() { invoiceModal.classList.remove('hidden'); renderIcons(); }
 function closeInvoiceModal() { invoiceModal.classList.add('hidden'); }
 function openAfterSalesModal() { afterSalesModal.classList.remove('hidden'); renderIcons(); }
 function closeAfterSalesModal() { afterSalesModal.classList.add('hidden'); }
@@ -766,7 +585,6 @@ function openWithdrawalModal() {
 }
 function closeWithdrawalModal() {
     withdrawalModal.classList.add('hidden');
-    console.log('Modal classes after hide:', withdrawalModal.classList);
     document.getElementById('add-account-form').classList.add('hidden');
 }
 
@@ -796,17 +614,12 @@ function showAddAccountForm() {
 }
 
 function saveWithdrawalAccount() {
-    const bankName = document.getElementById('bank-name').value.trim();
-    const branchName = document.getElementById('branch-name').value.trim();
-    const accountNumber = document.getElementById('account-number').value.trim();
+    const bankName = document.getElementById('bank-name').value;
+    const branchName = document.getElementById('branch-name').value;
+    const accountNumber = document.getElementById('account-number').value;
 
     if (!bankName || !branchName || !accountNumber) {
         alert('请填写完整的账户信息');
-        return;
-    }
-
-    if(!/^\d{16,19}$/.test(accountNumber)) {
-        alert('请输入有效的银行卡号');
         return;
     }
 
@@ -826,39 +639,21 @@ function saveWithdrawalAccount() {
 }
 
 function handleWithdrawal() {
-    const amountInput = document.getElementById('withdrawal-amount-input');
-    const amount = parseFloat(amountInput.value);
-
-    const withdrawableAmount = parseFloat(document.getElementById('withdrawal-modal-amount').textContent.replace('¥', ''));
-
-    if (isNaN(amount) || amount <= 0) {
-        console.error('请输入有效的提现金额');
+    if (withdrawalAccounts.length === 0) {
+        alert('请先添加一个提现账户');
         return;
     }
-
-    if (amount > withdrawableAmount) {
-        console.error('提现金额不能超过可提现佣金');
+    if (!document.querySelector('input[name="withdrawal-account"]:checked')) {
+        alert('请选择一个提现账户');
         return;
     }
-
-    if (withdrawalAccounts.length === 0 || !document.querySelector('input[name="withdrawal-account"]:checked')) {
-        console.error('请选择一个提现账户');
+    const amount = document.getElementById('withdrawal-amount-input').value;
+    if (!amount || parseFloat(amount) <= 0) {
+        alert('请输入有效的提现金额');
         return;
     }
-
-    // In a real app, this would be an API call. Here we simulate it.
-    distributionData.withdrawals.unshift({
-        id: `W-${Date.now()}`,
-        date: new Date().toLocaleDateString('zh-CN'),
-        amount: amount,
-        status: '处理中'
-    });
-
-    // This is a simplified update. A real app would handle this server-side.
-    distributionData.stats.withdrawn = (distributionData.stats.withdrawn || 0) + amount;
-
+    alert('提现申请已提交！');
     closeWithdrawalModal();
-    renderDistributionDashboard(); // Re-render to update tables and balances
 }
 
 // --- Auth Modal Logic ---
@@ -890,15 +685,11 @@ function switchTab(button, tabId) {
     parent.querySelector(`#${tabId}`).classList.remove('hidden');
 }
 
-let currentOrderStatusFilter = 'all';
-
 function switchOrderTab(button, status) {
-    currentOrderStatusFilter = status;
     const parent = button.closest('.bg-white');
     parent.querySelectorAll('.order-tab-button').forEach(btn => btn.classList.remove('active'));
     button.classList.add('active');
-    const searchTerm = document.getElementById('order-search-input').value;
-    renderOrdersPage(status, searchTerm);
+    renderOrdersPage(status);
 }
 
 // --- 购物车与结算逻辑 ---
@@ -1163,24 +954,15 @@ function confirmPayment() {
 }
 
 // --- 订单页面逻辑 ---
-function renderOrdersPage(filterStatus = 'all', searchTerm = '') {
+function renderOrdersPage(filterStatus = 'all') {
     const container = document.getElementById('orders-list-container');
     if (!container) return;
 
-    let filteredOrders = orders.filter(order => {
+    const filteredOrders = orders.filter(order => {
         if (filterStatus === 'all') return true;
         if (filterStatus === 'in-production') return ['placed', 'processing', 'confirming', 'production'].includes(order.statusId);
         return order.statusId === filterStatus;
     });
-
-    if (searchTerm) {
-        const lowerCaseSearchTerm = searchTerm.toLowerCase();
-        filteredOrders = filteredOrders.filter(order => {
-            const hasMatchingId = order.id.toLowerCase().includes(lowerCaseSearchTerm);
-            const hasMatchingItem = order.items.some(item => item.name.toLowerCase().includes(lowerCaseSearchTerm));
-            return hasMatchingId || hasMatchingItem;
-        });
-    }
 
     if (filteredOrders.length === 0) {
         container.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="inbox" class="w-12 h-12 mx-auto"></i><p class="mt-2">暂无相关订单</p></div>`;
@@ -1235,58 +1017,55 @@ function renderOrderDetailPage(orderId) {
         return;
     }
 
-    document.getElementById('order-detail-id-breadcrumb').textContent = `订单 #${order.id}`;
+    document.getElementById('order-detail-breadcrumb').innerHTML = `
+        <a href="user-center.html?viewId=dashboard-view" class="hover:underline">我的账户</a> &gt;
+        <a href="user-center.html?viewId=orders-view" class="hover:underline">我的订单</a> &gt;
+        <span>订单 #${order.id}</span>
+    `;
+    document.getElementById('order-detail-title').textContent = `订单详情`;
 
-    // Render timeline
     const timelineContainer = document.getElementById('order-timeline');
     const currentStatusIndex = orderStates.findIndex(s => s.id === order.statusId);
     timelineContainer.innerHTML = orderStates.map((state, index) => {
         const isActive = index <= currentStatusIndex;
         return `
-        <div class="relative flex-1 flex flex-col items-center text-center timeline-item ${isActive ? 'active' : ''}">
-            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isActive ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-500'}">
+        <div class="relative flex items-start timeline-item ${isActive ? 'active' : ''}">
+            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-4 ${isActive ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-500'}">
                 <i data-lucide="${state.icon}" class="w-4 h-4"></i>
             </div>
-            <p class="font-semibold text-sm mt-2 ${isActive ? 'text-slate-800' : 'text-slate-500'}">${state.name}</p>
+            <div>
+                <p class="font-semibold ${isActive ? 'text-slate-800' : 'text-slate-500'}">${state.name}</p>
+                ${isActive ? `<p class="text-xs text-slate-500 mt-1">${index === currentStatusIndex ? '进行中...' : '已完成'}</p>` : ''}
+            </div>
         </div>`;
     }).join('');
 
-    // Render item details
-    const itemsContainer = document.getElementById('order-detail-items');
-    itemsContainer.innerHTML = order.items.map(item => `
-        <div class="flex items-start space-x-4 border-b border-slate-200 pb-4 last:border-b-0">
-            <img src="${item.imageUrl}" alt="${item.name}" class="w-20 h-20 rounded-md object-cover border">
-            <div class="flex-grow">
-                <p class="font-semibold">${item.name}</p>
-                <p class="text-sm text-slate-500 mt-1">${item.specs}</p>
+    const infoContainer = document.getElementById('order-detail-info');
+    const address = userAddresses.find(a => a.isDefault);
+    infoContainer.innerHTML = `
+        <h3 class="text-xl font-semibold mb-4">订单信息</h3>
+        <div class="grid md:grid-cols-2 gap-8">
+            <div>
+                <h4 class="font-semibold text-slate-800 mb-3">收货信息</h4>
+                <p class="text-slate-600">${address.name}</p>
+                <p class="text-slate-600">${address.phone}</p>
+                <p class="text-slate-600">${address.address}</p>
             </div>
-            <div class="text-right">
-                <p class="font-semibold">¥${(item.quantity * item.unitPrice).toFixed(2)}</p>
-                <p class="text-sm text-slate-500">x${item.quantity}</p>
+            <div>
+                <h4 class="font-semibold text-slate-800 mb-3">产品列表</h4>
+                <ul class="space-y-2 text-sm text-slate-600">
+                    ${order.items.map(item => `<li><strong>${item.name} (x${item.quantity})</strong>: ${item.specs}</li>`).join('')}
+                </ul>
             </div>
         </div>
-    `).join('');
-
-    // Render order summary
-    const summaryContainer = document.getElementById('order-summary-details');
-    const subtotal = order.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-    const shipping = order.total - subtotal;
-    summaryContainer.innerHTML = `
-        <div class="flex justify-between"><span>商品总价</span><span class="font-medium">¥${subtotal.toFixed(2)}</span></div>
-        <div class="flex justify-between"><span>运费</span><span class="font-medium">¥${shipping.toFixed(2)}</span></div>
-        <div class="flex justify-between font-bold text-base mt-2 pt-2 border-t border-slate-300"><span>订单总计</span><span class="text-red-600">¥${order.total.toFixed(2)}</span></div>
-    `;
-
-    // Render shipping details
-    const shippingContainer = document.getElementById('order-shipping-details');
-    shippingContainer.innerHTML = `<p>${order.shippingAddress}</p>`;
-
-    // Render payment details
-    const paymentContainer = document.getElementById('order-payment-details');
-    paymentContainer.innerHTML = `<p>${order.paymentMethod}</p>`;
+        <div class="border-t border-slate-200 my-6"></div>
+        <div class="text-right">
+            <p class="text-slate-600">商品总价: <span class="font-semibold text-slate-800">¥${(order.total - 15).toFixed(2)}</span></p>
+            <p class="text-slate-600">运费: <span class="font-semibold text-slate-800">¥15.00</span></p>
+            <p class="mt-2 text-lg">实付款: <span class="font-bold text-2xl text-red-600">¥${order.total.toFixed(2)}</span></p>
+        </div>`;
 
     updateContextualBox(order);
-    renderIcons();
 }
 
 function updateContextualBox(order) {
@@ -1337,29 +1116,27 @@ function updateOrderStatus(orderId, newStatusId) {
 
 // --- Distribution Logic ---
 function renderDistributionParentView() {
-    const parent = document.getElementById('distribution-view');
-    if (!parent) return;
+    const applyView = document.getElementById('distribution-apply-view');
+    const pendingView = document.getElementById('distribution-pending-view');
+    const rejectedView = document.getElementById('distribution-rejected-view');
+    const dashboardView = document.getElementById('distribution-dashboard-view');
 
-    // Hide all sub-views first
-    const subViews = parent.querySelectorAll('.user-center-view > div');
-    if(subViews.length > 0) {
-        subViews.forEach(v => v.classList.add('hidden'));
-    }
+    // 隐藏所有视图
+    applyView.classList.add('hidden');
+    pendingView.classList.add('hidden');
+    rejectedView.classList.add('hidden');
+    dashboardView.classList.add('hidden');
 
     if (distributionStatus === 'none') {
-        const applyView = parent.querySelector('#distribution-apply-view');
-        if(applyView) applyView.classList.remove('hidden');
+        applyView.classList.remove('hidden');
     } else if (distributionStatus === 'pending') {
-        const pendingView = parent.querySelector('#distribution-pending-view');
-        if(pendingView) pendingView.classList.remove('hidden');
+        pendingView.classList.remove('hidden');
         renderPendingView();
     } else if (distributionStatus === 'rejected') {
-        const rejectedView = parent.querySelector('#distribution-rejected-view');
-        if(rejectedView) rejectedView.classList.remove('hidden');
+        rejectedView.classList.remove('hidden');
         renderRejectedView();
     } else if (distributionStatus === 'approved') {
-        const dashboardView = parent.querySelector('#distribution-dashboard-view');
-        if(dashboardView) dashboardView.classList.remove('hidden');
+        dashboardView.classList.remove('hidden');
         renderDistributionDashboard();
     }
     renderIcons();
@@ -1367,34 +1144,32 @@ function renderDistributionParentView() {
 
 // 渲染审核中视图
 function renderPendingView() {
+    // 更新提交时间
     if (distributionApplicationData.submitTime) {
         document.getElementById('submit-time').textContent = distributionApplicationData.submitTime;
     }
 
+    // 显示申请信息摘要
     const summaryContainer = document.getElementById('application-summary');
-    if (!summaryContainer) return;
-
-    let summaryHtml = '';
     if (distributionApplicationData.type === 'individual') {
-        summaryHtml = `
-            <div class="grid grid-cols-2 gap-4 text-left">
-                <div><strong class="font-medium text-slate-500">申请类型:</strong> 个人</div>
-                <div><strong class="font-medium text-slate-500">申请人:</strong> ${distributionApplicationData.name || ''}</div>
-                <div><strong class="font-medium text-slate-500">手机号:</strong> ${distributionApplicationData.phone || ''}</div>
-                <div><strong class="font-medium text-slate-500">邮箱:</strong> ${distributionApplicationData.email || ''}</div>
+        summaryContainer.innerHTML = `
+            <div class="grid grid-cols-2 gap-x-8 gap-y-4">
+                <div><span class="font-medium text-slate-500">申请类型:</span><br><span class="font-semibold">个人申请</span></div>
+                <div><span class="font-medium text-slate-500">真实姓名:</span><br><span class="font-semibold">${distributionApplicationData.name || '未填写'}</span></div>
+                <div><span class="font-medium text-slate-500">联系电话:</span><br><span class="font-semibold">${distributionApplicationData.phone || '未填写'}</span></div>
+                <div><span class="font-medium text-slate-500">电子邮箱:</span><br><span class="font-semibold">${distributionApplicationData.email || '未填写'}</span></div>
             </div>
         `;
     } else if (distributionApplicationData.type === 'company') {
-        summaryHtml = `
-            <div class="grid grid-cols-2 gap-4 text-left">
-                <div><strong class="font-medium text-slate-500">申请类型:</strong> 企业</div>
-                <div><strong class="font-medium text-slate-500">公司名称:</strong> ${distributionApplicationData.companyName || ''}</div>
-                <div><strong class="font-medium text-slate-500">联系人:</strong> ${distributionApplicationData.contactPerson || ''}</div>
-                <div><strong class="font-medium text-slate-500">联系电话:</strong> ${distributionApplicationData.phone || ''}</div>
+        summaryContainer.innerHTML = `
+            <div class="grid grid-cols-2 gap-x-8 gap-y-4">
+                <div><span class="font-medium text-slate-500">申请类型:</span><br><span class="font-semibold">企业申请</span></div>
+                <div><span class="font-medium text-slate-500">公司名称:</span><br><span class="font-semibold">${distributionApplicationData.companyName || '未填写'}</span></div>
+                <div><span class="font-medium text-slate-500">业务联系人:</span><br><span class="font-semibold">${distributionApplicationData.contactPerson || '未填写'}</span></div>
+                <div><span class="font-medium text-slate-500">联系电话:</span><br><span class="font-semibold">${distributionApplicationData.phone || '未填写'}</span></div>
             </div>
         `;
     }
-    summaryContainer.innerHTML = summaryHtml;
 }
 
 // 渲染拒绝视图
@@ -1418,37 +1193,29 @@ function renderRejectedView() {
 let distributionApplicationData = {};
 
 // 切换申请表单类型
-function toggleApplyForm(type, button) {
+function toggleApplyForm(type) {
     const individualForm = document.getElementById('individual-form');
     const companyForm = document.getElementById('company-form');
+    const individualTab = document.querySelector('button[onclick*="individual"]');
+    const companyTab = document.querySelector('button[onclick*="company"]');
 
-    document.querySelectorAll('.apply-tab-button').forEach(btn => {
-        btn.classList.remove('active', 'text-slate-900', 'border-blue-600');
-        btn.classList.add('text-slate-500', 'border-transparent');
-    });
-    if(button) {
-        button.classList.add('active', 'text-slate-900', 'border-blue-600');
-        button.classList.remove('text-slate-500', 'border-transparent');
-    }
 
     if (type === 'individual') {
         individualForm.classList.remove('hidden');
         companyForm.classList.add('hidden');
+        individualTab.classList.add('active');
+        companyTab.classList.remove('active');
     } else {
         individualForm.classList.add('hidden');
         companyForm.classList.remove('hidden');
+        individualTab.classList.remove('active');
+        companyTab.classList.add('active');
     }
 }
 
 // 处理分销申请
 function handleDistributionApply(type) {
-    const form = document.getElementById(type === 'individual' ? 'individual-form' : 'company-form');
-    if (!form.checkValidity()) {
-        alert('请填写所有必填项 (*)');
-        form.reportValidity();
-        return;
-    }
-
+    // 收集表单数据
     if (type === 'individual') {
         distributionApplicationData = {
             type: 'individual',
@@ -1475,20 +1242,23 @@ function handleDistributionApply(type) {
         };
     }
 
+    // 更新状态为审核中
     distributionStatus = 'pending';
     renderDistributionParentView();
+
+    // 显示提交成功消息
     showNotification('申请已提交，我们将在1-3个工作日内完成审核', 'success');
 }
 
-// 模拟审核通过
-function simulateApproval() {
+// (Admin) Approve Application
+function adminApproveApplication() {
     distributionStatus = 'approved';
     renderDistributionParentView();
     showNotification('恭喜！您的分销申请已通过审核', 'success');
 }
 
-// 模拟审核拒绝
-function simulateRejection() {
+// (Admin) Reject Application
+function adminRejectApplication() {
     distributionStatus = 'rejected';
     renderDistributionParentView();
 }
@@ -1553,83 +1323,59 @@ function renderDistributionDashboard() {
     document.getElementById('dist-withdrawable-commission').textContent = `¥${withdrawableCommission.toFixed(2)}`;
     document.getElementById('dist-customer-count').textContent = distributionData.customers.length;
     document.getElementById('dist-level').textContent = distributionData.stats.level;
-    document.getElementById('dist-rate').textContent = `${distributionData.stats.commissionRate}`;
+    document.getElementById('dist-rate').textContent = `/ ${distributionData.stats.commissionRate}`;
 
-    const referralLinkInput = document.getElementById('referral-link');
-    if (referralLinkInput) {
-        const referralLink = referralLinkInput.value;
-        const qrCodeImg = document.getElementById('referral-qr-code');
-        if(qrCodeImg) {
-            qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=96x96&data=${encodeURIComponent(referralLink)}`;
-        }
-    }
+    const referralLink = document.getElementById('referral-link').value;
+    document.getElementById('referral-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=96x96&data=${encodeURIComponent(referralLink)}`;
 
     // Render Earnings Chart
     const chartContainer = document.getElementById('earnings-chart');
-    if (chartContainer) {
-        const maxEarning = Math.max(...distributionData.monthlyEarnings.map(e => e.earnings), 1); // Avoid division by zero
-        chartContainer.innerHTML = distributionData.monthlyEarnings.map(item => `
-            <div class="flex-1 flex flex-col items-center justify-end" title="${item.month}: ¥${item.earnings.toFixed(2)}">
-                <div class="w-full bg-blue-200 rounded-t-sm hover:bg-blue-400 transition-colors" style="height: ${(item.earnings / maxEarning) * 100}%;"></div>
-                <p class="text-xs text-slate-500 mt-1">${item.month}</p>
-            </div>
-        `).join('');
-    }
+    const maxEarning = Math.max(...distributionData.monthlyEarnings.map(e => e.earnings), 1); // Avoid division by zero
+    chartContainer.innerHTML = distributionData.monthlyEarnings.map(item => `
+        <div class="flex-1 flex flex-col items-center justify-end" title="${item.month}: ¥${item.earnings.toFixed(2)}">
+            <div class="w-full bg-blue-200 rounded-t-sm hover:bg-blue-400 transition-colors" style="height: ${(item.earnings / maxEarning) * 100}%;"></div>
+            <p class="text-xs text-slate-500 mt-1">${item.month}</p>
+        </div>
+    `).join('');
 
     // Render Tables
     const ordersBody = document.getElementById('dist-orders-table-body');
-    if (ordersBody) {
-        ordersBody.innerHTML = distributionData.orders.map(o => `
-            <tr class="border-b border-slate-200">
-                <td class="p-4 text-sm">${o.id}</td>
-                <td class="p-4 text-sm">${o.customer}</td>
-                <td class="p-4 text-sm">${o.date}</td>
-                <td class="p-4 text-sm">¥${o.total.toFixed(2)}</td>
-                <td class="p-4 text-sm font-semibold text-green-600">+¥${o.commission.toFixed(2)}</td>
-                <td class="p-4 text-sm">${o.status === '已结算' ? `<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>` : `<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>`}</td>
-            </tr>
-        `).join('');
-    }
+    ordersBody.innerHTML = distributionData.orders.map(o => `
+        <tr class="border-b border-slate-200">
+            <td class="p-4 text-sm">${o.id}</td>
+            <td class="p-4 text-sm">${o.customer}</td>
+            <td class="p-4 text-sm">${o.date}</td>
+            <td class="p-4 text-sm">¥${o.total.toFixed(2)}</td>
+            <td class="p-4 text-sm font-semibold text-green-600">+¥${o.commission.toFixed(2)}</td>
+            <td class="p-4 text-sm">${o.status === '已结算' ? `<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>` : `<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>`}</td>
+        </tr>
+    `).join('');
 
     const customersBody = document.getElementById('dist-customers-table-body');
-    if (customersBody) {
-        customersBody.innerHTML = distributionData.customers.map(c => `
-            <tr class="border-b border-slate-200">
-                <td class="p-4 text-sm">${c.name}</td>
-                <td class="p-4 text-sm">${c.joinDate}</td>
-                <td class="p-4 text-sm">¥${c.totalSpent.toFixed(2)}</td>
-                <td class="p-4 text-sm">${c.lastOrderDate}</td>
-            </tr>
-        `).join('');
-    }
+    customersBody.innerHTML = distributionData.customers.map(c => `
+        <tr class="border-b border-slate-200">
+            <td class="p-4 text-sm">${c.name}</td>
+            <td class="p-4 text-sm">${c.joinDate}</td>
+            <td class="p-4 text-sm">¥${c.totalSpent.toFixed(2)}</td>
+            <td class="p-4 text-sm">${c.lastOrderDate}</td>
+        </tr>
+    `).join('');
 
     const withdrawalsBody = document.getElementById('dist-withdrawals-table-body');
-    if (withdrawalsBody) {
-        if (distributionData.withdrawals.length === 0) {
-            withdrawalsBody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-slate-500">暂无提现记录</td></tr>`;
-        } else {
-            withdrawalsBody.innerHTML = distributionData.withdrawals.map(w => `
-                <tr class="border-b border-slate-200">
-                    <td class="p-4 text-sm">${w.id}</td>
-                    <td class="p-4 text-sm">${w.date}</td>
-                    <td class="p-4 text-sm">¥${w.amount.toFixed(2)}</td>
-                    <td class="p-4 text-sm"><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">${w.status}</span></td>
-                </tr>
-            `).join('');
-        }
+    withdrawalsBody.innerHTML = distributionData.withdrawals.map(w => `
+        <tr class="border-b border-slate-200">
+            <td class="p-4 text-sm">${w.id}</td>
+            <td class="p-4 text-sm">${w.date}</td>
+            <td class="p-4 text-sm">¥${w.amount.toFixed(2)}</td>
+            <td class="p-4 text-sm"><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">${w.status}</span></td>
+        </tr>
+    `).join('');
+
+    if (withdrawalsBody.innerHTML === '') {
+        withdrawalsBody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-slate-500">暂无提现记录</td></tr>`;
     }
 }
 
-function copyReferralLink(button) {
-    const linkInput = document.getElementById('referral-link');
-    navigator.clipboard.writeText(linkInput.value).then(() => {
-        const copyText = button.querySelector('span');
-        copyText.textContent = '已复制!';
-        setTimeout(() => {
-            copyText.textContent = '复制';
-        }, 2000);
-    });
-}
 
 
 // --- Customization & Product Logic ---
@@ -2155,47 +1901,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 filterSidebar.classList.add('hidden');
                 document.getElementById('filter-chevron').style.transform = 'rotate(0deg)';
             }
-        });
-    }
-
-    // Handle User Center Modals
-    const orderSearchInput = document.getElementById('order-search-input');
-    if (orderSearchInput) {
-        orderSearchInput.addEventListener('input', e => {
-            renderOrdersPage(currentOrderStatusFilter, e.target.value);
-        });
-    }
-    const addressForm = document.getElementById('address-form');
-    if (addressForm) {
-        addressForm.addEventListener('submit', e => {
-            e.preventDefault();
-            // In a real app, you would save the address to a server.
-            // Here we just close the modal.
-            alert('地址已保存！');
-            closeAddressModal();
-        });
-    }
-
-    const invoiceForm = document.getElementById('invoice-form');
-    if (invoiceForm) {
-        invoiceForm.addEventListener('submit', e => {
-            e.preventDefault();
-            // In a real app, you would submit the invoice request to a server.
-            // Here we just close the modal.
-            alert('发票申请已提交！');
-            closeInvoiceModal();
-        });
-
-        const invoiceTypeRadios = document.querySelectorAll('input[name="invoice-type"]');
-        invoiceTypeRadios.forEach(radio => {
-            radio.addEventListener('change', () => {
-                const companyDetails = document.getElementById('company-invoice-details');
-                if (document.querySelector('input[name="invoice-type"]:checked').value === 'company') {
-                    companyDetails.classList.remove('hidden');
-                } else {
-                    companyDetails.classList.add('hidden');
-                }
-            });
         });
     }
 });
