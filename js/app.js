@@ -67,6 +67,24 @@ const materialData = {
 };
 
 // --- 辅助函数 ---
+function getAllProducts() {
+    const allProducts = [];
+    for (const domain in productCatalog) {
+        for (const pCat in productCatalog[domain]) {
+            for (const sCat in productCatalog[domain][pCat]) {
+                for (const product of productCatalog[domain][pCat][sCat]) {
+                    allProducts.push({
+                        ...product,
+                        ...(productDetails[product.id] || {})
+                    });
+                }
+            }
+        }
+    }
+    return allProducts;
+}
+const products = getAllProducts();
+
 function renderIcons() {
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
@@ -1843,32 +1861,17 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeFilters();
     } else if (document.getElementById('customization-page')) {
         if (productId) {
-            // This is a bit of a hack, we need to populate the page as if goToCustomization was called
-            const details = productDetails[productId];
-            let productInfo = null;
-            for (const domain in productCatalog) {
-                for (const pCat in productCatalog[domain]) {
-                    for (const sCat in productCatalog[domain][pCat]) {
-                        const found = productCatalog[domain][pCat][sCat].find(p => p.id === productId);
-                        if (found) {
-                            productInfo = found;
-                            break;
-                        }
-                    }
-                    if (productInfo) break;
-                }
-                if (productInfo) break;
-            }
-            if (productInfo) {
-                document.getElementById('customization-title').textContent = productInfo.name;
-                document.getElementById('customization-header').textContent = `${productInfo.name} 定制`;
-                if (details && details.description) {
-                    document.getElementById('customization-desc').textContent = details.description;
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                document.getElementById('customization-title').textContent = product.name;
+                document.getElementById('customization-header').textContent = `${product.name} 定制`;
+                if (product.description) {
+                    document.getElementById('customization-desc').textContent = product.description;
                 } else {
-                    document.getElementById('customization-desc').textContent = `定制您的专属 ${productInfo.name} (${productInfo.id})。`;
+                    document.getElementById('customization-desc').textContent = `定制您的专属 ${product.name} (${product.id})。`;
                 }
-                document.getElementById('customization-preview-img').src = productInfo.imageUrl.replace('400', '800').replace('300','600');
-                document.getElementById('customization-preview-img').alt = productInfo.name;
+                document.getElementById('customization-preview-img').src = product.imageUrl.replace('400', '800').replace('300','600');
+                document.getElementById('customization-preview-img').alt = product.name;
             }
         }
         renderMaterialOptions();
