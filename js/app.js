@@ -422,19 +422,7 @@ function renderProductCenter(filter) {
 }
 
 function goToCustomization(productId) {
-    const details = productDetails[productId];
-    if (!details) {
-        alert('该产品的定制功能即将上线，敬请期待！');
-        return;
-    }
-
-    // This part remains the same as it correctly populates the customization page
-    const titleElement = document.getElementById('customization-title');
-    const headerElement = document.getElementById('customization-header');
-    const descElement = document.getElementById('customization-desc');
-    const imageElement = document.getElementById('customization-preview-img');
-
-    // Find the product in the catalog to get its name and image
+    // Find the product in the catalog to get its name and image first
     let productInfo = null;
     for (const domain in productCatalog) {
         for (const pCat in productCatalog[domain]) {
@@ -450,9 +438,31 @@ function goToCustomization(productId) {
         if (productInfo) break;
     }
 
+    // If product is not in the catalog, it's an error.
+    if (!productInfo) {
+        alert('错误：找不到该产品的信息。');
+        return;
+    }
+
+    const details = productDetails[productId];
+
+    const titleElement = document.getElementById('customization-title');
+    const headerElement = document.getElementById('customization-header');
+    const descElement = document.getElementById('customization-desc');
+    const imageElement = document.getElementById('customization-preview-img');
+
     if (titleElement) titleElement.textContent = productInfo.name;
     if (headerElement) headerElement.textContent = `${productInfo.name} 定制`;
-    if (descElement) descElement.textContent = details.description;
+
+    // Use details if they exist, otherwise create a fallback description.
+    if (descElement) {
+        if (details && details.description) {
+            descElement.textContent = details.description;
+        } else {
+            descElement.textContent = `定制您的专属 ${productInfo.name} (${productInfo.id})。`;
+        }
+    }
+
     if (imageElement) {
         imageElement.src = productInfo.imageUrl.replace('400', '800').replace('300','600');
         imageElement.alt = productInfo.name;
