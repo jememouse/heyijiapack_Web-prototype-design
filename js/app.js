@@ -1,5 +1,5 @@
 // --- 全局状态和数据 ---
-let cart = [];
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let lastOrderId = null;
 let distributionStatus = 'none'; // 'none', 'pending', 'approved'
 let withdrawalAccounts = []; // To store saved bank accounts
@@ -8,11 +8,36 @@ const userAddresses = [
     { id: 1, name: '李婷', phone: '138****1234', address: '上海市 浦东新区 世纪大道100号 东方明珠大厦 88层', isDefault: true },
     { id: 2, name: '王经理', phone: '159****5678', address: '江苏省 苏州市 工业园区 星湖街328号 创意产业园 A栋 201室', isDefault: false },
 ];
-let orders = [
+let orders = JSON.parse(localStorage.getItem('orders')) || [
     { id: '20250720001', date: '2025-07-20', total: 1250.00, status: '文件处理中', statusId: 'processing', items: [{ name: '飞机盒', specs: '200x150x50mm | E瓦楞 | 哑光覆膜', quantity: 500, imageUrl: 'https://images.unsplash.com/photo-1607083206325-caf1edba7a0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
     { id: '20250718985', date: '2025-07-18', total: 3500.00, status: '已发货', statusId: 'shipped', items: [{ name: '双插盒', specs: '100x80x40mm | 350g白卡纸 | 烫金', quantity: 1000, imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
     { id: '20250715752', date: '2025-07-15', total: 880.00, status: '已完成', statusId: 'completed', items: [{ name: '抽屉盒', specs: '120x120x60mm | 精品灰板 | 无工艺', quantity: 200, imageUrl: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
 ];
+
+// --- 发票数据 ---
+const invoicableOrders = [
+    { id: '20250718985', date: '2025-07-18', total: 3500.00, items: '双插盒 x 1000' },
+    { id: '20250715752', date: '2025-07-15', total: 880.00, items: '抽屉盒 x 200' },
+];
+const issuedInvoices = [
+    { id: 'INV-202506-001', date: '2025-06-25', total: 4200.00, type: '增值税普通发票', status: '已开具', link: '#' },
+];
+
+// --- 售后数据 ---
+const afterSalesRequests = [
+    { id: 'AS-202507-001', orderId: '20250718985', requestDate: '2025-07-22', type: '退货退款', reason: '部分产品有瑕疵', status: '处理中', statusId: 'processing' },
+    { id: 'AS-202507-002', orderId: '20250715752', requestDate: '2025-07-20', type: '换货', reason: '尺寸错误', status: '已完成', statusId: 'completed' },
+];
+
+// --- 优惠券数据 ---
+const coupons = [
+    { id: 'NEW-USER-2025', value: 50, type: 'fixed', name: '新人专享券', description: '满300元可用', expiry: '2025-12-31', status: 'valid' },
+    { id: 'SUMMER-SALE', value: 0.88, type: 'percentage', name: '夏日特惠折扣', description: '全场通用，最高抵扣100元', expiry: '2025-08-31', status: 'valid' },
+    { id: 'VIP-EXCLUSIVE', value: 100, type: 'fixed', name: 'VIP客户专享', description: '满1000元可用', expiry: '2025-09-30', status: 'valid' },
+    { id: 'USED-001', value: 20, type: 'fixed', name: '订单满减券', description: '满200元可用', expiry: '2025-07-15', status: 'used' },
+    { id: 'EXPIRED-001', value: 0.95, type: 'percentage', name: '全场折扣', description: '全场通用', expiry: '2025-06-30', status: 'expired' },
+];
+
 const distributionData = {
     stats: {
         level: "青铜分销员",
@@ -67,6 +92,24 @@ const materialData = {
 };
 
 // --- 辅助函数 ---
+function getAllProducts() {
+    const allProducts = [];
+    for (const domain in productCatalog) {
+        for (const pCat in productCatalog[domain]) {
+            for (const sCat in productCatalog[domain][pCat]) {
+                for (const product of productCatalog[domain][pCat][sCat]) {
+                    allProducts.push({
+                        ...product,
+                        ...(productDetails[product.id] || {})
+                    });
+                }
+            }
+        }
+    }
+    return allProducts;
+}
+const products = getAllProducts();
+
 function renderIcons() {
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
@@ -74,7 +117,6 @@ function renderIcons() {
 }
 
 // --- 页面导航逻辑 ---
-const pages = document.querySelectorAll('.page');
 const userCenterViews = document.querySelectorAll('.user-center-view');
 
 const sidebarTemplate = [
@@ -89,29 +131,6 @@ const sidebarTemplate = [
     { id: 'settings-view', icon: 'user-cog', text: '账户设置' },
 ];
 
-function showPage(pageId, context) {
-    pages.forEach(p => p.classList.add('hidden'));
-    const activePage = document.getElementById(pageId);
-    if (activePage) activePage.classList.remove('hidden');
-
-    if (pageId === 'user-center-page') {
-        const viewId = context?.viewId || 'dashboard-view';
-        showUserCenterView(viewId, context);
-    } else if (pageId === 'shopping-cart-page') {
-        renderCart();
-    } else if (pageId === 'checkout-page') {
-        renderCheckoutPage();
-    } else if (pageId === 'customization-page') {
-        renderMaterialOptions();
-        renderSpecialProcesses();
-    } else if (pageId === 'product-center-page') {
-        initializeFilters();
-    }
-
-    window.scrollTo(0, 0);
-    renderIcons();
-}
-
 function showUserCenterView(viewId, context) {
     userCenterViews.forEach(v => v.classList.add('hidden'));
     const activeView = document.getElementById(viewId);
@@ -122,21 +141,74 @@ function showUserCenterView(viewId, context) {
         renderOrdersPage();
     } else if (viewId === 'order-detail-view') {
         renderOrderDetailPage(context?.orderId);
+    } else if (viewId === 'address-view') {
+        renderAddressView();
+    } else if (viewId === 'settings-view') {
+        renderSettingsView();
     } else if (viewId === 'distribution-view') {
         renderDistributionParentView();
+    } else if (viewId === 'invoice-view') {
+        renderInvoiceView();
+    } else if (viewId === 'after-sales-view') {
+        renderAfterSalesView();
+    } else if (viewId === 'coupons-view') {
+        renderCouponsView();
+    }
+}
+
+function switchCouponTab(button, status) {
+    const parent = button.closest('.bg-white');
+    parent.querySelectorAll('.coupon-tab-button').forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+    renderCouponsView(status);
+}
+
+function renderCouponsView(filterStatus = 'valid') {
+    const container = document.getElementById('coupons-list-container');
+    if (!container) return;
+
+    const filteredCoupons = coupons.filter(c => c.status === filterStatus);
+
+    if (filteredCoupons.length === 0) {
+        container.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="ticket" class="w-12 h-12 mx-auto"></i><p class="mt-2">暂无此类优惠券</p></div>`;
+    } else {
+        container.innerHTML = `<div class="grid md:grid-cols-2 gap-6">${filteredCoupons.map(coupon => `
+            <div class="coupon-card ${coupon.status} relative flex items-center bg-white border-l-8 rounded-lg shadow-sm overflow-hidden">
+                <div class="p-5 flex-grow">
+                    <h4 class="font-bold text-lg text-slate-800">${coupon.name}</h4>
+                    <p class="text-sm text-slate-500 mt-1">${coupon.description}</p>
+                    <p class="text-xs text-slate-400 mt-3">有效期至: ${coupon.expiry}</p>
+                </div>
+                <div class="flex-shrink-0 w-32 text-center text-white p-4">
+                    ${coupon.type === 'fixed' ?
+                    `<span class="text-4xl font-bold">${coupon.value}</span><span class="font-semibold">元</span>` :
+                    `<span class="text-4xl font-bold">${coupon.value * 10}</span><span class="font-semibold">折</span>`
+                    }
+                </div>
+                ${coupon.status !== 'valid' ? `<div class="absolute top-2 right-2 transform rotate-12"><span class="text-xs font-bold uppercase border-2 px-2 py-1 rounded-md">${coupon.status === 'used' ? '已使用' : '已过期'}</span></div>` : ''}
+            </div>
+        `).join('')}</div>`;
     }
     renderIcons();
 }
 
+>>>>>>> dd921bc80f4c78dc257b4318fcb5a15c49758841
+=======
+>>>>>>> dd921bc80f4c78dc257b4318fcb5a15c49758841
 // Product Detail Page Functions
 // Store the currently viewed product ID
 let currentProductDetailId = null;
 
-function showProductDetail(productId) {
+function navigateToProductDetail(productId) {
+    window.location.href = `product-detail.html?productId=${productId}`;
+}
+
+function renderProductDetailPage(productId) {
     currentProductDetailId = productId;
     const product = products.find(p => p.id === productId);
     if (!product) {
-        alert('产品未找到!');
+        // Handle product not found, maybe show a message on the page
+        document.getElementById('product-detail-page').innerHTML = '<p class="text-center p-12">产品未找到!</p>';
         return;
     }
 
@@ -173,8 +245,6 @@ function showProductDetail(productId) {
         customizeButton.onclick = () => goToCustomization(productId);
     }
 
-    // Show product detail page and render the default tab
-    showPage('product-detail-page');
     // Click the first tab by default
     document.querySelector('.product-detail-tab-button').click();
     renderIcons();
@@ -367,7 +437,7 @@ function renderProductCenter(filter) {
                     const details = productDetails[product.id] || {};
                     return `
                         <div class="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-transparent hover:border-blue-500 hover:shadow-xl transition-all">
-                            <div class="image-container bg-slate-100" onclick="showProductDetail('${product.id}')">
+                            <div class="image-container bg-slate-100" onclick="navigateToProductDetail('${product.id}')">
                                 <img class="img-3d w-full h-48 object-cover cursor-pointer"
                                     src="${product.imageUrl}"
                                     alt="${product.name} 3D图">
@@ -376,7 +446,7 @@ function renderProductCenter(filter) {
                                 <h3 class="text-lg font-bold flex-grow">${product.name}</h3>
                                 <p class="text-xs text-slate-500 mt-1">${product.id}</p>
                                 <div class="mt-4 space-y-2">
-                                    <button onclick="showProductDetail('${product.id}')" class="w-full border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">查看详情</button>
+                                    <button onclick="navigateToProductDetail('${product.id}')" class="w-full border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">查看详情</button>
                                     <button onclick="goToCustomization('${product.id}')" class="w-full btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">立即定制</button>
                                 </div>
                             </div>
@@ -422,43 +492,7 @@ function renderProductCenter(filter) {
 }
 
 function goToCustomization(productId) {
-    const details = productDetails[productId];
-    if (!details) {
-        alert('该产品的定制功能即将上线，敬请期待！');
-        return;
-    }
-
-    // This part remains the same as it correctly populates the customization page
-    const titleElement = document.getElementById('customization-title');
-    const headerElement = document.getElementById('customization-header');
-    const descElement = document.getElementById('customization-desc');
-    const imageElement = document.getElementById('customization-preview-img');
-
-    // Find the product in the catalog to get its name and image
-    let productInfo = null;
-    for (const domain in productCatalog) {
-        for (const pCat in productCatalog[domain]) {
-            for (const sCat in productCatalog[domain][pCat]) {
-                const found = productCatalog[domain][pCat][sCat].find(p => p.id === productId);
-                if (found) {
-                    productInfo = found;
-                    break;
-                }
-            }
-            if (productInfo) break;
-        }
-        if (productInfo) break;
-    }
-
-    if (titleElement) titleElement.textContent = productInfo.name;
-    if (headerElement) headerElement.textContent = `${productInfo.name} 定制`;
-    if (descElement) descElement.textContent = details.description;
-    if (imageElement) {
-        imageElement.src = productInfo.imageUrl.replace('400', '800').replace('300','600');
-        imageElement.alt = productInfo.name;
-    }
-
-    showPage('customization-page');
+    window.location.href = `customization.html?productId=${productId}`;
 }
 
 // --- New Hierarchical Filter Logic ---
@@ -580,7 +614,7 @@ function buildSidebar(container, activeViewId) {
     const logoutLink = document.createElement('a');
     logoutLink.href = '#';
     logoutLink.className = 'flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg mt-4 border-t border-slate-200';
-    logoutLink.onclick = (e) => { e.preventDefault(); showPage('homepage'); };
+    logoutLink.onclick = (e) => { e.preventDefault(); window.location.href = 'index.html'; };
     logoutLink.innerHTML = `<i data-lucide="log-out" class="w-5 h-5 mr-3"></i> 退出登录`;
     container.appendChild(logoutLink);
 }
@@ -605,7 +639,7 @@ function closeLoginModal() { loginModal.classList.add('hidden'); }
 function openOrderSuccessModal() { orderSuccessModal.classList.remove('hidden'); renderIcons(); }
 function closeOrderSuccessModalAndGoToUpload() {
     orderSuccessModal.classList.add('hidden');
-    showPage('user-center-page', { viewId: 'order-detail-view', orderId: lastOrderId });
+    window.location.href = `user-center.html?viewId=order-detail-view&orderId=${lastOrderId}`;
 }
 function openPaymentModal(total) {
     document.getElementById('payment-amount').textContent = `¥ ${total.toFixed(2)}`;
@@ -706,11 +740,11 @@ function switchAuthTab(button, tabId) {
 }
 function handleLogin() {
     closeLoginModal();
-    showPage('user-center-page');
+    window.location.href = 'user-center.html';
 }
 function handleRegister() {
     closeLoginModal();
-    showPage('user-center-page');
+    window.location.href = 'user-center.html';
 }
 
 // --- Tab Switching Logic ---
@@ -828,6 +862,7 @@ function handleAddToCart() {
     };
 
     cart.push(newItem);
+    localStorage.setItem('cart', JSON.stringify(cart));
 
     updateCartIcon();
 
@@ -837,7 +872,7 @@ function handleAddToCart() {
         cartIconContainer.classList.remove('cart-shake-animation');
     }, 400);
 
-    showPage('shopping-cart-page');
+    window.location.href = 'cart.html';
 }
 
 function renderCart() {
@@ -850,7 +885,7 @@ function renderCart() {
                 <i data-lucide="shopping-cart" class="w-16 h-16 mx-auto text-slate-300"></i>
                 <h2 class="mt-4 text-2xl font-semibold">您的购物车是空的</h2>
                 <p class="mt-2 text-slate-500">快去“在线定制”页面，添加一些商品吧！</p>
-                <button onclick="showPage('product-center-page')" class="mt-6 btn-primary text-white px-6 py-2 rounded-lg font-semibold">
+                <button onclick="window.location.href='products.html'" class="mt-6 btn-primary text-white px-6 py-2 rounded-lg font-semibold">
                     去定制
                 </button>
             </div>
@@ -898,12 +933,14 @@ function updateCartItemQuantity(itemId, change) {
         if (newQuantity > 0) item.quantity = newQuantity;
         else removeCartItem(itemId);
     }
+    localStorage.setItem('cart', JSON.stringify(cart));
     renderCart();
     updateCartIcon();
 }
 
 function removeCartItem(itemId) {
     cart = cart.filter(i => i.id !== itemId);
+    localStorage.setItem('cart', JSON.stringify(cart));
     renderCart();
     updateCartIcon();
 }
@@ -913,7 +950,7 @@ function handleCheckout() {
         alert('您的购物车是空的！');
         return;
     }
-    showPage('checkout-page');
+    window.location.href = 'checkout.html';
 }
 
 function renderCheckoutPage() {
@@ -978,6 +1015,10 @@ function confirmPayment() {
     orders.unshift(newOrder);
     lastOrderId = newOrder.id;
 
+    // Save cart and orders to localStorage so they persist across pages
+    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem('orders', JSON.stringify(orders));
+
     openOrderSuccessModal();
     cart = [];
     updateCartIcon();
@@ -1019,7 +1060,7 @@ function renderOrdersPage(filterStatus = 'all') {
                         </div>
                     </div>
                     <div class="border-t border-slate-200 mt-4 pt-4 flex justify-end space-x-3">
-                        <button onclick="showUserCenterView('order-detail-view', { orderId: '${order.id}' })" class="bg-white border border-slate-300 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50">查看详情</button>
+                        <button onclick="window.location.href='user-center.html?viewId=order-detail-view&orderId=${order.id}'" class="bg-white border border-slate-300 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50">查看详情</button>
                         <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">再次购买</button>
                     </div>
                 </div>
@@ -1048,8 +1089,8 @@ function renderOrderDetailPage(orderId) {
     }
 
     document.getElementById('order-detail-breadcrumb').innerHTML = `
-        <a href="#" onclick="showUserCenterView('dashboard-view')" class="hover:underline">我的账户</a> &gt;
-        <a href="#" onclick="showUserCenterView('orders-view')" class="hover:underline">我的订单</a> &gt;
+        <a href="user-center.html?viewId=dashboard-view" class="hover:underline">我的账户</a> &gt;
+        <a href="user-center.html?viewId=orders-view" class="hover:underline">我的订单</a> &gt;
         <span>订单 #${order.id}</span>
     `;
     document.getElementById('order-detail-title').textContent = `订单详情`;
@@ -1139,6 +1180,7 @@ function updateOrderStatus(orderId, newStatusId) {
         order.statusId = newStatusId;
         const state = orderStates.find(s => s.id === newStatusId);
         order.status = state ? state.name : '';
+        localStorage.setItem('orders', JSON.stringify(orders));
         renderOrderDetailPage(orderId);
     }
 }
@@ -1883,42 +1925,56 @@ function updateQuote() {
 
 // --- 初始化 ---
 document.addEventListener('DOMContentLoaded', () => {
-    // 检查是否有来自 smart-matcher 的导航请求
-    const navigateToAction = localStorage.getItem('navigateTo');
-    if (navigateToAction) {
-        localStorage.removeItem('navigateTo'); // 清除以防重复触发
-        try {
-            const { action, productId } = JSON.parse(navigateToAction);
-            if (action === 'goToCustomization' && productId) {
-                goToCustomization(productId);
-                return; // 阻止后续的默认页面加载
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('productId');
+
+    if (document.getElementById('homepage')) {
+        // No specific init for homepage
+    } else if (document.getElementById('product-center-page')) {
+        initializeFilters();
+    } else if (document.getElementById('customization-page')) {
+        if (productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                document.getElementById('customization-title').textContent = product.name;
+                document.getElementById('customization-header').textContent = `${product.name} 定制`;
+                if (product.description) {
+                    document.getElementById('customization-desc').textContent = product.description;
+                } else {
+                    document.getElementById('customization-desc').textContent = `定制您的专属 ${product.name} (${product.id})。`;
+                }
+                document.getElementById('customization-preview-img').src = product.imageUrl.replace('400', '800').replace('300','600');
+                document.getElementById('customization-preview-img').alt = product.name;
             }
-        } catch (e) {
-            console.error("Error parsing navigateTo action:", e);
+        }
+        renderMaterialOptions();
+        renderSpecialProcesses();
+    } else if (document.getElementById('shopping-cart-page')) {
+        renderCart();
+    } else if (document.getElementById('checkout-page')) {
+        renderCheckoutPage();
+    } else if (document.getElementById('user-center-page')) {
+        const viewId = urlParams.get('viewId') || 'dashboard-view';
+        showUserCenterView(viewId);
+    } else if (document.getElementById('product-detail-page')) {
+        if (productId) {
+            renderProductDetailPage(productId);
         }
     }
 
-    // 检查是否有目标页面需要跳转
-    const targetPage = localStorage.getItem('targetPage');
-    if (targetPage) {
-        localStorage.removeItem('targetPage');
-        showPage(targetPage);
-    } else {
-        showPage('homepage');
-    }
     updateCartIcon();
-    initializeFilters();
     renderIcons();
 
     // Handle window resize for mobile filter
-    window.addEventListener('resize', () => {
-        if (window.innerWidth >= 1024) {
-            // Show sidebar on desktop
-            document.getElementById('filter-sidebar').classList.remove('hidden');
-        } else {
-            // Hide sidebar on mobile by default
-            document.getElementById('filter-sidebar').classList.add('hidden');
-            document.getElementById('filter-chevron').style.transform = 'rotate(0deg)';
-        }
-    });
+    const filterSidebar = document.getElementById('filter-sidebar');
+    if (filterSidebar) {
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                filterSidebar.classList.remove('hidden');
+            } else {
+                filterSidebar.classList.add('hidden');
+                document.getElementById('filter-chevron').style.transform = 'rotate(0deg)';
+            }
+        });
+    }
 });

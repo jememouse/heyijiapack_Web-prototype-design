@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品详情 - 智盒工坊 (iboxify)</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="查看产品详情，了解产品规格、工艺介绍、下单须知和常见问题。">
+    <meta name="keywords" content="产品详情, 产品规格, 工艺介绍, 下单须知, 常见问题">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-white text-slate-800">
+
+    <div id="app" class="min-h-screen flex flex-col">
+
+        <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-200">
+            <nav class="container mx-auto px-8 md:px-16 py-4 flex justify-between items-center">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <svg width="32" height="32" viewBox="0 0 24 24" class="text-blue-600">
+                        <path fill="currentColor"
+                            d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 15h-2v-5h-4v5H9V9h2v4h2V9h2v8z">
+                        </path>
+                    </svg>
+                    <span class="text-xl font-bold text-slate-900">智盒工坊</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-slate-600 hover:text-blue-600">首页</a>
+                    <a href="products.html" class="text-slate-600 hover:text-blue-600">在线定制</a>
+                    <a href="smart-matcher.html" class="text-slate-600 hover:text-blue-600">智能包装方案匹配器</a>
+                    <a href="smart-design.html" class="text-slate-600 hover:text-blue-600">智能包装设计及打样服务</a>
+                    <a href="user-center.html" class="text-slate-600 hover:text-blue-600">个人中心</a>
+                    <a href="solutions.html" class="text-slate-600 hover:text-blue-600">解决方案</a>
+                    <a href="help.html" class="text-slate-600 hover:text-blue-600">帮助中心</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#" onclick="openLoginModal()" class="text-slate-600 hover:text-blue-600 text-sm">登录/注册</a>
+                    <a href="cart.html" id="cart-icon-container"
+                        class="relative flex items-center text-slate-600 hover:text-blue-600 transition-colors font-medium">
+                        <i data-lucide="shopping-cart" class="w-5 h-5 mr-1"></i>
+                        <span>我的购物车</span>
+                        <span id="cart-badge"
+                            class="ml-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                    </a>
+                    <button onclick="window.location.href='products.html'"
+                        class="btn-primary text-white px-5 py-2 rounded-lg font-semibold shadow-sm transition-all hidden sm:block">
+                        立即定制
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-grow">
+            <div id="product-detail-page">
+                <div class="container mx-auto px-8 md:px-16 py-8">
+                    <!-- Breadcrumb -->
+                    <nav class="flex items-center space-x-2 text-sm text-slate-500 mb-8">
+                        <a href="index.html" class="hover:text-blue-600">首页</a>
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        <a href="products.html" class="hover:text-blue-600">在线定制</a>
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        <span id="product-detail-breadcrumb" class="text-slate-900 font-medium">双插盒</span>
+                    </nav>
+
+                    <div class="grid lg:grid-cols-2 gap-12 mb-12">
+                        <!-- Product Images -->
+                        <div class="space-y-4">
+                            <div class="bg-slate-100 rounded-xl p-8 aspect-square flex items-center justify-center">
+                                <img id="product-detail-main-image"
+                                    src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80"
+                                    alt="产品主图" class="max-w-full max-h-full object-contain">
+                            </div>
+                            <div class="grid grid-cols-4 gap-2">
+                                <div
+                                    class="bg-slate-100 rounded-lg p-2 aspect-square cursor-pointer border-2 border-blue-500">
+                                    <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
+                                        alt="3D效果图" class="w-full h-full object-contain">
+                                </div>
+                                <div
+                                    class="bg-slate-100 rounded-lg p-2 aspect-square cursor-pointer border-2 border-transparent hover:border-blue-300">
+                                    <img src="https://images.unsplash.com/photo-1586953208448-b95a79798f07?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
+                                        alt="2D展开图" class="w-full h-full object-contain">
+                                </div>
+                                <div
+                                    class="bg-slate-100 rounded-lg p-2 aspect-square cursor-pointer border-2 border-transparent hover:border-blue-300">
+                                    <img src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
+                                        alt="工艺细节" class="w-full h-full object-contain">
+                                </div>
+                                <div
+                                    class="bg-slate-100 rounded-lg p-2 aspect-square cursor-pointer border-2 border-transparent hover:border-blue-300">
+                                    <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=150&q=80"
+                                        alt="应用场景" class="w-full h-full object-contain">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Info -->
+                        <div class="space-y-6">
+                            <div>
+                                <h1 id="product-detail-title" class="text-3xl font-bold text-slate-900 mb-2">双插盒</h1>
+                                <p id="product-detail-subtitle" class="text-lg text-slate-600">Tuck End Box</p>
+                                <div class="flex items-center space-x-4 mt-4">
+                                    <span
+                                        class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">一个起订</span>
+                                    <span
+                                        class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">24小时交付</span>
+                                    <span
+                                        class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full">3秒报价</span>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-slate-200 pt-6">
+                                <h3 class="text-lg font-semibold mb-3">产品特点</h3>
+                                <ul id="product-detail-features" class="space-y-2 text-slate-600">
+                                    <li class="flex items-start"><i data-lucide="check"
+                                            class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>上下盖均为插入式，组装便捷
+                                    </li>
+                                    <li class="flex items-start"><i data-lucide="check"
+                                            class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>是最常见的卡盒结构，成本经济
+                                    </li>
+                                    <li class="flex items-start"><i data-lucide="check"
+                                            class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>适合轻质产品包装</li>
+                                    <li class="flex items-start"><i data-lucide="check"
+                                            class="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"></i>支持多种印刷工艺</li>
+                                </ul>
+                            </div>
+
+                            <div class="border-t border-slate-200 pt-6">
+                                <h3 class="text-lg font-semibold mb-3">适用场景</h3>
+                                <div id="product-detail-scenarios" class="grid grid-cols-2 gap-4">
+                                    <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                                        <i data-lucide="smartphone" class="w-6 h-6 text-blue-600"></i>
+                                        <span class="text-sm font-medium">电子产品</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                                        <i data-lucide="heart" class="w-6 h-6 text-pink-600"></i>
+                                        <span class="text-sm font-medium">化妆品</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                                        <i data-lucide="gift" class="w-6 h-6 text-purple-600"></i>
+                                        <span class="text-sm font-medium">礼品包装</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+                                        <i data-lucide="shopping-bag" class="w-6 h-6 text-green-600"></i>
+                                        <span class="text-sm font-medium">零售商品</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-slate-200 pt-6">
+                                <button
+                                    onclick="goToCustomization('双插盒', 'Tuck End Box | 上下盖均为插入式，组装便捷，是最常见的卡盒结构。', 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80')"
+                                    class="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold text-lg hover:bg-blue-700 transition-colors">
+                                    立即定制此产品
+                                </button>
+                                <p class="text-center text-sm text-slate-500 mt-2">支持一个起订，在线3秒报价</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Details Tabs -->
+                    <div class="bg-white rounded-xl shadow-sm">
+                        <div class="border-b border-slate-200">
+                            <nav class="flex space-x-8 px-8" aria-label="Tabs">
+                                <button onclick="switchProductDetailTab(this, 'specifications')"
+                                    class="product-detail-tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                    产品规格
+                                </button>
+                                <button onclick="switchProductDetailTab(this, 'process')"
+                                    class="product-detail-tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                    工艺介绍
+                                </button>
+                                <button onclick="switchProductDetailTab(this, 'notice')"
+                                    class="product-detail-tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                    下单须知
+                                </button>
+                                <button onclick="switchProductDetailTab(this, 'faq')"
+                                    class="product-detail-tab-button text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                    常见问题
+                                </button>
+                            </nav>
+                        </div>
+
+                        <div class="p-8">
+                            <!-- 产品规格 -->
+                            <div id="specifications-content" class="product-detail-tab-content">
+                                <!-- content will be generated by JS -->
+                            </div>
+
+                            <!-- 工艺介绍 -->
+                            <div id="process-content" class="product-detail-tab-content hidden">
+                                <!-- content will be generated by JS -->
+                            </div>
+
+                            <!-- 下单须知 -->
+                            <div id="notice-content" class="product-detail-tab-content hidden">
+                                <!-- content will be generated by JS -->
+                            </div>
+
+                            <!-- 常见问题 -->
+                            <div id="faq-content" class="product-detail-tab-content hidden">
+                                <!-- content will be generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="bg-white border-t border-slate-200 mt-16">
+            <div class="container mx-auto px-8 md:px-16 py-8">
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="font-semibold text-slate-800">智盒工坊</h3>
+                        <p class="text-sm text-slate-600 mt-2">包装定制平台</p>
+                        <p class="text-xs text-slate-500 mt-1">一个起订 · 3秒报价 · 24小时交付</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-500">导航</h4>
+                        <ul class="mt-2 space-y-2 text-sm">
+                            <li><a href="products.html"
+                                    class="text-slate-600 hover:text-blue-600">在线定制</a></li>
+                            <li><a href="solutions.html"
+                                    class="text-slate-600 hover:text-blue-600">解决方案</a></li>
+                            <li><a href="help.html"
+                                    class="text-slate-600 hover:text-blue-600">帮助中心</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-500">支持</h4>
+                        <ul class="mt-2 space-y-2 text-sm">
+                            <li><a href="help.html"
+                                    class="text-slate-600 hover:text-blue-600">帮助中心</a></li>
+                            <li><a href="help.html"
+                                    class="text-slate-600 hover:text-blue-600">联系我们</a></li>
+                            <li><a href="#" class="text-slate-600 hover:text-blue-600">服务条款</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-8 border-t border-slate-200 pt-6 text-center text-sm text-slate-500">&copy; 2025 智盒工坊
+                    (iboxify). All Rights Reserved.</div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Modals will be copied here later -->
+
+    <script src="js/product-data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
