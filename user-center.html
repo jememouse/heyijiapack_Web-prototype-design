@@ -109,40 +109,8 @@
                                                     <th class="p-4 font-semibold"></th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr class="border-b border-slate-200">
-                                                    <td class="p-4">#...001</td>
-                                                    <td class="p-4">2025-07-20</td>
-                                                    <td class="p-4">¥1,250.00</td>
-                                                    <td class="p-4"><span
-                                                            class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">文件处理中</span>
-                                                    </td>
-                                                    <td class="p-4"><a href="#"
-                                                            onclick="showUserCenterView('order-detail-view')"
-                                                            class="font-semibold text-blue-600">查看</a></td>
-                                                </tr>
-                                                <tr class="border-b border-slate-200">
-                                                    <td class="p-4">#...985</td>
-                                                    <td class="p-4">2025-07-18</td>
-                                                    <td class="p-4">¥3,500.00</td>
-                                                    <td class="p-4"><span
-                                                            class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">已发货</span>
-                                                    </td>
-                                                    <td class="p-4"><a href="#"
-                                                            onclick="showUserCenterView('order-detail-view')"
-                                                            class="font-semibold text-blue-600">查看</a></td>
-                                                </tr>
-                                                <tr class="border-b border-slate-200">
-                                                    <td class="p-4">#...752</td>
-                                                    <td class="p-4">2025-07-15</td>
-                                                    <td class="p-4">¥880.00</td>
-                                                    <td class="p-4"><span
-                                                            class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">已完成</span>
-                                                    </td>
-                                                    <td class="p-4"><a href="#"
-                                                            onclick="showUserCenterView('order-detail-view')"
-                                                            class="font-semibold text-blue-600">查看</a></td>
-                                                </tr>
+                                            <tbody id="dashboard-recent-orders">
+                                                <!-- Recent orders will be rendered here -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -290,7 +258,69 @@
                                 </div>
                             </div>
                             <div id="order-detail-view" class="user-center-view hidden">
-                                <!-- Content will be rendered by renderOrderDetailPage() in app.js -->
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <div class="flex justify-between items-start mb-8">
+                                        <div>
+                                            <h1 class="text-3xl font-bold" id="order-detail-title">订单详情</h1>
+                                            <p class="text-slate-500 mt-1" id="order-detail-breadcrumb">
+                                                <a href="#" onclick="showUserCenterView('dashboard-view')" class="text-blue-600 hover:underline">我的账户</a> &gt;
+                                                <a href="#" onclick="showUserCenterView('orders-view')" class="text-blue-600 hover:underline">我的订单</a> &gt;
+                                                <span id="order-detail-id-breadcrumb"></span>
+                                            </p>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg font-medium">打印订单</button>
+                                            <button class="btn-primary text-white px-4 py-2 rounded-lg font-medium">再次购买</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Order Status Timeline -->
+                                    <div id="order-timeline" class="flex justify-between items-center mb-12 p-4 bg-slate-50 rounded-lg">
+                                        <!-- Timeline will be rendered here by JS -->
+                                    </div>
+
+                                    <!-- Order Details Grid -->
+                                    <div class="grid md:grid-cols-3 gap-8">
+                                        <!-- Left Column: Items -->
+                                        <div class="md:col-span-2">
+                                            <h2 class="text-xl font-semibold mb-4">商品信息</h2>
+                                            <div id="order-detail-items" class="space-y-4">
+                                                <!-- Item details will be rendered here -->
+                                            </div>
+                                        </div>
+
+                                        <!-- Right Column: Summary -->
+                                        <div class="md:col-span-1">
+                                            <div class="bg-slate-50 rounded-lg p-6 space-y-6">
+                                                <div>
+                                                    <h3 class="text-lg font-semibold mb-3">订单摘要</h3>
+                                                    <div id="order-summary-details" class="space-y-2 text-sm">
+                                                        <!-- Summary details will be rendered here -->
+                                                    </div>
+                                                </div>
+                                                <div class="border-t border-slate-200"></div>
+                                                <div>
+                                                    <h3 class="text-lg font-semibold mb-3">配送信息</h3>
+                                                    <div id="order-shipping-details" class="space-y-1 text-sm">
+                                                        <!-- Shipping details will be rendered here -->
+                                                    </div>
+                                                </div>
+                                                 <div class="border-t border-slate-200"></div>
+                                                <div>
+                                                    <h3 class="text-lg font-semibold mb-3">支付信息</h3>
+                                                    <div id="order-payment-details" class="space-y-1 text-sm">
+                                                        <!-- Payment details will be rendered here -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Contextual Action Box -->
+                                    <div id="contextual-action-box" class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+                                        <!-- Contextual actions will be rendered here -->
+                                    </div>
+                                </div>
                             </div>
                             <div id="after-sales-view" class="user-center-view hidden">
                                 <div class="bg-white p-8 rounded-xl shadow-sm">

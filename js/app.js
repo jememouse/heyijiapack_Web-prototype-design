@@ -9,9 +9,51 @@ const userAddresses = [
     { id: 2, name: '王经理', phone: '159****5678', address: '江苏省 苏州市 工业园区 星湖街328号 创意产业园 A栋 201室', isDefault: false },
 ];
 let orders = JSON.parse(localStorage.getItem('orders')) || [
-    { id: '20250720001', date: '2025-07-20', total: 1250.00, status: '文件处理中', statusId: 'processing', items: [{ name: '飞机盒', specs: '200x150x50mm | E瓦楞 | 哑光覆膜', quantity: 500, imageUrl: 'https://images.unsplash.com/photo-1607083206325-caf1edba7a0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
-    { id: '20250718985', date: '2025-07-18', total: 3500.00, status: '已发货', statusId: 'shipped', items: [{ name: '双插盒', specs: '100x80x40mm | 350g白卡纸 | 烫金', quantity: 1000, imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
-    { id: '20250715752', date: '2025-07-15', total: 880.00, status: '已完成', statusId: 'completed', items: [{ name: '抽屉盒', specs: '120x120x60mm | 精品灰板 | 无工艺', quantity: 200, imageUrl: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
+    {
+        id: '20250720001',
+        date: '2025-07-20',
+        total: 1250.00,
+        status: '文件处理中',
+        statusId: 'processing',
+        shippingAddress: '上海市 浦东新区 世纪大道100号 东方明珠大厦 88层',
+        paymentMethod: '支付宝',
+        items: [{
+            name: '飞机盒',
+            specs: '200x150x50mm | E瓦楞 | 哑光覆膜',
+            quantity: 500,
+            unitPrice: 2.50,
+            imageUrl: 'https://images.unsplash.com/photo-1607083206325-caf1edba7a0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80'
+        }]
+    },
+    {
+        id: '20250718985',
+        date: '2025-07-18',
+        total: 3500.00,
+        status: '已发货',
+        statusId: 'shipped',
+        shippingAddress: '江苏省 苏州市 工业园区 星湖街328号 创意产业园 A栋 201室',
+        paymentMethod: '微信支付',
+        items: [
+            { name: '双插盒', specs: '100x80x40mm | 350g白卡纸 | 烫金', quantity: 1000, unitPrice: 3.20, imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' },
+            { name: '感谢卡', specs: '100x80mm | 300g铜版纸', quantity: 1000, unitPrice: 0.30, imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }
+        ]
+    },
+    {
+        id: '20250715752',
+        date: '2025-07-15',
+        total: 880.00,
+        status: '已完成',
+        statusId: 'completed',
+        shippingAddress: '上海市 浦东新区 世纪大道100号 东方明珠大厦 88层',
+        paymentMethod: '银行转账',
+        items: [{
+            name: '抽屉盒',
+            specs: '120x120x60mm | 精品灰板 | 无工艺',
+            quantity: 200,
+            unitPrice: 4.40,
+            imageUrl: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80'
+        }]
+    },
 ];
 let invoices = [
     { id: 'INV-20250720', orderId: '20250720001', date: '2025-07-21', total: 1250.00, status: '已开具' },
@@ -132,7 +174,9 @@ function showUserCenterView(viewId, context) {
     if (activeView) activeView.classList.remove('hidden');
     buildSidebar(document.getElementById('user-center-sidebar'), viewId);
 
-    if (viewId === 'orders-view') {
+    if (viewId === 'dashboard-view') {
+        renderDashboardView();
+    } else if (viewId === 'orders-view') {
         renderOrdersPage('all');
     } else if (viewId === 'order-detail-view') {
         renderOrderDetailPage(context?.orderId);
@@ -148,6 +192,32 @@ function showUserCenterView(viewId, context) {
         renderCouponsView();
     }
     renderIcons();
+}
+
+function renderDashboardView() {
+    const container = document.getElementById('dashboard-recent-orders');
+    if (!container) return;
+
+    const recentOrders = orders.slice(0, 3);
+
+    container.innerHTML = recentOrders.map(order => {
+        const statusColors = {
+            processing: 'bg-yellow-100 text-yellow-800',
+            shipped: 'bg-blue-100 text-blue-800',
+            completed: 'bg-green-100 text-green-800',
+        };
+        const statusColor = statusColors[order.statusId] || 'bg-slate-100 text-slate-800';
+
+        return `
+            <tr class="border-b border-slate-200">
+                <td class="p-4">${order.id}</td>
+                <td class="p-4">${order.date}</td>
+                <td class="p-4">¥${order.total.toFixed(2)}</td>
+                <td class="p-4"><span class="${statusColor} text-xs font-medium px-2 py-1 rounded-full">${order.status}</span></td>
+                <td class="p-4"><a href="#" onclick="showUserCenterView('order-detail-view', { orderId: '${order.id}' })" class="font-semibold text-blue-600">查看</a></td>
+            </tr>
+        `;
+    }).join('');
 }
 
 function renderAddressView() {
@@ -1141,55 +1211,58 @@ function renderOrderDetailPage(orderId) {
         return;
     }
 
-    document.getElementById('order-detail-breadcrumb').innerHTML = `
-        <a href="user-center.html?viewId=dashboard-view" class="hover:underline">我的账户</a> &gt;
-        <a href="user-center.html?viewId=orders-view" class="hover:underline">我的订单</a> &gt;
-        <span>订单 #${order.id}</span>
-    `;
-    document.getElementById('order-detail-title').textContent = `订单详情`;
+    document.getElementById('order-detail-id-breadcrumb').textContent = `订单 #${order.id}`;
 
+    // Render timeline
     const timelineContainer = document.getElementById('order-timeline');
     const currentStatusIndex = orderStates.findIndex(s => s.id === order.statusId);
     timelineContainer.innerHTML = orderStates.map((state, index) => {
         const isActive = index <= currentStatusIndex;
         return `
-        <div class="relative flex items-start timeline-item ${isActive ? 'active' : ''}">
-            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-4 ${isActive ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-500'}">
+        <div class="relative flex-1 flex flex-col items-center text-center timeline-item ${isActive ? 'active' : ''}">
+            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isActive ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-500'}">
                 <i data-lucide="${state.icon}" class="w-4 h-4"></i>
             </div>
-            <div>
-                <p class="font-semibold ${isActive ? 'text-slate-800' : 'text-slate-500'}">${state.name}</p>
-                ${isActive ? `<p class="text-xs text-slate-500 mt-1">${index === currentStatusIndex ? '进行中...' : '已完成'}</p>` : ''}
-            </div>
+            <p class="font-semibold text-sm mt-2 ${isActive ? 'text-slate-800' : 'text-slate-500'}">${state.name}</p>
         </div>`;
     }).join('');
 
-    const infoContainer = document.getElementById('order-detail-info');
-    const address = userAddresses.find(a => a.isDefault);
-    infoContainer.innerHTML = `
-        <h3 class="text-xl font-semibold mb-4">订单信息</h3>
-        <div class="grid md:grid-cols-2 gap-8">
-            <div>
-                <h4 class="font-semibold text-slate-800 mb-3">收货信息</h4>
-                <p class="text-slate-600">${address.name}</p>
-                <p class="text-slate-600">${address.phone}</p>
-                <p class="text-slate-600">${address.address}</p>
+    // Render item details
+    const itemsContainer = document.getElementById('order-detail-items');
+    itemsContainer.innerHTML = order.items.map(item => `
+        <div class="flex items-start space-x-4 border-b border-slate-200 pb-4 last:border-b-0">
+            <img src="${item.imageUrl}" alt="${item.name}" class="w-20 h-20 rounded-md object-cover border">
+            <div class="flex-grow">
+                <p class="font-semibold">${item.name}</p>
+                <p class="text-sm text-slate-500 mt-1">${item.specs}</p>
             </div>
-            <div>
-                <h4 class="font-semibold text-slate-800 mb-3">产品列表</h4>
-                <ul class="space-y-2 text-sm text-slate-600">
-                    ${order.items.map(item => `<li><strong>${item.name} (x${item.quantity})</strong>: ${item.specs}</li>`).join('')}
-                </ul>
+            <div class="text-right">
+                <p class="font-semibold">¥${(item.quantity * item.unitPrice).toFixed(2)}</p>
+                <p class="text-sm text-slate-500">x${item.quantity}</p>
             </div>
         </div>
-        <div class="border-t border-slate-200 my-6"></div>
-        <div class="text-right">
-            <p class="text-slate-600">商品总价: <span class="font-semibold text-slate-800">¥${(order.total - 15).toFixed(2)}</span></p>
-            <p class="text-slate-600">运费: <span class="font-semibold text-slate-800">¥15.00</span></p>
-            <p class="mt-2 text-lg">实付款: <span class="font-bold text-2xl text-red-600">¥${order.total.toFixed(2)}</span></p>
-        </div>`;
+    `).join('');
+
+    // Render order summary
+    const summaryContainer = document.getElementById('order-summary-details');
+    const subtotal = order.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+    const shipping = order.total - subtotal;
+    summaryContainer.innerHTML = `
+        <div class="flex justify-between"><span>商品总价</span><span class="font-medium">¥${subtotal.toFixed(2)}</span></div>
+        <div class="flex justify-between"><span>运费</span><span class="font-medium">¥${shipping.toFixed(2)}</span></div>
+        <div class="flex justify-between font-bold text-base mt-2 pt-2 border-t border-slate-300"><span>订单总计</span><span class="text-red-600">¥${order.total.toFixed(2)}</span></div>
+    `;
+
+    // Render shipping details
+    const shippingContainer = document.getElementById('order-shipping-details');
+    shippingContainer.innerHTML = `<p>${order.shippingAddress}</p>`;
+
+    // Render payment details
+    const paymentContainer = document.getElementById('order-payment-details');
+    paymentContainer.innerHTML = `<p>${order.paymentMethod}</p>`;
 
     updateContextualBox(order);
+    renderIcons();
 }
 
 function updateContextualBox(order) {
