@@ -149,7 +149,34 @@
                                 </div>
                             </div>
                             <div id="orders-view" class="user-center-view hidden">
-                                <!-- Content will be rendered by renderOrdersPage() in app.js -->
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <h1 class="text-3xl font-bold mb-6">我的订单</h1>
+
+                                    <!-- Tabs -->
+                                    <div class="border-b border-slate-200">
+                                        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                            <button onclick="switchOrderTab(this, 'all')" class="order-tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">全部订单</button>
+                                            <button onclick="switchOrderTab(this, 'in-production')" class="order-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300">生产中</button>
+                                            <button onclick="switchOrderTab(this, 'shipped')" class="order-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300">已发货</button>
+                                            <button onclick="switchOrderTab(this, 'completed')" class="order-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300">已完成</button>
+                                        </nav>
+                                    </div>
+
+                                    <!-- Search Bar -->
+                                    <div class="mt-6">
+                                        <div class="relative">
+                                            <input type="text" id="order-search-input" placeholder="输入订单号或商品名称搜索..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Order List -->
+                                    <div id="orders-list-container" class="mt-6 space-y-6">
+                                        <!-- Orders will be rendered here -->
+                                    </div>
+                                </div>
                             </div>
                             <div id="address-view" class="user-center-view hidden">
                                 <div class="bg-white p-8 rounded-xl shadow-sm">

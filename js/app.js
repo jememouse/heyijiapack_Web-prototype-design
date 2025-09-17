@@ -133,7 +133,7 @@ function showUserCenterView(viewId, context) {
     buildSidebar(document.getElementById('user-center-sidebar'), viewId);
 
     if (viewId === 'orders-view') {
-        renderOrdersPage();
+        renderOrdersPage('all');
     } else if (viewId === 'order-detail-view') {
         renderOrderDetailPage(context?.orderId);
     } else if (viewId === 'distribution-view') {
@@ -796,11 +796,15 @@ function switchTab(button, tabId) {
     parent.querySelector(`#${tabId}`).classList.remove('hidden');
 }
 
+let currentOrderStatusFilter = 'all';
+
 function switchOrderTab(button, status) {
+    currentOrderStatusFilter = status;
     const parent = button.closest('.bg-white');
     parent.querySelectorAll('.order-tab-button').forEach(btn => btn.classList.remove('active'));
     button.classList.add('active');
-    renderOrdersPage(status);
+    const searchTerm = document.getElementById('order-search-input').value;
+    renderOrdersPage(status, searchTerm);
 }
 
 // --- 购物车与结算逻辑 ---
@@ -1065,15 +1069,24 @@ function confirmPayment() {
 }
 
 // --- 订单页面逻辑 ---
-function renderOrdersPage(filterStatus = 'all') {
+function renderOrdersPage(filterStatus = 'all', searchTerm = '') {
     const container = document.getElementById('orders-list-container');
     if (!container) return;
 
-    const filteredOrders = orders.filter(order => {
+    let filteredOrders = orders.filter(order => {
         if (filterStatus === 'all') return true;
         if (filterStatus === 'in-production') return ['placed', 'processing', 'confirming', 'production'].includes(order.statusId);
         return order.statusId === filterStatus;
     });
+
+    if (searchTerm) {
+        const lowerCaseSearchTerm = searchTerm.toLowerCase();
+        filteredOrders = filteredOrders.filter(order => {
+            const hasMatchingId = order.id.toLowerCase().includes(lowerCaseSearchTerm);
+            const hasMatchingItem = order.items.some(item => item.name.toLowerCase().includes(lowerCaseSearchTerm));
+            return hasMatchingId || hasMatchingItem;
+        });
+    }
 
     if (filteredOrders.length === 0) {
         container.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="inbox" class="w-12 h-12 mx-auto"></i><p class="mt-2">暂无相关订单</p></div>`;
@@ -2019,6 +2032,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Handle User Center Modals
+    const orderSearchInput = document.getElementById('order-search-input');
+    if (orderSearchInput) {
+        orderSearchInput.addEventListener('input', e => {
+            renderOrdersPage(currentOrderStatusFilter, e.target.value);
+        });
+    }
     const addressForm = document.getElementById('address-form');
     if (addressForm) {
         addressForm.addEventListener('submit', e => {
