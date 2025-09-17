@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线定制 - 智盒工坊 (iboxify)</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="在线定制您的专属包装盒，输入尺寸、选择材料和工艺，实时获取报价。">
+    <meta name="keywords" content="在线定制, 包装盒, 定制尺寸, 选择材料, 装饰工艺">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-white text-slate-800">
+
+    <div id="app" class="min-h-screen flex flex-col">
+
+        <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-200">
+            <nav class="container mx-auto px-8 md:px-16 py-4 flex justify-between items-center">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <svg width="32" height="32" viewBox="0 0 24 24" class="text-blue-600">
+                        <path fill="currentColor"
+                            d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 15h-2v-5h-4v5H9V9h2v4h2V9h2v8z">
+                        </path>
+                    </svg>
+                    <span class="text-xl font-bold text-slate-900">智盒工坊</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-slate-600 hover:text-blue-600">首页</a>
+                    <a href="products.html" class="text-slate-600 hover:text-blue-600">在线定制</a>
+                    <a href="smart-matcher.html" class="text-slate-600 hover:text-blue-600">智能包装方案匹配器</a>
+                    <a href="smart-design.html" class="text-slate-600 hover:text-blue-600">智能包装设计及打样服务</a>
+                    <a href="user-center.html" class="text-slate-600 hover:text-blue-600">个人中心</a>
+                    <a href="solutions.html" class="text-slate-600 hover:text-blue-600">解决方案</a>
+                    <a href="help.html" class="text-slate-600 hover:text-blue-600">帮助中心</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#" onclick="openLoginModal()" class="text-slate-600 hover:text-blue-600 text-sm">登录/注册</a>
+                    <a href="cart.html" id="cart-icon-container"
+                        class="relative flex items-center text-slate-600 hover:text-blue-600 transition-colors font-medium">
+                        <i data-lucide="shopping-cart" class="w-5 h-5 mr-1"></i>
+                        <span>我的购物车</span>
+                        <span id="cart-badge"
+                            class="ml-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                    </a>
+                    <button onclick="window.location.href='products.html'"
+                        class="btn-primary text-white px-5 py-2 rounded-lg font-semibold shadow-sm transition-all hidden sm:block">
+                        立即定制
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-grow">
+            <div id="customization-page">
+                <div class="container mx-auto px-8 md:px-16 py-12">
+                    <div class="grid lg:grid-cols-5 gap-12">
+                        <div class="lg:col-span-3">
+                            <div class="bg-white rounded-xl shadow-sm sticky top-28 p-4">
+                                <div
+                                    class="aspect-w-4 aspect-h-3 bg-slate-100 rounded-lg flex items-center justify-center">
+                                    <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+                                        alt="通用彩盒" id="customization-preview-img" class="w-full h-full object-contain">
+                                </div>
+                                <div class="mt-4 px-2">
+                                    <h3 class="text-lg font-semibold" id="customization-title">通用彩盒</h3>
+                                    <p class="text-sm text-slate-500 mt-1" id="customization-desc">根据您的需求，定制高品质通用彩盒。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <h2 class="text-2xl font-bold mb-6" id="customization-header">通用彩盒 定制</h2>
+                            <div class="space-y-6">
+                                <!-- 1. 输入尺寸 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">1. 输入尺寸 *</h3>
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div><label for="length" class="block text-sm font-medium text-slate-700">长
+                                                (L)</label>
+                                            <div class="mt-1 relative rounded-md shadow-sm"><input type="number"
+                                                    name="length" id="length" value="200" oninput="updateQuote()"
+                                                    class="w-full p-3 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors font-medium text-slate-900">
+                                                <div
+                                                    class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                    <span class="text-slate-600 font-medium text-sm">mm</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div><label for="width" class="block text-sm font-medium text-slate-700">宽
+                                                (W)</label>
+                                            <div class="mt-1 relative rounded-md shadow-sm"><input type="number"
+                                                    name="width" id="width" value="150" oninput="updateQuote()"
+                                                    class="w-full p-3 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors font-medium text-slate-900">
+                                                <div
+                                                    class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                    <span class="text-slate-600 font-medium text-sm">mm</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div><label for="height" class="block text-sm font-medium text-slate-700">高
+                                                (H)</label>
+                                            <div class="mt-1 relative rounded-md shadow-sm"><input type="number"
+                                                    name="height" id="height" value="50" oninput="updateQuote()"
+                                                    class="w-full p-3 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors font-medium text-slate-900">
+                                                <div
+                                                    class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                    <span class="text-slate-600 font-medium text-sm">mm</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 2. 选择材料 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">2. 选择材料</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-700 mb-2">纸张类型 *</label>
+                                            <div id="material-type-options" class="grid grid-cols-2 gap-3">
+                                                <!-- Material options will be generated by JS -->
+                                            </div>
+                                        </div>
+                                        <div id="grammage-options-container">
+                                            <!-- Grammage options will be generated by JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 3. 图案印制方式 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">3. 图案印制方式</h3>
+                                    <div class="space-y-3">
+                                        <!-- 精美数码印刷 -->
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <div class="flex items-center mb-1">
+                                                    <span class="font-semibold text-sm">精美数码印刷</span>
+                                                    <span
+                                                        class="ml-2 px-2 py-1 bg-blue-600 text-white text-xs rounded-full font-medium">推荐</span>
+                                                </div>
+                                                <p class="text-xs text-slate-500 mt-1">适合小批量、色彩鲜艳的设计，无专色选项，成本适中</p>
+                                            </div>
+                                            <input type="radio" name="printing-method" value="digital"
+                                                onchange="toggleSpotColorOptions(this.value)"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                        </label>
+
+                                        <!-- 胶印方式 -->
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">胶印方式</span>
+                                                <p class="text-xs text-slate-500 mt-1">适合大批量生产，默认包含CMYK四色，可增加专色</p>
+                                            </div>
+                                            <input type="radio" name="printing-method" value="offset"
+                                                onchange="toggleSpotColorOptions(this.value)"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        </label>
+
+                                        <!-- 专色选项 (条件显示) -->
+                                        <div id="spot-color-options"
+                                            class="hidden ml-4 pl-4 border-l-2 border-blue-200 space-y-3">
+                                            <label class="block text-sm font-medium text-slate-700">专色数量</label>
+                                            <div class="flex flex-wrap gap-2">
+                                                <label
+                                                    class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                    <input type="radio" name="printing-spot-color" value="0"
+                                                        data-price-factor="0" onchange="updateQuote()" class="sr-only"
+                                                        checked>
+                                                    无专色
+                                                </label>
+                                                <label
+                                                    class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                    <input type="radio" name="printing-spot-color" value="1"
+                                                        data-price-factor="0.2" onchange="updateQuote()"
+                                                        class="sr-only">
+                                                    1个专色
+                                                </label>
+                                                <label
+                                                    class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                    <input type="radio" name="printing-spot-color" value="2"
+                                                        data-price-factor="0.4" onchange="updateQuote()"
+                                                        class="sr-only">
+                                                    2个专色
+                                                </label>
+                                                <label
+                                                    class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                    <input type="radio" name="printing-spot-color" value="3"
+                                                        data-price-factor="0.6" onchange="updateQuote()"
+                                                        class="sr-only">
+                                                    3个专色
+                                                </label>
+                                            </div>
+                                            <div class="bg-blue-50 rounded-lg p-3">
+                                                <div class="text-xs text-blue-700">
+                                                    <p class="font-medium mb-1">专色说明</p>
+                                                    <p>专色是指预先调配好的特定颜色油墨，可实现更精准的色彩表现，常用于品牌标准色、金属色等特殊效果。</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 不印刷 -->
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-slate-50 has-[:checked]:border-slate-400 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">不印刷</span>
+                                                <p class="text-xs text-slate-500 mt-1">仅制作包装盒结构，不进行任何印刷，成本更低</p>
+                                            </div>
+                                            <input type="radio" name="printing-method" value="none"
+                                                onchange="toggleSpotColorOptions(this.value)"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- 4. 表面处理 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">4. 表面处理</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-500 mb-2">覆膜类</p>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="哑胶/哑膜"
+                                                        data-price-factor="1.1" onchange="updateQuote()" class="sr-only"
+                                                        checked><span class="font-semibold text-sm">哑胶/哑膜</span>
+                                                    <p class="text-xs text-slate-500 mt-1">表面哑光，手感舒适</p>
+                                                </label>
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="光胶/光膜"
+                                                        data-price-factor="1.1" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">光胶/光膜</span>
+                                                    <p class="text-xs text-slate-500 mt-1">表面光亮，防水防污</p>
+                                                </label>
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="防刮花哑膜"
+                                                        data-price-factor="1.4" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">防刮花哑膜</span>
+                                                    <p class="text-xs text-slate-500 mt-1">耐磨防刮，触感高级</p>
+                                                </label>
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="防刮花光膜"
+                                                        data-price-factor="1.4" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">防刮花光膜</span>
+                                                    <p class="text-xs text-slate-500 mt-1">耐磨防刮，更光亮</p>
+                                                </label>
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="镭射膜"
+                                                        data-price-factor="1.8" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">镭射膜</span>
+                                                    <p class="text-xs text-slate-500 mt-1">炫彩金属光泽效果</p>
+                                                </label>
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="触感膜"
+                                                        data-price-factor="1.6" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">触感膜</span>
+                                                    <p class="text-xs text-slate-500 mt-1">如肌肤般柔软触感</p>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-500 mb-2">上光/过油类</p>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="光油"
+                                                        data-price-factor="1.05" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">光油</span>
+                                                    <p class="text-xs text-slate-500 mt-1">提升光泽，保护印面</p>
+                                                </label>
+                                                <label
+                                                    class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500"><input
+                                                        type="radio" name="surface-treatment" value="哑油"
+                                                        data-price-factor="1.05" onchange="updateQuote()"
+                                                        class="sr-only"><span class="font-semibold text-sm">哑油</span>
+                                                    <p class="text-xs text-slate-500 mt-1">哑光质感，保护印面</p>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 5. 装饰工艺 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">5. 装饰工艺</h3>
+                                    <div id="special-processes-container" class="space-y-4">
+                                        <!-- Process options will be rendered here by JS -->
+                                    </div>
+                                </div>
+                                <!-- 6. 成型 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">6. 成型</h3>
+                                    <div class="space-y-3">
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">粘盒</span>
+                                                <p class="text-xs text-slate-500 mt-1">机器自动粘合成型，效率高，适合大批量</p>
+                                            </div>
+                                            <input type="radio" name="forming-method" value="粘盒" data-price-factor="0.1"
+                                                onchange="updateQuote()"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                        </label>
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">不粘盒</span>
+                                                <p class="text-xs text-slate-500 mt-1">仅模切不粘合，客户自行组装，成本更低</p>
+                                            </div>
+                                            <input type="radio" name="forming-method" value="不粘盒" data-price-factor="0"
+                                                onchange="updateQuote()"
+                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- 7. 配件 & 8. 其它服务 -->
+                                <div class="grid grid-cols-2 gap-6">
+                                    <div>
+                                        <h3 class="text-lg font-semibold mb-3">7. 配件</h3>
+                                        <div class="space-y-3">
+                                            <!-- 内托选项 -->
+                                            <label
+                                                class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                                <div>
+                                                    <span class="font-semibold text-sm">内托</span>
+                                                    <p class="text-xs text-slate-500 mt-1">为产品提供固定和保护，提升包装档次</p>
+                                                </div>
+                                                <input type="checkbox" name="accessories" value="内托"
+                                                    data-price-factor="0.8"
+                                                    onchange="toggleInnerTrayOptions(this); updateQuote()"
+                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                            </label>
+
+                                            <!-- 内托详细选项 (条件显示) -->
+                                            <div id="inner-tray-options"
+                                                class="hidden ml-4 pl-4 border-l-2 border-blue-200 space-y-3">
+                                                <div>
+                                                    <label
+                                                        class="block text-sm font-medium text-slate-700 mb-2">内托材质</label>
+                                                    <div class="space-y-2">
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>EVA泡棉</span>
+                                                            <input type="radio" name="inner-tray-material" value="EVA泡棉"
+                                                                data-price-factor="0"
+                                                                onchange="toggleInnerTrayMaterialOptions(this.value)"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                                                                checked>
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>纸质内托</span>
+                                                            <input type="radio" name="inner-tray-material" value="纸质内托"
+                                                                data-price-factor="0.2"
+                                                                onchange="toggleInnerTrayMaterialOptions(this.value)"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>吸塑内托</span>
+                                                            <input type="radio" name="inner-tray-material" value="吸塑内托"
+                                                                data-price-factor="0.5"
+                                                                onchange="toggleInnerTrayMaterialOptions(this.value)"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <!-- 纸质内托详细选项 -->
+                                                <div id="paper-tray-options" class="hidden space-y-3">
+                                                    <label
+                                                        class="block text-sm font-medium text-slate-700 mb-2">纸张类型</label>
+                                                    <div class="space-y-2">
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>白卡纸</span>
+                                                            <input type="radio" name="paper-tray-type" value="白卡纸"
+                                                                data-price-factor="0"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                                                                checked>
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>瓦楞纸</span>
+                                                            <input type="radio" name="paper-tray-type" value="瓦楞纸"
+                                                                data-price-factor="0.1"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>牛皮纸</span>
+                                                            <input type="radio" name="paper-tray-type" value="牛皮纸"
+                                                                data-price-factor="0.05"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>灰板纸</span>
+                                                            <input type="radio" name="paper-tray-type" value="灰板纸"
+                                                                data-price-factor="0.08"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                    </div>
+                                                    <div>
+                                                        <label
+                                                            class="block text-sm font-medium text-slate-700 mb-2">纸张厚度</label>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="paper-tray-thickness"
+                                                                    value="250g" class="sr-only" checked>
+                                                                250g
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="paper-tray-thickness"
+                                                                    value="300g" class="sr-only">
+                                                                300g
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="paper-tray-thickness"
+                                                                    value="350g" class="sr-only">
+                                                                350g
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="paper-tray-thickness"
+                                                                    value="400g" class="sr-only">
+                                                                400g
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- 吸塑内托详细选项 -->
+                                                <div id="plastic-tray-options" class="hidden space-y-3">
+                                                    <label
+                                                        class="block text-sm font-medium text-slate-700 mb-2">塑料材质</label>
+                                                    <div class="space-y-2">
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>PET (环保)</span>
+                                                            <input type="radio" name="plastic-tray-type" value="PET"
+                                                                data-price-factor="0"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                                                                checked>
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>PVC (透明度高)</span>
+                                                            <input type="radio" name="plastic-tray-type" value="PVC"
+                                                                data-price-factor="0.1"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between text-sm">
+                                                            <span>PS (成本经济)</span>
+                                                            <input type="radio" name="plastic-tray-type" value="PS"
+                                                                data-price-factor="-0.05"
+                                                                class="h-3 w-3 text-blue-600 focus:ring-blue-500">
+                                                        </label>
+                                                    </div>
+                                                    <div>
+                                                        <label
+                                                            class="block text-sm font-medium text-slate-700 mb-2">厚度规格</label>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="plastic-tray-thickness"
+                                                                    value="0.3mm" class="sr-only" checked>
+                                                                0.3mm
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="plastic-tray-thickness"
+                                                                    value="0.5mm" class="sr-only">
+                                                                0.5mm
+                                                            </label>
+                                                            <label
+                                                                class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                                <input type="radio" name="plastic-tray-thickness"
+                                                                    value="0.8mm" class="sr-only">
+                                                                0.8mm
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        class="block text-sm font-medium text-slate-700 mb-2">内托颜色</label>
+                                                    <div class="flex flex-wrap gap-2">
+                                                        <label
+                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                            <input type="radio" name="inner-tray-color" value="黑色"
+                                                                class="sr-only" checked>
+                                                            黑色
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                            <input type="radio" name="inner-tray-color" value="白色"
+                                                                class="sr-only">
+                                                            白色
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                            <input type="radio" name="inner-tray-color" value="灰色"
+                                                                class="sr-only">
+                                                            灰色
+                                                        </label>
+                                                        <label
+                                                            class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
+                                                            <input type="radio" name="inner-tray-color" value="定制色"
+                                                                class="sr-only">
+                                                            定制色
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="bg-blue-50 rounded-lg p-3">
+                                                    <div class="text-xs text-blue-700">
+                                                        <p class="font-medium mb-1">内托说明</p>
+                                                        <p>内托可以有效固定产品位置，防止运输过程中的碰撞损坏，同时提升开箱体验和产品档次。我们会根据您的产品尺寸进行定制设计。
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- 其他配件选项 -->
+                                            <label
+                                                class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                                <div>
+                                                    <span class="font-semibold text-sm">手提绳</span>
+                                                    <p class="text-xs text-slate-500 mt-1">方便携带，提升用户体验</p>
+                                                </div>
+                                                <input type="checkbox" name="accessories" value="手提绳"
+                                                    data-price-factor="0.3" onchange="updateQuote()"
+                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                            </label>
+
+                                            <label
+                                                class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                                <div>
+                                                    <span class="font-semibold text-sm">封口贴</span>
+                                                    <p class="text-xs text-slate-500 mt-1">防拆封，增强产品安全性</p>
+                                                </div>
+                                                <input type="checkbox" name="accessories" value="封口贴"
+                                                    data-price-factor="0.2" onchange="updateQuote()"
+                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold mb-3">8. 其它服务</h3>
+                                        <div class="space-y-3">
+                                            <div>
+                                                <p class="text-sm font-medium text-slate-700 mb-2">打包方式</p>
+                                                <div class="space-y-2">
+                                                    <label
+                                                        class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                                        <span class="font-semibold text-sm">包装箱打包</span>
+                                                        <input type="radio" name="packaging-method" value="包装箱打包"
+                                                            data-price-factor="0.3" onchange="updateQuote()"
+                                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                                    </label>
+                                                    <label
+                                                        class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                                        <span class="font-semibold text-sm">牛皮纸打包</span>
+                                                        <input type="radio" name="packaging-method" value="牛皮纸打包"
+                                                            data-price-factor="0.1" onchange="updateQuote()"
+                                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 9. 打样服务 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">9. 打样服务 <span
+                                            class="text-xs text-slate-500 font-normal">（支持一个起订）</span></h3>
+                                    <div class="space-y-3">
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">3D数字展示</span>
+                                                <p class="text-xs text-slate-500 mt-1">虚拟3D效果图，快速预览成品效果</p>
+                                            </div>
+                                            <input type="checkbox" name="sampling-service" value="3D数字展示"
+                                                data-price-factor="80" onchange="updateQuote()">
+                                        </label>
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">结构白样</span>
+                                                <p class="text-xs text-slate-500 mt-1">无印刷白色样品，验证结构和尺寸</p>
+                                            </div>
+                                            <input type="checkbox" name="sampling-service" value="结构白样"
+                                                data-price-factor="150" onchange="updateQuote()">
+                                        </label>
+                                        <label
+                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
+                                            <div>
+                                                <span class="font-semibold text-sm">平面色样</span>
+                                                <p class="text-xs text-slate-500 mt-1">含印刷颜色的样品，用于查看包装颜色效果，不含工艺</p>
+                                            </div>
+                                            <input type="checkbox" name="sampling-service" value="平面色样"
+                                                data-price-factor="180" onchange="updateQuote()">
+                                        </label>
+                                    </div>
+                                    <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                        <div class="flex items-start space-x-2">
+                                            <i data-lucide="info"
+                                                class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"></i>
+                                            <div class="text-xs text-blue-700">
+                                                <p class="font-medium mb-1">需要完整色彩与工艺效果样品？</p>
+                                                <p>建议直接下1-3个订单数量，即可获得含所有工艺的完整成品样品，更具参考价值。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 10. 输入数量 -->
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">10. 输入数量 * <span
+                                            class="text-xs text-green-600 font-normal">（支持1个起订）</span></h3>
+                                    <div class="relative">
+                                        <input type="number" name="quantity" id="quantity" value="1" min="1"
+                                            oninput="updateQuote()"
+                                            class="w-full p-4 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors font-semibold text-lg text-slate-900">
+                                        <div
+                                            class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                            <span class="text-slate-600 font-medium text-sm">个</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-2">最小起订量：1个，无需担心库存压力</p>
+                                </div>
+                            </div>
+                            <!-- 价格 -->
+                            <div class="bg-white rounded-xl shadow-sm p-6 mt-6 sticky bottom-6">
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between items-center text-slate-600"><span>产品单价</span><span
+                                            id="unit-price" class="font-medium text-slate-800">¥ 0.00</span></div>
+                                    <div class="flex justify-between items-center text-slate-600"><span>产品总价</span><span
+                                            id="subtotal-price" class="font-medium text-slate-800">¥ 0.00</span></div>
+                                    <div class="flex justify-between items-center text-slate-600"><span>物流费用</span><span
+                                            id="logistics-fee" class="font-medium text-slate-800">¥ 0.00</span></div>
+                                    <div class="flex justify-between items-center text-slate-600"><span>预计货期</span><span
+                                            id="lead-time" class="font-medium text-slate-800">-</span></div>
+                                </div>
+                                <div class="border-t border-slate-200 my-4"></div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg font-semibold">总计价</span>
+                                    <span id="total-price" class="text-2xl font-bold text-blue-600">¥ 0.00</span>
+                                </div>
+                                <button onclick="handleAddToCart()"
+                                    class="mt-6 w-full btn-primary text-white px-8 py-3 rounded-lg font-bold text-base transition-all">加入购物车</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="bg-white border-t border-slate-200 mt-16">
+            <div class="container mx-auto px-8 md:px-16 py-8">
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="font-semibold text-slate-800">智盒工坊</h3>
+                        <p class="text-sm text-slate-600 mt-2">包装定制平台</p>
+                        <p class="text-xs text-slate-500 mt-1">一个起订 · 3秒报价 · 24小时交付</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-500">导航</h4>
+                        <ul class="mt-2 space-y-2 text-sm">
+                            <li><a href="products.html"
+                                    class="text-slate-600 hover:text-blue-600">在线定制</a></li>
+                            <li><a href="solutions.html"
+                                    class="text-slate-600 hover:text-blue-600">解决方案</a></li>
+                            <li><a href="help.html"
+                                    class="text-slate-600 hover:text-blue-600">帮助中心</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-500">支持</h4>
+                        <ul class="mt-2 space-y-2 text-sm">
+                            <li><a href="help.html"
+                                    class="text-slate-600 hover:text-blue-600">帮助中心</a></li>
+                            <li><a href="help.html"
+                                    class="text-slate-600 hover:text-blue-600">联系我们</a></li>
+                            <li><a href="#" class="text-slate-600 hover:text-blue-600">服务条款</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-8 border-t border-slate-200 pt-6 text-center text-sm text-slate-500">&copy; 2025 智盒工坊
+                    (iboxify). All Rights Reserved.</div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Modals will be copied here later -->
+
+    <script src="js/product-data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

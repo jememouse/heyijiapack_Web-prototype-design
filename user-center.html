@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - 智盒工坊 (iboxify)</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="管理您的智盒工坊账户，查看订单、管理地址、申请发票等。">
+    <meta name="keywords" content="个人中心, 我的账户, 订单管理, 地址管理, 发票管理">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-white text-slate-800">
+
+    <div id="app" class="min-h-screen flex flex-col">
+
+        <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-200">
+            <nav class="container mx-auto px-8 md:px-16 py-4 flex justify-between items-center">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <svg width="32" height="32" viewBox="0 0 24 24" class="text-blue-600">
+                        <path fill="currentColor"
+                            d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 15h-2v-5h-4v5H9V9h2v4h2V9h2v8z">
+                        </path>
+                    </svg>
+                    <span class="text-xl font-bold text-slate-900">智盒工坊</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-slate-600 hover:text-blue-600">首页</a>
+                    <a href="products.html" class="text-slate-600 hover:text-blue-600">在线定制</a>
+                    <a href="smart-matcher.html" class="text-slate-600 hover:text-blue-600">智能包装方案匹配器</a>
+                    <a href="smart-design.html" class="text-slate-600 hover:text-blue-600">智能包装设计及打样服务</a>
+                    <a href="user-center.html" class="text-blue-600 font-semibold">个人中心</a>
+                    <a href="solutions.html" class="text-slate-600 hover:text-blue-600">解决方案</a>
+                    <a href="help.html" class="text-slate-600 hover:text-blue-600">帮助中心</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#" onclick="openLoginModal()" class="text-slate-600 hover:text-blue-600 text-sm">登录/注册</a>
+                    <a href="cart.html" id="cart-icon-container"
+                        class="relative flex items-center text-slate-600 hover:text-blue-600 transition-colors font-medium">
+                        <i data-lucide="shopping-cart" class="w-5 h-5 mr-1"></i>
+                        <span>我的购物车</span>
+                        <span id="cart-badge"
+                            class="ml-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                    </a>
+                    <button onclick="window.location.href='products.html'"
+                        class="btn-primary text-white px-5 py-2 rounded-lg font-semibold shadow-sm transition-all hidden sm:block">
+                        立即定制
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-grow">
+            <div id="user-center-page">
+                <div class="container mx-auto px-8 md:px-16 py-12">
+                    <div class="grid lg:grid-cols-4 gap-8">
+                        <aside class="lg:col-span-1">
+                            <div class="bg-white p-4 rounded-xl shadow-sm h-fit sticky top-28">
+                                <div class="flex items-center space-x-4 p-4 border-b border-slate-200">
+                                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=64&q=80"
+                                        class="w-16 h-16 rounded-full object-cover" alt="用户头像">
+                                    <div>
+                                        <p class="font-semibold text-slate-900">李婷</p>
+                                        <p class="text-sm text-slate-500">企业认证用户</p>
+                                    </div>
+                                </div>
+                                <nav id="user-center-sidebar" class="py-2"></nav>
+                            </div>
+                        </aside>
+                        <main id="user-center-content" class="lg:col-span-3">
+                            <div id="dashboard-view" class="user-center-view">
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <h1 class="text-3xl font-bold mb-2">欢迎回来, 李婷!</h1>
+                                    <p class="text-slate-600 mb-8">这是您的账户总览，祝您有美好的一天。</p>
+                                    <div class="grid sm:grid-cols-3 gap-6 mb-8">
+                                        <div class="bg-slate-50 p-6 rounded-lg">
+                                            <p class="text-sm text-slate-500">待处理订单</p>
+                                            <p class="text-3xl font-bold mt-1">3</p>
+                                        </div>
+                                        <div class="bg-slate-50 p-6 rounded-lg">
+                                            <p class="text-sm text-slate-500">待收货</p>
+                                            <p class="text-3xl font-bold mt-1">1</p>
+                                        </div>
+                                        <div class="bg-slate-50 p-6 rounded-lg">
+                                            <p class="text-sm text-slate-500">可用优惠券</p>
+                                            <p class="text-3xl font-bold mt-1">5</p>
+                                        </div>
+                                    </div>
+                                    <h2 class="text-xl font-semibold mb-4">最近订单</h2>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-left">
+                                            <thead class="bg-slate-50 text-sm text-slate-600">
+                                                <tr>
+                                                    <th class="p-4 font-semibold">订单号</th>
+                                                    <th class="p-4 font-semibold">下单日期</th>
+                                                    <th class="p-4 font-semibold">总金额</th>
+                                                    <th class="p-4 font-semibold">状态</th>
+                                                    <th class="p-4 font-semibold"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="border-b border-slate-200">
+                                                    <td class="p-4">#...001</td>
+                                                    <td class="p-4">2025-07-20</td>
+                                                    <td class="p-4">¥1,250.00</td>
+                                                    <td class="p-4"><span
+                                                            class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">文件处理中</span>
+                                                    </td>
+                                                    <td class="p-4"><a href="#"
+                                                            onclick="showUserCenterView('order-detail-view')"
+                                                            class="font-semibold text-blue-600">查看</a></td>
+                                                </tr>
+                                                <tr class="border-b border-slate-200">
+                                                    <td class="p-4">#...985</td>
+                                                    <td class="p-4">2025-07-18</td>
+                                                    <td class="p-4">¥3,500.00</td>
+                                                    <td class="p-4"><span
+                                                            class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">已发货</span>
+                                                    </td>
+                                                    <td class="p-4"><a href="#"
+                                                            onclick="showUserCenterView('order-detail-view')"
+                                                            class="font-semibold text-blue-600">查看</a></td>
+                                                </tr>
+                                                <tr class="border-b border-slate-200">
+                                                    <td class="p-4">#...752</td>
+                                                    <td class="p-4">2025-07-15</td>
+                                                    <td class="p-4">¥880.00</td>
+                                                    <td class="p-4"><span
+                                                            class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">已完成</span>
+                                                    </td>
+                                                    <td class="p-4"><a href="#"
+                                                            onclick="showUserCenterView('order-detail-view')"
+                                                            class="font-semibold text-blue-600">查看</a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="orders-view" class="user-center-view hidden">
+                                <!-- ... content ... -->
+                            </div>
+                            <div id="address-view" class="user-center-view hidden">
+                                <!-- ... content ... -->
+                            </div>
+                            <div id="invoice-view" class="user-center-view hidden">
+                                <!-- ... content ... -->
+                            </div>
+                            <div id="distribution-view" class="user-center-view hidden">
+                                <!-- ... content ... -->
+                            </div>
+                            <div id="coupons-view" class="user-center-view hidden">
+                                <!-- ... content ... -->
+                            </div>
+                            <div id="settings-view" class="user-center-view hidden">
+                                <!-- ... content ... -->
+                            </div>
+                            <div id="order-detail-view" class="user-center-view hidden">
+                                <!-- ... content ... -->
+                            </div>
+                            <div id="after-sales-view" class="user-center-view hidden">
+                                <!-- ... content ... -->
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="bg-white border-t border-slate-200 mt-16">
+            <div class="container mx-auto px-8 md:px-16 py-8">
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="font-semibold text-slate-800">智盒工坊</h3>
+                        <p class="text-sm text-slate-600 mt-2">包装定制平台</p>
+                        <p class="text-xs text-slate-500 mt-1">一个起订 · 3秒报价 · 24小时交付</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-500">导航</h4>
+                        <ul class="mt-2 space-y-2 text-sm">
+                            <li><a href="products.html"
+                                    class="text-slate-600 hover:text-blue-600">在线定制</a></li>
+                            <li><a href="solutions.html"
+                                    class="text-slate-600 hover:text-blue-600">解决方案</a></li>
+                            <li><a href="help.html"
+                                    class="text-slate-600 hover:text-blue-600">帮助中心</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-500">支持</h4>
+                        <ul class="mt-2 space-y-2 text-sm">
+                            <li><a href="help.html"
+                                    class="text-slate-600 hover:text-blue-600">帮助中心</a></li>
+                            <li><a href="help.html"
+                                    class="text-slate-600 hover:text-blue-600">联系我们</a></li>
+                            <li><a href="#" class="text-slate-600 hover:text-blue-600">服务条款</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-8 border-t border-slate-200 pt-6 text-center text-sm text-slate-500">&copy; 2025 智盒工坊
+                    (iboxify). All Rights Reserved.</div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Modals will be copied here later -->
+
+    <script src="js/product-data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
