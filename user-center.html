@@ -169,18 +169,109 @@
                                 </div>
                             </div>
                             <div id="distribution-view" class="user-center-view hidden">
-                                <div id="distribution-apply-view" class="hidden">
-                                    <div class="bg-white p-8 rounded-xl shadow-sm text-center">
-                                        <h1 class="text-3xl font-bold mb-4">成为我们的分销伙伴</h1>
-                                        <p class="text-slate-600 max-w-2xl mx-auto mb-8">加入我们的分销计划，推广我们的产品，赚取丰厚的佣金。我们提供全方位的支持，助您轻松开启事业。
-                                        </p>
-                                        <button onclick="handleDistributionApply('individual')" class="btn-primary text-white px-8 py-3 rounded-lg font-bold text-lg">立即申请</button>
+                                <div id="distribution-apply-view">
+                                    <div class="bg-white p-8 rounded-xl shadow-sm">
+                                        <h1 class="text-3xl font-bold mb-4 text-center">成为我们的分销伙伴</h1>
+                                        <p class="text-slate-600 max-w-3xl mx-auto mb-8 text-center">加入我们的分销计划，推广我们的产品，赚取丰厚的佣金。我们提供全方位的支持，助您轻松开启事业。</p>
+
+                                        <div class="max-w-2xl mx-auto">
+                                            <!-- Tabs for selecting application type -->
+                                            <div class="mb-6 border-b border-slate-200">
+                                                <nav class="-mb-px flex space-x-8 justify-center" aria-label="Tabs">
+                                                    <button onclick="toggleApplyForm('individual', this)" class="apply-tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                                        个人申请
+                                                    </button>
+                                                    <button onclick="toggleApplyForm('company', this)" class="apply-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300">
+                                                        企业申请
+                                                    </button>
+                                                </nav>
+                                            </div>
+
+                                            <!-- Individual Application Form -->
+                                            <form id="individual-form" class="space-y-6">
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <div>
+                                                        <label for="individual-name" class="block text-sm font-medium text-slate-700">姓名 *</label>
+                                                        <input type="text" id="individual-name" required class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                                                    </div>
+                                                    <div>
+                                                        <label for="individual-id" class="block text-sm font-medium text-slate-700">身份证号 *</label>
+                                                        <input type="text" id="individual-id" required class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                                                    </div>
+                                                     <div>
+                                                        <label for="individual-phone" class="block text-sm font-medium text-slate-700">手机号 *</label>
+                                                        <input type="tel" id="individual-phone" required class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                                                    </div>
+                                                    <div>
+                                                        <label for="individual-email" class="block text-sm font-medium text-slate-700">邮箱 *</label>
+                                                        <input type="email" id="individual-email" required class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label for="individual-address" class="block text-sm font-medium text-slate-700">联系地址</label>
+                                                    <input type="text" id="individual-address" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                                                </div>
+                                                <div>
+                                                    <label for="individual-experience" class="block text-sm font-medium text-slate-700">相关经验或社交媒体链接</label>
+                                                    <textarea id="individual-experience" rows="3" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm"></textarea>
+                                                </div>
+                                                <div class="pt-4">
+                                                    <button type="button" onclick="handleDistributionApply('individual')" class="w-full btn-primary text-white px-8 py-3 rounded-lg font-bold text-lg">提交申请</button>
+                                                </div>
+                                            </form>
+
+                                            <!-- Company Application Form -->
+                                            <form id="company-form" class="space-y-6 hidden">
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <div>
+                                                        <label for="company-name" class="block text-sm font-medium text-slate-700">公司名称 *</label>
+                                                        <input type="text" id="company-name" required class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                                                    </div>
+                                                    <div>
+                                                        <label for="business-license" class="block text-sm font-medium text-slate-700">统一社会信用代码 *</label>
+                                                        <input type="text" id="business-license" required class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                                                    </div>
+                                                    <div>
+                                                        <label for="legal-person" class="block text-sm font-medium text-slate-700">法人姓名 *</label>
+                                                        <input type="text" id="legal-person" required class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                                                    </div>
+                                                    <div>
+                                                        <label for="contact-person" class="block text-sm font-medium text-slate-700">联系人姓名 *</label>
+                                                        <input type="text" id="contact-person" required class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                                                    </div>
+                                                     <div>
+                                                        <label for="contact-phone" class="block text-sm font-medium text-slate-700">联系人手机号 *</label>
+                                                        <input type="tel" id="contact-phone" required class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                                                    </div>
+                                                    <div>
+                                                        <label for="company-email" class="block text-sm font-medium text-slate-700">联系人邮箱 *</label>
+                                                        <input type="email" id="company-email" required class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label for="business-address" class="block text-sm font-medium text-slate-700">公司地址</label>
+                                                    <input type="text" id="business-address" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                                                </div>
+                                                 <div>
+                                                    <label for="business-scope" class="block text-sm font-medium text-slate-700">经营范围</label>
+                                                    <textarea id="business-scope" rows="3" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm"></textarea>
+                                                </div>
+                                                <div class="pt-4">
+                                                     <button type="button" onclick="handleDistributionApply('company')" class="w-full btn-primary text-white px-8 py-3 rounded-lg font-bold text-lg">提交申请</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="distribution-pending-view" class="hidden">
                                     <div class="bg-white p-8 rounded-xl shadow-sm text-center">
                                         <h1 class="text-2xl font-bold mb-4">您的申请正在审核中</h1>
-                                        <p class="text-slate-600 mb-2">我们已收到您的分销申请，通常会在1-3个工作日内完成审核。</p>
+                                        <p class="text-slate-600 mb-6">我们已收到您的分销申请，通常会在1-3个工作日内完成审核。</p>
+                                        <div class="text-left">
+                                            <div id="application-summary" class="p-6 bg-slate-50 rounded-lg text-sm mb-6">
+                                                <!-- Summary will be rendered here -->
+                                            </div>
+                                        </div>
                                         <p class="text-sm text-slate-500">提交时间: <span id="submit-time"></span></p>
                                     </div>
                                 </div>

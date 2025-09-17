@@ -1367,32 +1367,34 @@ function renderDistributionParentView() {
 
 // 渲染审核中视图
 function renderPendingView() {
-    // 更新提交时间
     if (distributionApplicationData.submitTime) {
         document.getElementById('submit-time').textContent = distributionApplicationData.submitTime;
     }
 
-    // 显示申请信息摘要
     const summaryContainer = document.getElementById('application-summary');
+    if (!summaryContainer) return;
+
+    let summaryHtml = '';
     if (distributionApplicationData.type === 'individual') {
-        summaryContainer.innerHTML = `
-            <div class="grid grid-cols-2 gap-4">
-                <div><span class="font-medium">申请类型:</span> 个人申请</div>
-                <div><span class="font-medium">申请人:</span> ${distributionApplicationData.name || '未填写'}</div>
-                <div><span class="font-medium">联系电话:</span> ${distributionApplicationData.phone || '未填写'}</div>
-                <div><span class="font-medium">邮箱地址:</span> ${distributionApplicationData.email || '未填写'}</div>
+        summaryHtml = `
+            <div class="grid grid-cols-2 gap-4 text-left">
+                <div><strong class="font-medium text-slate-500">申请类型:</strong> 个人</div>
+                <div><strong class="font-medium text-slate-500">申请人:</strong> ${distributionApplicationData.name || ''}</div>
+                <div><strong class="font-medium text-slate-500">手机号:</strong> ${distributionApplicationData.phone || ''}</div>
+                <div><strong class="font-medium text-slate-500">邮箱:</strong> ${distributionApplicationData.email || ''}</div>
             </div>
         `;
     } else if (distributionApplicationData.type === 'company') {
-        summaryContainer.innerHTML = `
-            <div class="grid grid-cols-2 gap-4">
-                <div><span class="font-medium">申请类型:</span> 企业申请</div>
-                <div><span class="font-medium">公司名称:</span> ${distributionApplicationData.companyName || '未填写'}</div>
-                <div><span class="font-medium">联系人:</span> ${distributionApplicationData.contactPerson || '未填写'}</div>
-                <div><span class="font-medium">联系电话:</span> ${distributionApplicationData.phone || '未填写'}</div>
+        summaryHtml = `
+            <div class="grid grid-cols-2 gap-4 text-left">
+                <div><strong class="font-medium text-slate-500">申请类型:</strong> 企业</div>
+                <div><strong class="font-medium text-slate-500">公司名称:</strong> ${distributionApplicationData.companyName || ''}</div>
+                <div><strong class="font-medium text-slate-500">联系人:</strong> ${distributionApplicationData.contactPerson || ''}</div>
+                <div><strong class="font-medium text-slate-500">联系电话:</strong> ${distributionApplicationData.phone || ''}</div>
             </div>
         `;
     }
+    summaryContainer.innerHTML = summaryHtml;
 }
 
 // 渲染拒绝视图
@@ -1416,9 +1418,18 @@ function renderRejectedView() {
 let distributionApplicationData = {};
 
 // 切换申请表单类型
-function toggleApplyForm(type) {
+function toggleApplyForm(type, button) {
     const individualForm = document.getElementById('individual-form');
     const companyForm = document.getElementById('company-form');
+
+    document.querySelectorAll('.apply-tab-button').forEach(btn => {
+        btn.classList.remove('active', 'text-slate-900', 'border-blue-600');
+        btn.classList.add('text-slate-500', 'border-transparent');
+    });
+    if(button) {
+        button.classList.add('active', 'text-slate-900', 'border-blue-600');
+        button.classList.remove('text-slate-500', 'border-transparent');
+    }
 
     if (type === 'individual') {
         individualForm.classList.remove('hidden');
@@ -1431,7 +1442,13 @@ function toggleApplyForm(type) {
 
 // 处理分销申请
 function handleDistributionApply(type) {
-    // 收集表单数据
+    const form = document.getElementById(type === 'individual' ? 'individual-form' : 'company-form');
+    if (!form.checkValidity()) {
+        alert('请填写所有必填项 (*)');
+        form.reportValidity();
+        return;
+    }
+
     if (type === 'individual') {
         distributionApplicationData = {
             type: 'individual',
@@ -1458,11 +1475,8 @@ function handleDistributionApply(type) {
         };
     }
 
-    // 更新状态为审核中
     distributionStatus = 'pending';
     renderDistributionParentView();
-
-    // 显示提交成功消息
     showNotification('申请已提交，我们将在1-3个工作日内完成审核', 'success');
 }
 
