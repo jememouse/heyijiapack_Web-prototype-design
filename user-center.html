@@ -65,7 +65,7 @@
             <div id="user-center-page">
                 <div class="container mx-auto px-8 md:px-16 py-12">
                     <div class="grid lg:grid-cols-4 gap-8">
-                        <aside class="lg:col-span-1">
+                        <aside class="hidden lg:block lg:col-span-1">
                             <div class="bg-white p-4 rounded-xl shadow-sm h-fit sticky top-28">
                                 <div class="flex items-center space-x-4 p-4 border-b border-slate-200">
                                     <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=64&q=80"
@@ -75,10 +75,28 @@
                                         <p class="text-sm text-slate-500">企业认证用户</p>
                                     </div>
                                 </div>
-                                <nav id="user-center-sidebar" class="py-2"></nav>
+                                <nav id="user-center-sidebar-desktop" class="py-2"></nav>
                             </div>
                         </aside>
-                        <main id="user-center-content" class="lg:col-span-3">
+                        <main id="user-center-content" class="col-span-4 lg:col-span-3">
+                            <div class="lg:hidden mb-6">
+                                <div class="bg-white p-4 rounded-xl shadow-sm">
+                                    <button onclick="toggleMobileMenu()" class="w-full flex justify-between items-center">
+                                        <div class="flex items-center space-x-4">
+                                            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=40&q=80"
+                                                class="w-10 h-10 rounded-full object-cover" alt="用户头像">
+                                            <div>
+                                                <p class="font-semibold text-slate-900 text-left">李婷</p>
+                                                <p id="mobile-menu-current-page" class="text-sm text-slate-500">账户总览</p>
+                                            </div>
+                                        </div>
+                                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500"></i>
+                                    </button>
+                                    <div id="mobile-menu-container" class="hidden mt-2 border-t border-slate-200 pt-2">
+                                        <nav id="user-center-sidebar-mobile" class="py-2"></nav>
+                                    </div>
+                                </div>
+                            </div>
                             <div id="dashboard-view" class="user-center-view">
                                 <div class="bg-white p-8 rounded-xl shadow-sm">
                                     <h1 class="text-3xl font-bold mb-2">欢迎回来, 李婷!</h1>
@@ -98,26 +116,32 @@
                                         </div>
                                     </div>
                                     <h2 class="text-xl font-semibold mb-4">最近订单</h2>
-                                    <div class="overflow-x-auto">
-                                        <table class="w-full text-left">
-                                            <thead class="bg-slate-50 text-sm text-slate-600">
-                                                <tr>
-                                                    <th class="p-4 font-semibold">订单号</th>
-                                                    <th class="p-4 font-semibold">下单日期</th>
-                                                    <th class="p-4 font-semibold">总金额</th>
-                                                    <th class="p-4 font-semibold">状态</th>
-                                                    <th class="p-4 font-semibold"></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="recent-orders-tbody">
-                                                <!-- Recent orders will be rendered here by JS -->
-                                            </tbody>
-                                        </table>
+                                    <div>
+                                        <!-- Desktop Header -->
+                                        <div class="hidden lg:grid lg:grid-cols-5 gap-4 text-sm font-semibold text-slate-600 bg-slate-50 p-4 rounded-t-lg">
+                                            <div>订单号</div>
+                                            <div>下单日期</div>
+                                            <div>总金额</div>
+                                            <div>状态</div>
+                                            <div>操作</div>
+                                        </div>
+                                        <!-- Orders List -->
+                                        <div id="recent-orders-list" class="space-y-4 lg:space-y-0">
+                                            <!-- Orders will be rendered here as cards -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div id="orders-view" class="user-center-view hidden">
-                                <!-- Content will be rendered by renderOrdersPage() in app.js -->
+                                <div class="bg-white p-8 rounded-xl shadow-sm">
+                                    <h1 class="text-3xl font-bold mb-6">我的订单</h1>
+                                    <div id="orders-tabs-container" class="border-b border-slate-200">
+                                        <!-- Order filter tabs will be rendered here -->
+                                    </div>
+                                    <div id="orders-list-container" class="mt-6 space-y-6">
+                                        <!-- Orders list will be rendered here -->
+                                    </div>
+                                </div>
                             </div>
                             <div id="address-view" class="user-center-view hidden">
                                 <div class="bg-white p-8 rounded-xl shadow-sm">
@@ -142,31 +166,61 @@
                                 </div>
                             </div>
                             <div id="distribution-view" class="user-center-view hidden">
-                                <!-- Content will be rendered by renderDistributionParentView() in app.js -->
+                                <div id="distribution-apply-view" class="hidden">
+                                    <div class="bg-white p-8 rounded-xl shadow-sm">
+                                        <h1 class="text-3xl font-bold mb-4">成为分销伙伴</h1>
+                                        <p class="text-slate-600 mb-8">加入我们的分销网络，分享收益，共同成长。</p>
+                                        <div class="grid md:grid-cols-2 gap-8">
+                                            <div class="border rounded-lg p-6 text-center">
+                                                <h2 class="text-xl font-semibold">个人分销</h2>
+                                                <p class="text-slate-500 mt-2 mb-4">适合网红、KOL、设计师等</p>
+                                                <button onclick="toggleApplyForm('individual')" class="btn-primary text-white px-6 py-2 rounded-lg">立即申请</button>
+                                            </div>
+                                            <div class="border rounded-lg p-6 text-center">
+                                                <h2 class="text-xl font-semibold">企业分销</h2>
+                                                <p class="text-slate-500 mt-2 mb-4">适合印刷厂、广告公司、设计工作室等</p>
+                                                <button onclick="toggleApplyForm('company')" class="btn-primary text-white px-6 py-2 rounded-lg">立即申请</button>
+                                            </div>
+                                        </div>
+                                        <form id="individual-form" class="mt-8 border-t pt-8 hidden">
+                                            <h3 class="text-2xl font-bold mb-6">个人分销申请</h3>
+                                            <!-- Individual form fields -->
+                                            <button type="button" onclick="handleDistributionApply('individual')" class="btn-primary text-white px-6 py-2 rounded-lg">提交申请</button>
+                                        </form>
+                                        <form id="company-form" class="mt-8 border-t pt-8 hidden">
+                                            <h3 class="text-2xl font-bold mb-6">企业分销申请</h3>
+                                            <!-- Company form fields -->
+                                            <button type="button" onclick="handleDistributionApply('company')" class="btn-primary text-white px-6 py-2 rounded-lg">提交申请</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div id="distribution-pending-view" class="hidden text-center bg-white p-12 rounded-xl shadow-sm">
+                                    <h1 class="text-3xl font-bold">申请审核中</h1>
+                                    <p class="text-slate-600 mt-4">您的分销申请已提交，我们正在审核中，请耐心等待。</p>
+                                    <div id="application-summary" class="mt-6 text-left text-sm"></div>
+                                </div>
+                                 <div id="distribution-rejected-view" class="hidden text-center bg-white p-12 rounded-xl shadow-sm">
+                                    <h1 class="text-3xl font-bold text-red-600">申请未通过</h1>
+                                    <div id="rejection-reason" class="text-slate-600 mt-4"></div>
+                                    <button onclick="resetDistributionApplication()" class="mt-8 btn-primary text-white px-6 py-2 rounded-lg">重新申请</button>
+                                </div>
+                                <div id="distribution-dashboard-view" class="hidden">
+                                    <!-- The main dashboard for approved distributors -->
+                                </div>
                             </div>
                             <div id="coupons-view" class="user-center-view hidden">
                                 <div class="bg-white p-8 rounded-xl shadow-sm">
                                     <h1 class="text-3xl font-bold mb-6">我的优惠券</h1>
-                                    <div class="border-b border-slate-200">
-                                        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                                            <button onclick="switchTab(this, 'available-coupons')" class="tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                                                未使用 (3)
-                                            </button>
-                                            <button onclick="switchTab(this, 'used-coupons')" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300">
-                                                已使用 (1)
-                                            </button>
-                                            <button onclick="switchTab(this, 'expired-coupons')" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300">
-                                                已过期 (0)
-                                            </button>
-                                        </nav>
+                                    <div id="coupons-tabs-container" class="border-b border-slate-200">
+                                        <!-- Coupon tabs will be rendered by JS -->
                                     </div>
-                                    <div id="available-coupons" class="tab-content mt-6">
+                                    <div id="available-coupons" class="tab-content mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <!-- Available coupons will be rendered here -->
                                     </div>
-                                    <div id="used-coupons" class="tab-content mt-6 hidden">
+                                    <div id="used-coupons" class="tab-content mt-6 hidden grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <!-- Used coupons will be rendered here -->
                                     </div>
-                                    <div id="expired-coupons" class="tab-content mt-6 hidden">
+                                    <div id="expired-coupons" class="tab-content mt-6 hidden grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <!-- Expired coupons will be rendered here -->
                                     </div>
                                 </div>
@@ -196,7 +250,7 @@
 
                                         <div class="border-t border-slate-200 pt-8">
                                             <h2 class="text-xl font-semibold mb-4">修改密码</h2>
-                                            <div class="space-y-4">
+                                            <div class="space-y-4 max-w-md">
                                                 <div>
                                                     <label for="old-password" class="block text-sm font-medium text-slate-700">旧密码</label>
                                                     <input type="password" id="old-password" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
@@ -218,11 +272,11 @@
                                             <div class="space-y-4">
                                                 <div class="flex items-center">
                                                     <input id="email-notifications" name="notifications" type="checkbox" checked class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
-                                                    <label for="email-notifications" class="ml-2 block text-sm text-slate-900">邮件通知 - 订单状态更新</label>
+                                                    <label for="email-notifications" class="ml-3 block text-sm text-slate-900">邮件通知 - 订单状态更新</label>
                                                 </div>
                                                  <div class="flex items-center">
                                                     <input id="sms-notifications" name="notifications" type="checkbox" class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
-                                                    <label for="sms-notifications" class="ml-2 block text-sm text-slate-900">短信通知 - 促销活动</label>
+                                                    <label for="sms-notifications" class="ml-3 block text-sm text-slate-900">短信通知 - 促销活动</label>
                                                 </div>
                                             </div>
                                              <button class="mt-6 btn-primary text-white px-4 py-2 rounded-lg font-semibold">保存设置</button>
@@ -237,7 +291,7 @@
                                 <div class="bg-white p-8 rounded-xl shadow-sm">
                                     <div class="flex justify-between items-center mb-6">
                                         <h1 class="text-3xl font-bold">售后处理</h1>
-                                        <button onclick="openAfterSalesModal(null)" class="btn-primary text-white px-4 py-2 rounded-lg font-semibold">申请售后</button>
+                                        <button onclick="openAfterSalesModal()" class="btn-primary text-white px-4 py-2 rounded-lg font-semibold">申请售后</button>
                                     </div>
                                     <div id="after-sales-list" class="space-y-4">
                                         <!-- After-sales items will be rendered here by JS -->
@@ -353,6 +407,53 @@
                 </div>
                 <div class="flex justify-end space-x-4 pt-4">
                     <button type="button" onclick="closeInvoiceModal()" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg font-medium">取消</button>
+                    <button type="submit" class="btn-primary text-white px-4 py-2 rounded-lg font-medium">提交申请</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- After-Sales Modal -->
+    <div id="after-sales-modal" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-8">
+            <h2 class="text-2xl font-bold mb-6">申请售后服务</h2>
+            <form id="after-sales-form" class="space-y-4">
+                <div>
+                    <label for="as-order-id" class="block text-sm font-medium text-slate-700">选择订单</label>
+                    <select id="as-order-id" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        <!-- Options will be populated by JS -->
+                    </select>
+                </div>
+                <div>
+                    <label for="as-type" class="block text-sm font-medium text-slate-700">服务类型</label>
+                    <select id="as-type" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        <option>退货</option>
+                        <option>换货</option>
+                        <option>维修</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="as-reason" class="block text-sm font-medium text-slate-700">问题描述</label>
+                    <textarea id="as-reason" rows="4" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="请详细描述您遇到的问题..."></textarea>
+                </div>
+                 <div>
+                    <label class="block text-sm font-medium text-slate-700">上传凭证</label>
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-md">
+                        <div class="space-y-1 text-center">
+                            <i data-lucide="image" class="mx-auto h-12 w-12 text-slate-400"></i>
+                            <div class="flex text-sm text-slate-600">
+                                <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                    <span>上传文件</span>
+                                    <input id="file-upload" name="file-upload" type="file" class="sr-only">
+                                </label>
+                                <p class="pl-1">或拖拽到此处</p>
+                            </div>
+                            <p class="text-xs text-slate-500">PNG, JPG, GIF up to 10MB</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-4 pt-4">
+                    <button type="button" onclick="closeAfterSalesModal()" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg font-medium">取消</button>
                     <button type="submit" class="btn-primary text-white px-4 py-2 rounded-lg font-medium">提交申请</button>
                 </div>
             </form>

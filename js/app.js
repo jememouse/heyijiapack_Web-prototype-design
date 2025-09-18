@@ -126,11 +126,32 @@ const sidebarTemplate = [
     { id: 'settings-view', icon: 'user-cog', text: '账户设置' },
 ];
 
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu-container');
+    menu.classList.toggle('hidden');
+}
+
 function showUserCenterView(viewId, context) {
     userCenterViews.forEach(v => v.classList.add('hidden'));
     const activeView = document.getElementById(viewId);
     if (activeView) activeView.classList.remove('hidden');
-    buildSidebar(document.getElementById('user-center-sidebar'), viewId);
+
+    // Build sidebars for both desktop and mobile
+    buildSidebar('user-center-sidebar-desktop', viewId);
+    buildSidebar('user-center-sidebar-mobile', viewId);
+
+    const activeItem = sidebarTemplate.find(item => item.id === viewId);
+    if (activeItem) {
+        const currentPageEl = document.getElementById('mobile-menu-current-page');
+        if(currentPageEl) currentPageEl.textContent = activeItem.text;
+    }
+
+    // Close mobile menu on navigation
+    const mobileMenu = document.getElementById('mobile-menu-container');
+    if(mobileMenu && !mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.add('hidden');
+    }
+
 
     if (viewId === 'dashboard-view') {
         renderDashboardView();
@@ -168,19 +189,21 @@ function renderDashboardView() {
     view.querySelector('#stats-coupons').textContent = availableCoupons;
 
     // 动态更新最近订单列表
-    const recentOrdersContainer = view.querySelector('#recent-orders-tbody');
+    const recentOrdersContainer = view.querySelector('#recent-orders-list');
     const recentOrders = orders.slice(0, 3);
-    recentOrdersContainer.innerHTML = recentOrders.map(order => `
-        <tr class="border-b border-slate-200 last:border-b-0">
-            <td class="p-4">${order.id}</td>
-            <td class="p-4">${order.date}</td>
-            <td class="p-4">¥${order.total.toFixed(2)}</td>
-            <td class="p-4"><span class="status-badge status-${order.statusId}">${order.status}</span></td>
-            <td class="p-4">
-                <a href="#" onclick="event.preventDefault(); showUserCenterView('order-detail-view', { orderId: '${order.id}' })" class="font-semibold text-blue-600 hover:underline">查看</a>
-            </td>
-        </tr>
-    `).join('');
+    if(recentOrdersContainer) {
+        recentOrdersContainer.innerHTML = recentOrders.map(order => `
+            <div class="border rounded-lg p-4 lg:grid lg:grid-cols-5 lg:gap-4 lg:items-center lg:border-0 lg:p-0 lg:border-b lg:border-slate-200 lg:rounded-none">
+                <div class="lg:p-4"><span class="lg:hidden font-semibold">订单号: </span>${order.id}</div>
+                <div class="lg:p-4 text-slate-600"><span class="lg:hidden font-semibold">日期: </span>${order.date}</div>
+                <div class="lg:p-4 font-semibold"><span class="lg:hidden font-semibold text-slate-600">金额: </span>¥${order.total.toFixed(2)}</div>
+                <div class="lg:p-4"><span class="status-badge status-${order.statusId}">${order.status}</span></div>
+                <div class="mt-4 pt-4 border-t lg:border-0 lg:mt-0 lg:pt-0 lg:p-4 lg:text-right">
+                    <a href="#" onclick="event.preventDefault(); showUserCenterView('order-detail-view', { orderId: '${order.id}' })" class="font-semibold text-blue-600 hover:underline">查看详情</a>
+                </div>
+            </div>
+        `).join('');
+    }
 }
 
 function renderSettingsView() {
@@ -202,15 +225,19 @@ function renderAddressView() {
     const container = document.getElementById('address-list');
     if (!container) return;
     container.innerHTML = userAddresses.map(addr => `
-        <div class="border rounded-lg p-4 flex justify-between items-start">
-            <div>
-                <p class="font-semibold">${addr.name} ${addr.isDefault ? '<span class="ml-2 text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">默认</span>' : ''}</p>
-                <p class="text-sm text-slate-500 mt-1">${addr.phone}</p>
-                <p class="text-sm text-slate-600 mt-2">${addr.address}</p>
-            </div>
-            <div class="flex space-x-4">
-                <button class="text-sm font-semibold text-blue-600 hover:underline">编辑</button>
-                <button class="text-sm font-semibold text-red-500 hover:underline">删除</button>
+        <div class="border rounded-xl p-4 md:p-6">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="flex-grow">
+                    <p class="font-semibold text-lg">${addr.name} ${addr.isDefault ? '<span class="ml-2 text-xs font-medium text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full align-middle">默认</span>' : ''}</p>
+                    <p class="text-sm text-slate-500 mt-2">${addr.phone}</p>
+                    <p class="text-sm text-slate-600 mt-1">${addr.address}</p>
+                </div>
+                <div class="w-full md:w-auto flex-shrink-0 mt-4 md:mt-0 md:ml-6">
+                     <div class="flex items-center justify-end space-x-4">
+                        <button class="text-sm font-semibold text-blue-600 hover:underline">编辑</button>
+                        <button class="text-sm font-semibold text-red-500 hover:underline">删除</button>
+                    </div>
+                </div>
             </div>
         </div>
     `).join('');
@@ -220,14 +247,14 @@ function renderInvoiceView() {
     const container = document.getElementById('invoice-list');
     if (!container) return;
     container.innerHTML = invoices.map(inv => `
-        <div class="border rounded-lg p-4 flex justify-between items-center">
-            <div>
-                <p class="font-semibold">订单 #${inv.orderId}</p>
+        <div class="border rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="flex-grow">
+                <p class="font-semibold">关联订单: <span class="font-normal">${inv.orderId}</span></p>
                 <p class="text-sm text-slate-500 mt-1">开票日期: ${inv.date} | 金额: ¥${inv.total.toFixed(2)}</p>
             </div>
-            <div>
-                <span class="text-sm font-medium ${inv.status === '已开具' ? 'text-green-600' : 'text-yellow-600'}">${inv.status}</span>
-                <button class="ml-4 text-sm font-semibold text-blue-600 hover:underline">查看详情</button>
+            <div class="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-4 mt-2 sm:mt-0">
+                <span class="text-sm font-medium px-2 py-1 rounded-full ${inv.status === '已开具' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${inv.status}</span>
+                <button class="text-sm font-semibold text-blue-600 hover:underline">查看详情</button>
             </div>
         </div>
     `).join('');
@@ -237,39 +264,81 @@ function renderAfterSalesView() {
     const container = document.getElementById('after-sales-list');
     if (!container) return;
     container.innerHTML = afterSales.map(as => `
-        <div class="border rounded-lg p-4 flex justify-between items-center">
-            <div>
-                <p class="font-semibold">订单 #${as.orderId} - ${as.type}</p>
+        <div class="border rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="flex-grow">
+                <p class="font-semibold">订单 <span class="font-normal">${as.orderId}</span> - <span class="font-normal">${as.type}</span></p>
                 <p class="text-sm text-slate-500 mt-1">申请日期: ${as.date}</p>
             </div>
-            <div>
-                <span class="text-sm font-medium ${as.status === '已完成' ? 'text-green-600' : 'text-yellow-600'}">${as.status}</span>
-                <button class="ml-4 text-sm font-semibold text-blue-600 hover:underline">查看详情</button>
+            <div class="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-4 mt-2 sm:mt-0">
+                <span class="text-sm font-medium px-2 py-1 rounded-full ${as.status === '已完成' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${as.status}</span>
+                <button class="text-sm font-semibold text-blue-600 hover:underline">查看详情</button>
             </div>
         </div>
     `).join('');
 }
 
 function renderCouponsView() {
+    const tabsContainer = document.getElementById('coupons-tabs-container');
     const availableContainer = document.getElementById('available-coupons');
-    if (availableContainer) {
+    const usedContainer = document.getElementById('used-coupons');
+    const expiredContainer = document.getElementById('expired-coupons');
+
+    if (!tabsContainer || !availableContainer || !usedContainer || !expiredContainer) return;
+
+    const couponTabs = [
+        { id: 'available-coupons', text: `未使用 (${coupons.available.length})` },
+        { id: 'used-coupons', text: `已使用 (${coupons.used.length})` },
+        { id: 'expired-coupons', text: `已过期 (${coupons.expired.length})` }
+    ];
+
+    // Render tabs
+    tabsContainer.innerHTML = `
+        <nav class="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
+            ${couponTabs.map((tab, index) => `
+                <button onclick="switchTab(this, '${tab.id}')" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${index === 0 ? 'active' : 'text-slate-500 hover:text-slate-700 hover:border-slate-300'}">
+                    ${tab.text}
+                </button>
+            `).join('')}
+        </nav>
+    `;
+
+    // Render available coupons
+    if (coupons.available.length > 0) {
         availableContainer.innerHTML = coupons.available.map(c => `
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
                 <p class="font-semibold">${c.name}</p>
-                <p class="text-sm text-slate-600">${c.description}</p>
+                <p class="text-sm text-slate-600 mt-1">${c.description}</p>
                 <p class="text-xs text-slate-500 mt-2">有效期至: ${c.expiry}</p>
             </div>
         `).join('');
+    } else {
+        availableContainer.innerHTML = `<p class="text-slate-500 col-span-full text-center py-8">暂无可用优惠券</p>`;
     }
-    const usedContainer = document.getElementById('used-coupons');
-    if (usedContainer) {
+
+    // Render used coupons
+    if (coupons.used.length > 0) {
         usedContainer.innerHTML = coupons.used.map(c => `
-            <div class="bg-slate-50 border-l-4 border-slate-400 p-4 mb-4">
+            <div class="bg-slate-100 border-l-4 border-slate-400 p-4">
                 <p class="font-semibold text-slate-500">${c.name}</p>
-                <p class="text-sm text-slate-500">${c.description}</p>
+                <p class="text-sm text-slate-500 mt-1">${c.description}</p>
                 <p class="text-xs text-slate-400 mt-2">使用日期: ${c.usedDate}</p>
             </div>
         `).join('');
+    } else {
+         usedContainer.innerHTML = `<p class="text-slate-500 col-span-full text-center py-8">暂无已使用优惠券</p>`;
+    }
+
+    // Render expired coupons
+    if (coupons.expired.length > 0) {
+        expiredContainer.innerHTML = coupons.expired.map(c => `
+            <div class="bg-slate-100 border-l-4 border-slate-400 p-4 opacity-60">
+                <p class="font-semibold text-slate-500">${c.name}</p>
+                <p class="text-sm text-slate-500 mt-1">${c.description}</p>
+                <p class="text-xs text-slate-400 mt-2">已过期</p>
+            </div>
+        `).join('');
+    } else {
+        expiredContainer.innerHTML = `<p class="text-slate-500 col-span-full text-center py-8">暂无已过期优惠券</p>`;
     }
 }
 
@@ -684,14 +753,17 @@ function initializeFilters() {
     renderIcons();
 }
 
-function buildSidebar(container, activeViewId) {
+function buildSidebar(containerId, activeViewId) {
+    const container = document.getElementById(containerId);
     if (!container) return;
+
     container.innerHTML = '';
     sidebarTemplate.forEach(item => {
         if (item.isHidden) return;
         const link = document.createElement('a');
         link.href = '#';
         link.className = `sidebar-link flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg ${item.id === activeViewId ? 'active' : ''}`;
+        // The showUserCenterView function will handle closing the mobile menu
         link.onclick = (e) => { e.preventDefault(); showUserCenterView(item.id); };
         link.innerHTML = `<i data-lucide="${item.icon}" class="w-5 h-5 mr-3"></i> ${item.text}`;
         container.appendChild(link);
@@ -727,7 +799,17 @@ function openInvoiceModal() {
     renderIcons();
 }
 function closeInvoiceModal() { invoiceModal.classList.add('hidden'); }
-function openAfterSalesModal() { afterSalesModal.classList.remove('hidden'); renderIcons(); }
+function openAfterSalesModal() {
+    const orderSelect = document.getElementById('as-order-id');
+    if (orderSelect) {
+        orderSelect.innerHTML = orders
+            .filter(o => ['completed', 'shipped'].includes(o.statusId)) // Allow for completed or shipped orders
+            .map(o => `<option value="${o.id}">订单 #${o.id} - ${o.items[0].name}</option>`)
+            .join('');
+    }
+    afterSalesModal.classList.remove('hidden');
+    renderIcons();
+}
 function closeAfterSalesModal() { afterSalesModal.classList.add('hidden'); }
 function openLoginModal() { loginModal.classList.remove('hidden'); renderIcons(); }
 function closeLoginModal() { loginModal.classList.add('hidden'); }
@@ -852,9 +934,7 @@ function switchTab(button, tabId) {
 }
 
 function switchOrderTab(button, status) {
-    const parent = button.closest('.bg-white');
-    parent.querySelectorAll('.order-tab-button').forEach(btn => btn.classList.remove('active'));
-    button.classList.add('active');
+    // The active class will be handled by the renderOrdersPage function
     renderOrdersPage(status);
 }
 
@@ -1121,40 +1201,66 @@ function confirmPayment() {
 
 // --- 订单页面逻辑 ---
 function renderOrdersPage(filterStatus = 'all') {
-    const container = document.getElementById('orders-list-container');
-    if (!container) return;
+    const tabsContainer = document.getElementById('orders-tabs-container');
+    const listContainer = document.getElementById('orders-list-container');
+    if (!tabsContainer || !listContainer) return;
+
+    const orderTabs = [
+        { id: 'all', text: '所有订单' },
+        { id: 'placed', text: '待上传文件' },
+        { id: 'in-production', text: '生产中' },
+        { id: 'shipped', text: '待收货' },
+        { id: 'completed', text: '已完成' }
+    ];
+
+    tabsContainer.innerHTML = `
+        <nav class="-mb-px flex space-x-6 overflow-x-auto">
+            ${orderTabs.map(tab => `
+                <button
+                    onclick="switchOrderTab(this, '${tab.id}')"
+                    class="order-tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${filterStatus === tab.id ? 'active' : 'text-slate-500 hover:text-slate-700 hover:border-slate-300'}">
+                    ${tab.text}
+                </button>
+            `).join('')}
+        </nav>
+    `;
 
     const filteredOrders = orders.filter(order => {
         if (filterStatus === 'all') return true;
-        if (filterStatus === 'in-production') return ['placed', 'processing', 'confirming', 'production'].includes(order.statusId);
+        if (filterStatus === 'in-production') return ['processing', 'confirming', 'production'].includes(order.statusId);
         return order.statusId === filterStatus;
     });
 
     if (filteredOrders.length === 0) {
-        container.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="inbox" class="w-12 h-12 mx-auto"></i><p class="mt-2">暂无相关订单</p></div>`;
+        listContainer.innerHTML = `<div class="text-center py-16 text-slate-500"><i data-lucide="inbox" class="w-16 h-16 mx-auto"></i><p class="mt-4 text-lg">暂无相关订单</p></div>`;
     } else {
-        container.innerHTML = filteredOrders.map(order => {
+        listContainer.innerHTML = filteredOrders.map(order => {
             const firstItem = order.items[0];
             return `
-            <div class="order-card border border-slate-200 rounded-lg">
-                <div class="bg-slate-50 px-6 py-3 flex justify-between items-center text-sm rounded-t-lg">
-                    <div><span class="font-semibold">订单号:</span> <span class="text-slate-600">${order.id}</span></div>
-                    <div><span class="font-semibold">下单时间:</span> <span class="text-slate-600">${order.date}</span></div>
-                    <div class="font-semibold text-blue-600">${order.status}</div>
-                </div>
-                <div class="p-6">
-                    <div class="flex items-start space-x-6">
-                        <img src="${firstItem.imageUrl}" alt="${firstItem.name}" class="w-24 h-24 rounded-md object-cover">
-                        <div class="flex-grow">
-                            <h4 class="font-semibold">${firstItem.name} ${order.items.length > 1 ? `等 ${order.items.length} 件商品` : ''}</h4>
-                            <p class="text-sm text-slate-500 mt-1">${firstItem.specs}</p>
-                            <p class="text-sm text-slate-500">数量: ${firstItem.quantity}</p>
+            <div class="order-card bg-white border border-slate-200 rounded-xl overflow-hidden">
+                <div class="bg-slate-50 px-4 py-3 md:px-6 md:py-4 border-b border-slate-200">
+                    <div class="flex flex-wrap items-center justify-between gap-y-2">
+                        <div class="flex items-center gap-x-4">
+                            <p class="text-sm font-semibold text-slate-800">订单号: ${order.id}</p>
+                            <p class="text-xs text-slate-500">下单于: ${order.date}</p>
                         </div>
-                        <div class="text-right">
-                            <p class="text-lg font-bold">¥${order.total.toFixed(2)}</p>
+                        <div class="text-sm font-semibold text-blue-600">${order.status}</div>
+                    </div>
+                </div>
+                <div class="p-4 md:p-6">
+                    <div class="flex flex-col md:flex-row items-start gap-4">
+                        <img src="${firstItem.imageUrl}" alt="${firstItem.name}" class="w-24 h-24 md:w-32 md:h-32 rounded-lg object-cover border flex-shrink-0">
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-lg">${firstItem.name} ${order.items.length > 1 ? `等 ${order.items.length} 件商品` : ''}</h4>
+                            <p class="text-sm text-slate-500 mt-1 line-clamp-2">${firstItem.specs}</p>
+                            <p class="text-sm text-slate-500 mt-1">数量: ${firstItem.quantity}</p>
+                        </div>
+                        <div class="text-left md:text-right w-full md:w-auto mt-2 md:mt-0">
+                            <p class="text-sm text-slate-500">订单总额</p>
+                            <p class="text-xl font-bold text-slate-900">¥${order.total.toFixed(2)}</p>
                         </div>
                     </div>
-                    <div class="border-t border-slate-200 mt-4 pt-4 flex justify-end space-x-3">
+                    <div class="border-t border-slate-100 mt-4 pt-4 flex justify-end items-center gap-x-3">
                         <button onclick="window.location.href='user-center.html?viewId=order-detail-view&orderId=${order.id}'" class="bg-white border border-slate-300 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50">查看详情</button>
                         <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">再次购买</button>
                     </div>
@@ -1471,68 +1577,197 @@ function showNotification(message, type = 'info') {
 }
 
 function renderDistributionDashboard() {
+    const container = document.getElementById('distribution-dashboard-view');
+    if (!container) return;
+
+    // --- Data Calculations ---
     const totalCommission = distributionData.orders.reduce((sum, order) => sum + order.commission, 0);
     const withdrawnAmount = distributionData.withdrawals.reduce((sum, w) => sum + w.amount, 0);
-    const settledCommission = distributionData.orders
-        .filter(o => o.status === '已结算')
-        .reduce((sum, order) => sum + order.commission, 0);
+    const settledCommission = distributionData.orders.filter(o => o.status === '已结算').reduce((sum, order) => sum + order.commission, 0);
     const withdrawableCommission = settledCommission - withdrawnAmount;
 
-    document.getElementById('dist-total-commission').textContent = `¥${totalCommission.toFixed(2)}`;
-    document.getElementById('dist-withdrawable-commission').textContent = `¥${withdrawableCommission.toFixed(2)}`;
-    document.getElementById('dist-customer-count').textContent = distributionData.customers.length;
-    document.getElementById('dist-level').textContent = distributionData.stats.level;
-    document.getElementById('dist-rate').textContent = `/ ${distributionData.stats.commissionRate}`;
+    // --- Render Main Structure ---
+    container.innerHTML = `
+        <!-- Stats Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <p class="text-sm text-slate-500 flex items-center"><span>分销等级</span><i data-lucide="help-circle" class="w-4 h-4 ml-1 text-slate-400 cursor-pointer" title="青铜: 10%, 白银: 12%, 黄金: 15%"></i></p>
+                <p class="text-2xl font-bold mt-1 text-blue-600">${distributionData.stats.level}</p>
+            </div>
+             <div class="bg-white p-6 rounded-xl shadow-sm">
+                <p class="text-sm text-slate-500">累计总佣金</p>
+                <p class="text-2xl font-bold mt-1" id="dist-total-commission">¥${totalCommission.toFixed(2)}</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <p class="text-sm text-slate-500">可提现佣金</p>
+                <p class="text-2xl font-bold mt-1 text-green-600" id="dist-withdrawable-commission">¥${withdrawableCommission.toFixed(2)}</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <p class="text-sm text-slate-500">我的客户数</p>
+                <p class="text-2xl font-bold mt-1">${distributionData.customers.length}</p>
+            </div>
+        </div>
 
-    const referralLink = document.getElementById('referral-link').value;
-    document.getElementById('referral-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=96x96&data=${encodeURIComponent(referralLink)}`;
+        <!-- Actions and Info Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm lg:col-span-2">
+                <h3 class="text-xl font-semibold mb-4">收益速览</h3>
+                <div id="earnings-chart" class="h-48"></div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <h3 class="text-xl font-semibold mb-4">我的推广</h3>
+                <div class="space-y-4">
+                     <div>
+                        <label class="block text-sm font-medium text-slate-700">推广二维码</label>
+                        <div class="mt-2 p-2 border rounded-lg inline-block">
+                            <img id="referral-qr-code" src="" alt="QR Code" class="w-28 h-28">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">推广链接</label>
+                        <div class="mt-1 flex rounded-md shadow-sm">
+                            <input type="text" id="referral-link" value="https://iboxify.com/ref?id=12345" class="block w-full rounded-none rounded-l-md border-slate-300 bg-slate-50" readonly>
+                            <button onclick="copyReferralLink(this)" class="inline-flex items-center px-4 py-2 rounded-r-md border border-l-0 border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200 text-sm font-semibold">
+                                <i data-lucide="copy" class="w-4 h-4 mr-2"></i>
+                                <span>复制</span>
+                            </button>
+                        </div>
+                    </div>
+                     <button onclick="openWithdrawalModal()" class="mt-4 w-full btn-primary text-white py-2.5 rounded-lg font-semibold flex items-center justify-center">
+                        <i data-lucide="landmark" class="w-4 h-4 mr-2"></i>
+                        <span>申请提现</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Tabs Section -->
+        <div class="bg-white mt-8 rounded-xl shadow-sm">
+            <div class="border-b border-slate-200 px-6">
+                <nav class="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
+                    <button onclick="switchTab(this, 'dist-orders-content')" class="tab-button active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">分销订单</button>
+                    <button onclick="switchTab(this, 'dist-customers-content')" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">我的客户</button>
+                    <button onclick="switchTab(this, 'dist-withdrawals-content')" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">提现记录</button>
+                </nav>
+            </div>
+            <div class="p-6">
+                <div id="dist-orders-content" class="tab-content">
+                    <div id="dist-orders-list" class="space-y-4"></div>
+                </div>
+                <div id="dist-customers-content" class="tab-content hidden">
+                    <div id="dist-customers-list" class="space-y-4"></div>
+                </div>
+                <div id="dist-withdrawals-content" class="tab-content hidden">
+                    <div id="dist-withdrawals-list" class="space-y-4"></div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // --- Render Dynamic Content ---
+
+    // Render QR Code
+    const referralLink = container.querySelector('#referral-link').value;
+    container.querySelector('#referral-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=112x112&data=${encodeURIComponent(referralLink)}`;
 
     // Render Earnings Chart
-    const chartContainer = document.getElementById('earnings-chart');
-    const maxEarning = Math.max(...distributionData.monthlyEarnings.map(e => e.earnings), 1); // Avoid division by zero
-    chartContainer.innerHTML = distributionData.monthlyEarnings.map(item => `
-        <div class="flex-1 flex flex-col items-center justify-end" title="${item.month}: ¥${item.earnings.toFixed(2)}">
-            <div class="w-full bg-blue-200 rounded-t-sm hover:bg-blue-400 transition-colors" style="height: ${(item.earnings / maxEarning) * 100}%;"></div>
-            <p class="text-xs text-slate-500 mt-1">${item.month}</p>
+    const chartContainer = container.querySelector('#earnings-chart');
+    const maxEarning = Math.max(...distributionData.monthlyEarnings.map(e => e.earnings), 1);
+    chartContainer.innerHTML = `
+        <div class="w-full h-full flex items-end justify-between gap-x-2 sm:gap-x-4">
+            ${distributionData.monthlyEarnings.map(item => `
+                <div class="flex-1 flex flex-col items-center justify-end group" title="${item.month}: ¥${item.earnings.toFixed(2)}">
+                    <div class="w-full bg-blue-100 rounded-t-md group-hover:bg-blue-300 transition-all" style="height: ${(item.earnings / maxEarning) * 100}%;"></div>
+                    <p class="text-xs text-slate-500 mt-2 whitespace-nowrap">${item.month}</p>
+                </div>
+            `).join('')}
         </div>
-    `).join('');
+    `;
 
-    // Render Tables
-    const ordersBody = document.getElementById('dist-orders-table-body');
-    ordersBody.innerHTML = distributionData.orders.map(o => `
-        <tr class="border-b border-slate-200">
-            <td class="p-4 text-sm">${o.id}</td>
-            <td class="p-4 text-sm">${o.customer}</td>
-            <td class="p-4 text-sm">${o.date}</td>
-            <td class="p-4 text-sm">¥${o.total.toFixed(2)}</td>
-            <td class="p-4 text-sm font-semibold text-green-600">+¥${o.commission.toFixed(2)}</td>
-            <td class="p-4 text-sm">${o.status === '已结算' ? `<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>` : `<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>`}</td>
-        </tr>
-    `).join('');
-
-    const customersBody = document.getElementById('dist-customers-table-body');
-    customersBody.innerHTML = distributionData.customers.map(c => `
-        <tr class="border-b border-slate-200">
-            <td class="p-4 text-sm">${c.name}</td>
-            <td class="p-4 text-sm">${c.joinDate}</td>
-            <td class="p-4 text-sm">¥${c.totalSpent.toFixed(2)}</td>
-            <td class="p-4 text-sm">${c.lastOrderDate}</td>
-        </tr>
-    `).join('');
-
-    const withdrawalsBody = document.getElementById('dist-withdrawals-table-body');
-    withdrawalsBody.innerHTML = distributionData.withdrawals.map(w => `
-        <tr class="border-b border-slate-200">
-            <td class="p-4 text-sm">${w.id}</td>
-            <td class="p-4 text-sm">${w.date}</td>
-            <td class="p-4 text-sm">¥${w.amount.toFixed(2)}</td>
-            <td class="p-4 text-sm"><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">${w.status}</span></td>
-        </tr>
-    `).join('');
-
-    if (withdrawalsBody.innerHTML === '') {
-        withdrawalsBody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-slate-500">暂无提现记录</td></tr>`;
+    // Render Lists with new responsive card layout
+    const ordersList = container.querySelector('#dist-orders-list');
+    if (distributionData.orders.length > 0) {
+        ordersList.innerHTML = distributionData.orders.map(o => `
+            <div class="border rounded-xl p-4">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                    <p class="font-semibold text-slate-800">订单 <span class="text-blue-600">${o.id}</span></p>
+                    <p class="text-sm text-slate-500 mt-1 md:mt-0">客户: ${o.customer} | ${o.date}</p>
+                </div>
+                <div class="mt-4 pt-4 border-t grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div>
+                        <p class="text-xs text-slate-500">订单总额</p>
+                        <p class="font-medium mt-1">¥${o.total.toFixed(2)}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500">订单佣金</p>
+                        <p class="font-medium mt-1 text-green-600">+¥${o.commission.toFixed(2)}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500">佣金比例</p>
+                        <p class="font-medium mt-1">${distributionData.stats.commissionRate}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500">状态</p>
+                        <p class="font-medium mt-1"><span class="text-xs font-medium px-2 py-1 rounded-full ${o.status === '已结算' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${o.status}</span></p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        ordersList.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="inbox" class="w-12 h-12 mx-auto"></i><p class="mt-4">暂无分销订单</p></div>`;
     }
+
+
+    const customersList = container.querySelector('#dist-customers-list');
+    if (distributionData.customers.length > 0) {
+        customersList.innerHTML = distributionData.customers.map(c => `
+            <div class="border rounded-xl p-4">
+                 <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                    <p class="font-semibold text-slate-800 flex items-center"><i data-lucide="user" class="w-4 h-4 mr-2 text-blue-500"></i>${c.name}</p>
+                    <p class="text-sm text-slate-500 mt-1 md:mt-0">加入时间: ${c.joinDate}</p>
+                </div>
+                <div class="mt-4 pt-4 border-t grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs text-slate-500">累计消费</p>
+                        <p class="font-medium mt-1">¥${c.totalSpent.toFixed(2)}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500">最近下单</p>
+                        <p class="font-medium mt-1">${c.lastOrderDate}</p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        customersList.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="users" class="w-12 h-12 mx-auto"></i><p class="mt-4">暂无客户</p></div>`;
+    }
+
+
+    const withdrawalsList = container.querySelector('#dist-withdrawals-list');
+    if (distributionData.withdrawals.length > 0) {
+        withdrawalsList.innerHTML = distributionData.withdrawals.map(w => `
+            <div class="border rounded-xl p-4">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                    <p class="font-semibold text-slate-800">提现单号: ${w.id}</p>
+                    <p class="text-sm text-slate-500 mt-1 md:mt-0">${w.date}</p>
+                </div>
+                <div class="mt-4 pt-4 border-t grid grid-cols-2 gap-4">
+                     <div>
+                        <p class="text-xs text-slate-500">提现金额</p>
+                        <p class="font-medium mt-1 text-red-600">-¥${w.amount.toFixed(2)}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500">状态</p>
+                        <p class="font-medium mt-1"><span class="text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-800">${w.status}</span></p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        withdrawalsList.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="arrow-left-right" class="w-12 h-12 mx-auto"></i><p class="mt-4">暂无提现记录</p></div>`;
+    }
+
+    renderIcons();
 }
 
 function copyReferralLink(button) {
@@ -2050,7 +2285,8 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCheckoutPage();
     } else if (document.getElementById('user-center-page')) {
         const viewId = urlParams.get('viewId') || 'dashboard-view';
-        showUserCenterView(viewId);
+        const orderId = urlParams.get('orderId');
+        showUserCenterView(viewId, { orderId: orderId });
     } else if (document.getElementById('product-detail-page')) {
         if (productId) {
             renderProductDetailPage(productId);
@@ -2105,6 +2341,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     companyDetails.classList.add('hidden');
                 }
             });
+        });
+    }
+
+    const afterSalesForm = document.getElementById('after-sales-form');
+    if (afterSalesForm) {
+        afterSalesForm.addEventListener('submit', e => {
+            e.preventDefault();
+
+            const orderId = document.getElementById('as-order-id').value;
+            if (!orderId) {
+                alert('请选择一个订单');
+                return;
+            }
+
+            const newRequest = {
+                id: `AS-${Date.now()}`,
+                orderId: orderId,
+                date: new Date().toLocaleDateString('zh-CN').replace(/\//g, '-'),
+                type: document.getElementById('as-type').value,
+                status: '处理中'
+            };
+
+            afterSales.unshift(newRequest);
+            renderAfterSalesView();
+            closeAfterSalesModal();
+            showNotification('售后申请已提交，我们将尽快为您处理！', 'success');
         });
     }
 });
