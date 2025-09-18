@@ -36,7 +36,10 @@ let coupons = {
 const distributionData = {
     stats: {
         level: "青铜分销员",
-        commissionRate: "10%"
+        commissionRate: "10%",
+        todayNewCustomers: 2,
+        monthlyEstimatedIncome: 455.50,
+        pendingCommission: 30.00
     },
     orders: [
         { id: 'D-001', customer: '张三', date: '2025-07-25', total: 550.00, commission: 55.00, status: '已结算' },
@@ -58,6 +61,15 @@ const distributionData = {
         { month: '6月', earnings: 200 },
         { month: '7月', earnings: 175 },
         { month: '8月', earnings: 250 },
+    ],
+    weeklyEarnings: [
+        { day: '周一', earnings: 25 },
+        { day: '周二', earnings: 40 },
+        { day: '周三', earnings: 30 },
+        { day: '周四', earnings: 55 },
+        { day: '周五', earnings: 60 },
+        { day: '周六', earnings: 75 },
+        { day: '周日', earnings: 50 },
     ]
 };
 
@@ -1589,54 +1601,83 @@ function renderDistributionDashboard() {
     // --- Render Main Structure ---
     container.innerHTML = `
         <!-- Stats Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <p class="text-sm text-slate-500">可提现佣金</p>
+                <p class="text-3xl font-bold mt-1 text-green-600" id="dist-withdrawable-commission">¥${withdrawableCommission.toFixed(2)}</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <p class="text-sm text-slate-500">待结算佣金</p>
+                <p class="text-3xl font-bold mt-1 text-yellow-600">¥${distributionData.stats.pendingCommission.toFixed(2)}</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <p class="text-sm text-slate-500">累计总佣金</p>
+                <p class="text-3xl font-bold mt-1" id="dist-total-commission">¥${totalCommission.toFixed(2)}</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <p class="text-sm text-slate-500">本月预估收入</p>
+                <p class="text-2xl font-bold mt-1">¥${distributionData.stats.monthlyEstimatedIncome.toFixed(2)}</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <p class="text-sm text-slate-500">我的客户总数</p>
+                <p class="text-2xl font-bold mt-1">${distributionData.customers.length}</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <p class="text-sm text-slate-500">今日新增客户</p>
+                <p class="text-2xl font-bold mt-1">${distributionData.stats.todayNewCustomers}</p>
+            </div>
             <div class="bg-white p-6 rounded-xl shadow-sm">
                 <p class="text-sm text-slate-500 flex items-center"><span>分销等级</span><i data-lucide="help-circle" class="w-4 h-4 ml-1 text-slate-400 cursor-pointer" title="青铜: 10%, 白银: 12%, 黄金: 15%"></i></p>
                 <p class="text-2xl font-bold mt-1 text-blue-600">${distributionData.stats.level}</p>
-            </div>
-             <div class="bg-white p-6 rounded-xl shadow-sm">
-                <p class="text-sm text-slate-500">累计总佣金</p>
-                <p class="text-2xl font-bold mt-1" id="dist-total-commission">¥${totalCommission.toFixed(2)}</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm">
-                <p class="text-sm text-slate-500">可提现佣金</p>
-                <p class="text-2xl font-bold mt-1 text-green-600" id="dist-withdrawable-commission">¥${withdrawableCommission.toFixed(2)}</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm">
-                <p class="text-sm text-slate-500">我的客户数</p>
-                <p class="text-2xl font-bold mt-1">${distributionData.customers.length}</p>
             </div>
         </div>
 
         <!-- Actions and Info Section -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
             <div class="bg-white p-6 rounded-xl shadow-sm lg:col-span-2">
-                <h3 class="text-xl font-semibold mb-4">收益速览</h3>
-                <div id="earnings-chart" class="h-48"></div>
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <h3 class="text-xl font-semibold">收益速览</h3>
+                    <div class="flex space-x-1 bg-slate-100 p-1 rounded-lg">
+                        <button onclick="renderEarningsChart('weekly')" data-range="weekly" class="chart-tab-button text-sm font-semibold px-3 py-1 rounded-md transition-colors">本周</button>
+                        <button onclick="renderEarningsChart('monthly')" data-range="monthly" class="chart-tab-button text-sm font-semibold px-3 py-1 rounded-md transition-colors">本月</button>
+                    </div>
+                </div>
+                <div id="earnings-chart" class="h-48 relative">
+                    <div id="chart-area" class="w-full h-full"></div>
+                    <div id="chart-tooltip" class="hidden opacity-0 transition-opacity absolute bg-slate-800 text-white text-xs rounded py-1 px-2 pointer-events-none z-10 shadow-lg text-center"></div>
+                </div>
             </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm">
-                <h3 class="text-xl font-semibold mb-4">我的推广</h3>
-                <div class="space-y-4">
-                     <div>
-                        <label class="block text-sm font-medium text-slate-700">推广二维码</label>
-                        <div class="mt-2 p-2 border rounded-lg inline-block">
-                            <img id="referral-qr-code" src="" alt="QR Code" class="w-28 h-28">
-                        </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm text-center">
+                <h3 class="text-xl font-semibold mb-4">我的专属推广</h3>
+                <div class="p-2 border rounded-lg inline-block bg-white">
+                    <img id="referral-qr-code" src="" alt="QR Code" class="w-32 h-32">
+                </div>
+                <p class="text-xs text-slate-500 mt-2">微信扫一扫，分享给好友</p>
+
+                <div class="mt-4">
+                    <div class="mt-1 flex rounded-md shadow-sm">
+                        <input type="text" id="referral-link" value="https://iboxify.com/ref?id=12345" class="block w-full rounded-none rounded-l-md border-slate-300 bg-slate-50 text-sm" readonly>
+                        <button onclick="copyReferralLink(this)" class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700">推广链接</label>
-                        <div class="mt-1 flex rounded-md shadow-sm">
-                            <input type="text" id="referral-link" value="https://iboxify.com/ref?id=12345" class="block w-full rounded-none rounded-l-md border-slate-300 bg-slate-50" readonly>
-                            <button onclick="copyReferralLink(this)" class="inline-flex items-center px-4 py-2 rounded-r-md border border-l-0 border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200 text-sm font-semibold">
-                                <i data-lucide="copy" class="w-4 h-4 mr-2"></i>
-                                <span>复制</span>
-                            </button>
-                        </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t">
+                    <p class="text-sm font-medium text-slate-700 mb-3">一键分享至</p>
+                    <div class="flex justify-center space-x-3">
+                        <button title="分享到微信" class="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center hover:bg-green-600 transition-colors">
+                            <i data-lucide="message-circle" class="w-5 h-5"></i>
+                        </button>
+                        <button title="分享到微博" class="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors">
+                            <i data-lucide="send" class="w-5 h-5"></i>
+                        </button>
+                        <button title="更多分享" class="w-10 h-10 bg-slate-500 text-white rounded-full flex items-center justify-center hover:bg-slate-600 transition-colors">
+                            <i data-lucide="share-2" class="w-5 h-5"></i>
+                        </button>
                     </div>
-                     <button onclick="openWithdrawalModal()" class="mt-4 w-full btn-primary text-white py-2.5 rounded-lg font-semibold flex items-center justify-center">
-                        <i data-lucide="landmark" class="w-4 h-4 mr-2"></i>
-                        <span>申请提现</span>
-                    </button>
                 </div>
             </div>
         </div>
@@ -1670,19 +1711,11 @@ function renderDistributionDashboard() {
     const referralLink = container.querySelector('#referral-link').value;
     container.querySelector('#referral-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=112x112&data=${encodeURIComponent(referralLink)}`;
 
-    // Render Earnings Chart
-    const chartContainer = container.querySelector('#earnings-chart');
-    const maxEarning = Math.max(...distributionData.monthlyEarnings.map(e => e.earnings), 1);
-    chartContainer.innerHTML = `
-        <div class="w-full h-full flex items-end justify-between gap-x-2 sm:gap-x-4">
-            ${distributionData.monthlyEarnings.map(item => `
-                <div class="flex-1 flex flex-col items-center justify-end group" title="${item.month}: ¥${item.earnings.toFixed(2)}">
-                    <div class="w-full bg-blue-100 rounded-t-md group-hover:bg-blue-300 transition-all" style="height: ${(item.earnings / maxEarning) * 100}%;"></div>
-                    <p class="text-xs text-slate-500 mt-2 whitespace-nowrap">${item.month}</p>
-                </div>
-            `).join('')}
-        </div>
-    `;
+    // --- Render Dynamic Content ---
+    renderEarningsChart('weekly');
+    // Render QR Code
+    const referralLink = container.querySelector('#referral-link').value;
+    container.querySelector('#referral-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=128x128&data=${encodeURIComponent(referralLink)}`;
 
     // Render Lists with new responsive card layout
     const ordersList = container.querySelector('#dist-orders-list');
@@ -1693,7 +1726,7 @@ function renderDistributionDashboard() {
                     <p class="font-semibold text-slate-800">订单 <span class="text-blue-600">${o.id}</span></p>
                     <p class="text-sm text-slate-500 mt-1 md:mt-0">客户: ${o.customer} | ${o.date}</p>
                 </div>
-                <div class="mt-4 pt-4 border-t grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div class="mt-4 pt-4 border-t grid grid-cols-2 md:grid-cols-5 gap-4 text-center items-center">
                     <div>
                         <p class="text-xs text-slate-500">订单总额</p>
                         <p class="font-medium mt-1">¥${o.total.toFixed(2)}</p>
@@ -1709,6 +1742,9 @@ function renderDistributionDashboard() {
                     <div>
                         <p class="text-xs text-slate-500">状态</p>
                         <p class="font-medium mt-1"><span class="text-xs font-medium px-2 py-1 rounded-full ${o.status === '已结算' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${o.status}</span></p>
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                         <button class="text-sm font-semibold text-blue-600 hover:underline">查看详情</button>
                     </div>
                 </div>
             </div>
@@ -1745,7 +1781,14 @@ function renderDistributionDashboard() {
 
     const withdrawalsList = container.querySelector('#dist-withdrawals-list');
     if (distributionData.withdrawals.length > 0) {
-        withdrawalsList.innerHTML = distributionData.withdrawals.map(w => `
+        withdrawalsList.innerHTML = distributionData.withdrawals.map(w => {
+            const statusConfig = {
+                '已完成': { icon: 'check-circle-2', color: 'green' },
+                '处理中': { icon: 'loader-2', color: 'yellow' },
+                '已拒绝': { icon: 'x-circle', color: 'red' },
+            };
+            const currentStatus = statusConfig[w.status] || { icon: 'help-circle', color: 'slate' };
+            return `
             <div class="border rounded-xl p-4">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                     <p class="font-semibold text-slate-800">提现单号: ${w.id}</p>
@@ -1758,16 +1801,87 @@ function renderDistributionDashboard() {
                     </div>
                     <div>
                         <p class="text-xs text-slate-500">状态</p>
-                        <p class="font-medium mt-1"><span class="text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-800">${w.status}</span></p>
+                        <p class="font-medium mt-1 flex items-center justify-center text-${currentStatus.color}-600">
+                            <i data-lucide="${currentStatus.icon}" class="w-4 h-4 mr-1.5"></i>
+                            <span>${w.status}</span>
+                        </p>
                     </div>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
     } else {
         withdrawalsList.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="arrow-left-right" class="w-12 h-12 mx-auto"></i><p class="mt-4">暂无提现记录</p></div>`;
     }
 
     renderIcons();
+}
+
+function renderEarningsChart(timeRange) {
+    const container = document.getElementById('earnings-chart');
+    if (!container) return;
+
+    // Update active button style
+    document.querySelectorAll('.chart-tab-button').forEach(btn => {
+        const isActive = btn.dataset.range === timeRange;
+        btn.classList.toggle('active', isActive);
+        btn.classList.toggle('bg-white', isActive);
+        btn.classList.toggle('text-slate-900', isActive);
+        btn.classList.toggle('shadow-sm', isActive);
+        btn.classList.toggle('bg-transparent', !isActive);
+        btn.classList.toggle('text-slate-500', !isActive);
+    });
+
+    const data = timeRange === 'weekly' ? distributionData.weeklyEarnings : distributionData.monthlyEarnings;
+    const labelKey = timeRange === 'weekly' ? 'day' : 'month';
+    const maxEarning = Math.max(...data.map(e => e.earnings), 1);
+
+    const chartHTML = `
+        <div class="w-full h-full flex items-end justify-between gap-x-2 sm:gap-x-4">
+            ${data.map(item => `
+                <div class="flex-1 flex flex-col items-center justify-end group chart-bar"
+                     data-label="${item[labelKey]}"
+                     data-value="${item.earnings.toFixed(2)}">
+                    <div class="w-full bg-blue-100 rounded-t-md group-hover:bg-blue-300 transition-all" style="height: ${(item.earnings / maxEarning) * 100}%;"></div>
+                    <p class="text-xs text-slate-500 mt-2 whitespace-nowrap">${item[labelKey]}</p>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    container.querySelector('#chart-area').innerHTML = chartHTML;
+
+    // Tooltip logic
+    const tooltip = document.getElementById('chart-tooltip');
+    const bars = container.querySelectorAll('.chart-bar');
+
+    bars.forEach(bar => {
+        bar.addEventListener('mouseover', (e) => {
+            const label = bar.dataset.label;
+            const value = bar.dataset.value;
+            tooltip.innerHTML = `<div class="font-bold">${label}</div><div>¥${value}</div>`;
+            tooltip.classList.remove('hidden', 'opacity-0');
+
+            const rect = bar.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+
+            let left = rect.left - containerRect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
+            let top = rect.top - containerRect.top - tooltip.offsetHeight - 8;
+
+            // Prevent tooltip from going off-screen
+            if (left < 0) left = 0;
+            if (left + tooltip.offsetWidth > containerRect.width) left = containerRect.width - tooltip.offsetWidth;
+            if (top < 0) top = rect.top - containerRect.top + rect.height;
+
+
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${top}px`;
+        });
+
+        bar.addEventListener('mouseout', () => {
+            tooltip.classList.add('opacity-0', 'hidden');
+        });
+    });
 }
 
 function copyReferralLink(button) {
