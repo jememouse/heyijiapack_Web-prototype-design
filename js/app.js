@@ -561,8 +561,11 @@ function initializeFilters() {
         domainSummary.className = 'filter-link font-semibold p-2 rounded-lg hover:bg-slate-50 cursor-pointer flex justify-between items-center';
         domainSummary.dataset.level = 'domain';
         domainSummary.dataset.value = domainName;
+        // Use a regex to clean the domain name for display, removing prefixes like "P - "
+        const cleanDomainName = (domainMap[domainName] || domainName).replace(/^[A-Z]\s-\s/, '');
+
         domainSummary.innerHTML = `
-            <span>${domainMap[domainName] || domainName}</span>
+            <span>${cleanDomainName}</span>
             <i data-lucide="chevron-down" class="w-4 h-4 transition-transform transform group-open:rotate-180"></i>
         `;
         domainSummary.addEventListener('click', (e) => handleFilterClick('domain', domainName, e.currentTarget));
@@ -572,6 +575,8 @@ function initializeFilters() {
 
         Object.keys(domainData).forEach(primaryCategoryName => {
             const primaryCategoryData = domainData[primaryCategoryName];
+             // Clean the primary category name for display
+            const cleanPrimaryCategoryName = primaryCategoryName.replace(/^[A-Z]\d+\.\s/, '');
 
             const primaryDetails = document.createElement('details');
             primaryDetails.className = 'filter-group';
@@ -582,7 +587,7 @@ function initializeFilters() {
             primarySummary.dataset.level = 'primary';
             primarySummary.dataset.value = primaryCategoryName;
             primarySummary.innerHTML = `
-                <span>${primaryCategoryName}</span>
+                <span>${cleanPrimaryCategoryName}</span>
                 <i data-lucide="chevron-down" class="w-4 h-4 transition-transform transform group-open:rotate-180"></i>
             `;
             primarySummary.addEventListener('click', (e) => handleFilterClick('primary', primaryCategoryName, e.currentTarget));
@@ -592,12 +597,14 @@ function initializeFilters() {
 
             Object.keys(primaryCategoryData).forEach(secondaryCategoryName => {
                 if (primaryCategoryData[secondaryCategoryName].length > 0) {
+                     // Clean the secondary category name for display
+                    const cleanSecondaryCategoryName = secondaryCategoryName.replace(/^[A-Z]\d+\.\s/, '');
                     const secondaryLink = document.createElement('a');
                     secondaryLink.href = '#';
                     secondaryLink.className = 'filter-link text-sm block p-2 rounded-lg hover:bg-slate-50';
                     secondaryLink.dataset.level = 'secondary';
                     secondaryLink.dataset.value = secondaryCategoryName;
-                    secondaryLink.textContent = secondaryCategoryName;
+                    secondaryLink.textContent = cleanSecondaryCategoryName;
                     secondaryLink.addEventListener('click', (e) => {
                         e.preventDefault();
                         handleFilterClick('secondary', secondaryCategoryName, e.currentTarget);
