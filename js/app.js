@@ -132,7 +132,9 @@ function showUserCenterView(viewId, context) {
     if (activeView) activeView.classList.remove('hidden');
     buildSidebar(document.getElementById('user-center-sidebar'), viewId);
 
-    if (viewId === 'orders-view') {
+    if (viewId === 'dashboard-view') {
+        renderDashboardView();
+    } else if (viewId === 'orders-view') {
         renderOrdersPage();
     } else if (viewId === 'order-detail-view') {
         renderOrderDetailPage(context?.orderId);
@@ -146,9 +148,55 @@ function showUserCenterView(viewId, context) {
         renderAfterSalesView();
     } else if (viewId === 'coupons-view') {
         renderCouponsView();
+    } else if (viewId === 'settings-view') {
+        renderSettingsView();
     }
     renderIcons();
 }
+
+function renderDashboardView() {
+    const view = document.getElementById('dashboard-view');
+    if (!view) return;
+
+    // 动态更新统计数据
+    const pendingOrders = orders.filter(o => ['placed', 'processing', 'confirming'].includes(o.statusId)).length;
+    const toReceiveOrders = orders.filter(o => o.statusId === 'shipped').length;
+    const availableCoupons = coupons.available.length;
+
+    view.querySelector('#stats-pending-orders').textContent = pendingOrders;
+    view.querySelector('#stats-to-receive').textContent = toReceiveOrders;
+    view.querySelector('#stats-coupons').textContent = availableCoupons;
+
+    // 动态更新最近订单列表
+    const recentOrdersContainer = view.querySelector('#recent-orders-tbody');
+    const recentOrders = orders.slice(0, 3);
+    recentOrdersContainer.innerHTML = recentOrders.map(order => `
+        <tr class="border-b border-slate-200 last:border-b-0">
+            <td class="p-4">${order.id}</td>
+            <td class="p-4">${order.date}</td>
+            <td class="p-4">¥${order.total.toFixed(2)}</td>
+            <td class="p-4"><span class="status-badge status-${order.statusId}">${order.status}</span></td>
+            <td class="p-4">
+                <a href="#" onclick="event.preventDefault(); showUserCenterView('order-detail-view', { orderId: '${order.id}' })" class="font-semibold text-blue-600 hover:underline">查看</a>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function renderSettingsView() {
+    const view = document.getElementById('settings-view');
+    if (!view) return;
+
+    // 假设我们使用第一个地址的用户信息来填充表单
+    const defaultUser = userAddresses.find(u => u.isDefault) || userAddresses[0];
+    if (defaultUser) {
+        view.querySelector('#profile-name').value = defaultUser.name;
+        view.querySelector('#profile-phone').value = defaultUser.phone;
+        // 假设一个邮箱地址
+        view.querySelector('#profile-email').value = `${defaultUser.name.toLowerCase().replace(' ', '.')}@example.com`;
+    }
+}
+
 
 function renderAddressView() {
     const container = document.getElementById('address-list');
