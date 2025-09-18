@@ -458,8 +458,11 @@ function initializeFilters() {
         domainSummary.className = 'filter-link font-semibold p-2 rounded-lg hover:bg-slate-50 cursor-pointer flex justify-between items-center';
         domainSummary.dataset.level = 'domain';
         domainSummary.dataset.value = domainName;
+        // Use a regex to clean the domain name for display, removing prefixes like "P - "
+        const cleanDomainName = (domainMap[domainName] || domainName).replace(/^[A-Z]\s-\s/, '');
+
         domainSummary.innerHTML = `
-            <span>${domainMap[domainName] || domainName}</span>
+            <span>${cleanDomainName}</span>
             <i data-lucide="chevron-down" class="w-4 h-4 transition-transform transform group-open:rotate-180"></i>
         `;
         domainSummary.addEventListener('click', (e) => handleFilterClick('domain', domainName, e.currentTarget));
@@ -469,6 +472,8 @@ function initializeFilters() {
 
         Object.keys(domainData).forEach(primaryCategoryName => {
             const primaryCategoryData = domainData[primaryCategoryName];
+             // Clean the primary category name for display
+            const cleanPrimaryCategoryName = primaryCategoryName.replace(/^[A-Z]\d+\.\s/, '');
 
             const primaryDetails = document.createElement('details');
             primaryDetails.className = 'filter-group';
@@ -479,7 +484,7 @@ function initializeFilters() {
             primarySummary.dataset.level = 'primary';
             primarySummary.dataset.value = primaryCategoryName;
             primarySummary.innerHTML = `
-                <span>${primaryCategoryName}</span>
+                <span>${cleanPrimaryCategoryName}</span>
                 <i data-lucide="chevron-down" class="w-4 h-4 transition-transform transform group-open:rotate-180"></i>
             `;
             primarySummary.addEventListener('click', (e) => handleFilterClick('primary', primaryCategoryName, e.currentTarget));
@@ -489,12 +494,14 @@ function initializeFilters() {
 
             Object.keys(primaryCategoryData).forEach(secondaryCategoryName => {
                 if (primaryCategoryData[secondaryCategoryName].length > 0) {
+                     // Clean the secondary category name for display
+                    const cleanSecondaryCategoryName = secondaryCategoryName.replace(/^[A-Z]\d+\.\s/, '');
                     const secondaryLink = document.createElement('a');
                     secondaryLink.href = '#';
                     secondaryLink.className = 'filter-link text-sm block p-2 rounded-lg hover:bg-slate-50';
                     secondaryLink.dataset.level = 'secondary';
                     secondaryLink.dataset.value = secondaryCategoryName;
-                    secondaryLink.textContent = secondaryCategoryName;
+                    secondaryLink.textContent = cleanSecondaryCategoryName;
                     secondaryLink.addEventListener('click', (e) => {
                         e.preventDefault();
                         handleFilterClick('secondary', secondaryCategoryName, e.currentTarget);
@@ -525,8 +532,6 @@ function initializeFilters() {
 
     renderIcons();
 }
-
-
 
 function buildSidebar(container, activeViewId) {
     if (!container) return;
@@ -1153,20 +1158,20 @@ function renderPendingView() {
     const summaryContainer = document.getElementById('application-summary');
     if (distributionApplicationData.type === 'individual') {
         summaryContainer.innerHTML = `
-            <div class="grid grid-cols-2 gap-x-8 gap-y-4">
-                <div><span class="font-medium text-slate-500">申请类型:</span><br><span class="font-semibold">个人申请</span></div>
-                <div><span class="font-medium text-slate-500">真实姓名:</span><br><span class="font-semibold">${distributionApplicationData.name || '未填写'}</span></div>
-                <div><span class="font-medium text-slate-500">联系电话:</span><br><span class="font-semibold">${distributionApplicationData.phone || '未填写'}</span></div>
-                <div><span class="font-medium text-slate-500">电子邮箱:</span><br><span class="font-semibold">${distributionApplicationData.email || '未填写'}</span></div>
+            <div class="grid grid-cols-2 gap-4">
+                <div><span class="font-medium">申请类型:</span> 个人申请</div>
+                <div><span class="font-medium">申请人:</span> ${distributionApplicationData.name || '未填写'}</div>
+                <div><span class="font-medium">联系电话:</span> ${distributionApplicationData.phone || '未填写'}</div>
+                <div><span class="font-medium">邮箱地址:</span> ${distributionApplicationData.email || '未填写'}</div>
             </div>
         `;
     } else if (distributionApplicationData.type === 'company') {
         summaryContainer.innerHTML = `
-            <div class="grid grid-cols-2 gap-x-8 gap-y-4">
-                <div><span class="font-medium text-slate-500">申请类型:</span><br><span class="font-semibold">企业申请</span></div>
-                <div><span class="font-medium text-slate-500">公司名称:</span><br><span class="font-semibold">${distributionApplicationData.companyName || '未填写'}</span></div>
-                <div><span class="font-medium text-slate-500">业务联系人:</span><br><span class="font-semibold">${distributionApplicationData.contactPerson || '未填写'}</span></div>
-                <div><span class="font-medium text-slate-500">联系电话:</span><br><span class="font-semibold">${distributionApplicationData.phone || '未填写'}</span></div>
+            <div class="grid grid-cols-2 gap-4">
+                <div><span class="font-medium">申请类型:</span> 企业申请</div>
+                <div><span class="font-medium">公司名称:</span> ${distributionApplicationData.companyName || '未填写'}</div>
+                <div><span class="font-medium">联系人:</span> ${distributionApplicationData.contactPerson || '未填写'}</div>
+                <div><span class="font-medium">联系电话:</span> ${distributionApplicationData.phone || '未填写'}</div>
             </div>
         `;
     }
@@ -1196,20 +1201,13 @@ let distributionApplicationData = {};
 function toggleApplyForm(type) {
     const individualForm = document.getElementById('individual-form');
     const companyForm = document.getElementById('company-form');
-    const individualTab = document.querySelector('button[onclick*="individual"]');
-    const companyTab = document.querySelector('button[onclick*="company"]');
-
 
     if (type === 'individual') {
         individualForm.classList.remove('hidden');
         companyForm.classList.add('hidden');
-        individualTab.classList.add('active');
-        companyTab.classList.remove('active');
     } else {
         individualForm.classList.add('hidden');
         companyForm.classList.remove('hidden');
-        individualTab.classList.remove('active');
-        companyTab.classList.add('active');
     }
 }
 
@@ -1250,15 +1248,15 @@ function handleDistributionApply(type) {
     showNotification('申请已提交，我们将在1-3个工作日内完成审核', 'success');
 }
 
-// (Admin) Approve Application
-function adminApproveApplication() {
+// 模拟审核通过
+function simulateApproval() {
     distributionStatus = 'approved';
     renderDistributionParentView();
     showNotification('恭喜！您的分销申请已通过审核', 'success');
 }
 
-// (Admin) Reject Application
-function adminRejectApplication() {
+// 模拟审核拒绝
+function simulateRejection() {
     distributionStatus = 'rejected';
     renderDistributionParentView();
 }
@@ -1376,6 +1374,16 @@ function renderDistributionDashboard() {
     }
 }
 
+function copyReferralLink(button) {
+    const linkInput = document.getElementById('referral-link');
+    navigator.clipboard.writeText(linkInput.value).then(() => {
+        const copyText = button.querySelector('span');
+        copyText.textContent = '已复制!';
+        setTimeout(() => {
+            copyText.textContent = '复制';
+        }, 2000);
+    });
+}
 
 
 // --- Customization & Product Logic ---
