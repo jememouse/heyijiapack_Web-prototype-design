@@ -4,10 +4,14 @@ let lastOrderId = null;
 let distributionStatus = 'none'; // 'none', 'pending', 'approved'
 let withdrawalAccounts = []; // To store saved bank accounts
 
-const userAddresses = [
+let userAddresses = JSON.parse(localStorage.getItem('userAddresses')) || [
     { id: 1, name: '李婷', phone: '138****1234', address: '上海市 浦东新区 世纪大道100号 东方明珠大厦 88层', isDefault: true },
     { id: 2, name: '王经理', phone: '159****5678', address: '江苏省 苏州市 工业园区 星湖街328号 创意产业园 A栋 201室', isDefault: false },
 ];
+
+function saveAddresses() {
+    localStorage.setItem('userAddresses', JSON.stringify(userAddresses));
+}
 let orders = JSON.parse(localStorage.getItem('orders')) || [
     { id: '20250720001', date: '2025-07-20', total: 1250.00, status: '文件处理中', statusId: 'processing', items: [{ name: '飞机盒', specs: '200x150x50mm | E瓦楞 | 哑光覆膜', quantity: 500, imageUrl: 'https://images.unsplash.com/photo-1607083206325-caf1edba7a0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
     { id: '20250718985', date: '2025-07-18', total: 3500.00, status: '已发货', statusId: 'shipped', items: [{ name: '双插盒', specs: '100x80x40mm | 350g白卡纸 | 烫金', quantity: 1000, imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80' }] },
@@ -18,9 +22,54 @@ let invoices = [
     { id: 'INV-20250718', orderId: '20250718985', date: '2025-07-19', total: 3500.00, status: '已开具' },
 ];
 
-let afterSales = [
-    { id: 'AS-20250716', orderId: '20250715752', date: '2025-07-16', type: '退货', status: '已完成' },
+let afterSales = JSON.parse(localStorage.getItem('afterSales')) || [
+    {
+        id: 'AS-20250716',
+        orderId: '20250715752',
+        date: '2025-07-16',
+        type: '退货',
+        status: '已完成',
+        reason: '外箱压痕，影响陈列',
+        amount: 120.0,
+        channel: '仓库退货',
+        update: '2025-07-18',
+        notes: '已补发新品并完成退款结算。'
+    },
+    {
+        id: 'AS-20250721',
+        orderId: '20250720001',
+        date: '2025-07-21',
+        type: '补发配件',
+        status: '处理中',
+        reason: '吸塑内托缺件',
+        amount: 0,
+        channel: '生产补件',
+        update: '2025-07-22',
+        notes: '已安排生产加急补发，预计48小时出库。'
+    },
+    {
+        id: 'AS-20250725',
+        orderId: '20250718985',
+        date: '2025-07-25',
+        type: '退款',
+        status: '待审核',
+        reason: '客户调整包装方案',
+        amount: 3500.0,
+        channel: '客服审核',
+        update: '2025-07-25',
+        notes: '等待确认材料费用扣减比例，预计1个工作日内完成审核。'
+    }
 ];
+
+function saveAfterSales() {
+    localStorage.setItem('afterSales', JSON.stringify(afterSales));
+}
+
+if (!localStorage.getItem('afterSales')) {
+    saveAfterSales();
+}
+
+let afterSalesFilter = 'all';
 
 let coupons = {
     available: [
@@ -114,23 +163,157 @@ function renderIcons() {
 // --- 页面导航逻辑 ---
 const userCenterViews = document.querySelectorAll('.user-center-view');
 
-const sidebarTemplate = [
-    { id: 'dashboard-view', icon: 'layout-dashboard', text: '账户总览' },
-    { id: 'orders-view', icon: 'package', text: '我的订单' },
-    { id: 'order-detail-view', icon: 'file-search', text: '订单详情', isHidden: true },
-    { id: 'address-view', icon: 'map-pin', text: '地址管理' },
-    { id: 'invoice-view', icon: 'file-text', text: '发票管理' },
-    { id: 'after-sales-view', icon: 'wrench', text: '售后处理' },
-    { id: 'distribution-view', icon: 'share-2', text: '分销管理' },
-    { id: 'coupons-view', icon: 'ticket', text: '我的优惠券' },
-    { id: 'settings-view', icon: 'user-cog', text: '账户设置' },
-];
+const orderExperienceMap = {
+    placed: {
+        stageLabel: '文件准备',
+        nextMilestone: '上传生产文件即可启动工程审核',
+        logistics: '文件校对通过后预计 7-10 日可安排生产发货。',
+        packagingNote: '建议提前确认刀模展开方向、专色值与开槽位置，避免后续返工。',
+        summary: '订单已创建，等待您上传最终设计文件及授权资料。',
+        advice: '请在 24 小时内完成文件上传，工程师会第一时间介入审核。',
+        checklist: ['最终设计文件（AI/PDF，含出血）', '品牌/商标授权或使用证明', '特殊工艺位置与颜色编号说明'],
+        tasks: ['上传生产文件并确认色彩模式', '准备授权文件与包装批次信息'],
+        pillClass: 'status-placed'
+    },
+    processing: {
+        stageLabel: '工程校对',
+        nextMilestone: '工程师正在校对文件，预计 1 个工作日给出反馈',
+        logistics: '通过校对后即可排期打样或生产，建议确保联系方式畅通。',
+        packagingNote: '如涉及烫金/UV 等工艺，请确认同版颜色及压印深度，以保证呈现效果。',
+        summary: '工程师正在核对文件，确认尺寸、出血及工艺细节。',
+        advice: '如需调整材质或工艺，请在工程师反馈前集中说明。',
+        checklist: ['关注工程师的校对反馈', '确认烫金、UV 等特殊工艺的安全距离', '核对刀模尺寸与粘合方式'],
+        tasks: ['待工程师反馈校样结果', '准备如需调整的新版文件'],
+        pillClass: 'status-processing'
+    },
+    confirming: {
+        stageLabel: '样稿确认',
+        nextMilestone: '待您确认电子校样/打样，确认后进入排产',
+        logistics: '确认样稿后 3-5 个工作日可排产，复杂工艺需额外时间。',
+        packagingNote: '重点关注击凸、烫金与覆膜区域的细节呈现，必要时申请打样。',
+        summary: '样稿已生成，请确认结构、材质与颜色信息。',
+        advice: '建议从品牌调性、开箱体验与物流强度三方面检查样稿。',
+        checklist: ['确认电子校样或拍照打样', '核对 Pantone/专色与材质', '确认开箱动线及堆码方式'],
+        tasks: ['审阅工程样稿并反馈确认', '如需调整请集中说明一次完成'],
+        pillClass: 'status-confirming'
+    },
+    production: {
+        stageLabel: '生产排期',
+        nextMilestone: '生产中，预计 3-5 个工作日完成，完成后立即质检出货',
+        logistics: '生产完成后会推送质检照片与装箱清单，请留意系统通知。',
+        packagingNote: '建议提前规划成品的入仓动线，并确认堆码高度限制。',
+        summary: '订单已进入生产，工厂正在按工艺顺序排产。',
+        advice: '关注质检节点，如需额外版本请提前沟通以免延迟排期。',
+        checklist: ['确认发货目的仓与收货时间', '准备签收与质检流程', '核对内托/配件是否齐备'],
+        tasks: ['等待质检与成品照片', '确认装箱数量与堆叠方式'],
+        pillClass: 'status-production'
+    },
+    shipped: {
+        stageLabel: '在途配送',
+        nextMilestone: '订单已发货，预计 2-3 天送达，请安排签收',
+        logistics: '物流单号会于当日 17:00 前更新，可在此处查看最新路由。',
+        packagingNote: '签收时请检查外箱完整性，如发现受潮或破损请及时拍照并联系顾问。',
+        summary: '成品已离厂，物流正在派送途中。',
+        advice: '请安排仓库人员接货，提前准备涉及温湿度的储存方案。',
+        checklist: ['跟踪物流节点并预约收货时间', '到货后按 SKU 进行抽检', '记录外箱及内包装状态'],
+        tasks: ['追踪物流状态', '安排签收与抽检人员'],
+        pillClass: 'status-shipped'
+    },
+    completed: {
+        stageLabel: '交付完成',
+        nextMilestone: '订单已完成，欢迎反馈使用体验，为下一批次优化',
+        logistics: '如需再次下单，可直接在订单中发起复制或联系我们的顾问。',
+        packagingNote: '建议记录本批次的堆码表现与客户反馈，为下一波物料迭代做准备。',
+        summary: '订单已顺利收货，欢迎反馈包装表现与客户体验。',
+        advice: '结合此次体验，评估运输与陈列环节是否需要优化。',
+        checklist: ['收集终端/客户反馈', '记录实际装箱数据与损耗', '更新下次下单的计划需求'],
+        tasks: ['制作包装复盘记录', '如需补货可直接复制订单'],
+        pillClass: 'status-completed'
+    },
+    'refund-pending': {
+        stageLabel: '退款审核',
+        nextMilestone: '售后团队正在审核，预计 1-2 个工作日回复',
+        logistics: '请保留好现有实物与外箱照片，便于核实。',
+        packagingNote: '建议将问题品分类存放并做好标记，利于后续追踪。',
+        summary: '您已提交退款/售后申请，我们正在处理。',
+        advice: '如有新的证据，可随时通过售后入口补充。',
+        checklist: ['上传问题照片或视频', '保留物流单据与装箱单', '填写售后处理偏好（退款/补发）'],
+        tasks: ['等待售后审核结果', '准备补充说明或材料'],
+        pillClass: 'status-refund-pending'
+    },
+    cancelled: {
+        stageLabel: '订单关闭',
+        nextMilestone: '订单已取消，如需重新启动请复制订单或联系顾问',
+        logistics: '如已付款，退款将于 1-3 个工作日原路退回。',
+        packagingNote: '建议记录取消原因，以便下次下单时降低风险。',
+        summary: '订单已取消，可根据需求重新创建。',
+        advice: '如果需要调整规格或数量，请与顾问沟通后重新下单。',
+        checklist: ['关注退款到账情况', '整理取消原因与后续计划'],
+        tasks: ['确认款项是否退回', '评估重新下单所需的调整'],
+        pillClass: 'status-cancelled'
+    },
+    default: {
+        stageLabel: '订单跟进',
+        nextMilestone: '我们会尽快与您确认最新进度',
+        logistics: '如需紧急处理请联系客户支持，我们会尽快跟进。',
+        packagingNote: '根据品牌定位，建议持续关注材质与体验的一致性。',
+        summary: '订单正在处理中，详情请查看进度或联系顾问。',
+        advice: '保持沟通畅通，及时反馈需求变更。',
+        checklist: ['确认收货信息', '关注系统通知'],
+        tasks: ['查看订单详情了解最新进度'],
+        pillClass: 'status-default'
+    }
+};
+
+function getOrderExperience(statusId) {
+    return orderExperienceMap[statusId] || orderExperienceMap.default;
+}
+
+function formatCurrency(amount) {
+    return `¥${amount.toFixed(2)}`;
+}
+
+function sumOrderQuantity(order) {
+    return order.items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+}
+
+function buildSpecBadges(specs = '') {
+    return specs.split('|')
+        .map(part => part.trim())
+        .filter(Boolean)
+        .map(part => `<span class="order-chip">${part}</span>`)
+        .join('');
+}
+
+function generatePackagingTip(specs = '') {
+    const text = specs.toLowerCase();
+    const tips = [];
+    if (text.includes('烫金') || text.includes('hot')) {
+        tips.push('烫金区域请预留 ≥3mm 安全距离，确保金属版压印稳定');
+    }
+    if (text.includes('覆膜') || text.includes('哑光')) {
+        tips.push('覆膜表面建议 24 小时后再装箱，避免粘连与划伤');
+    }
+    if (text.includes('瓦楞')) {
+        tips.push('瓦楞结构堆码建议不高于 6 层，并做好防潮存放');
+    }
+    if (text.includes('灰板') || text.includes('精品灰板')) {
+        tips.push('灰板成品建议搭配防刮 OPP 袋及干燥剂提升体验');
+    }
+    if (text.includes('抽屉') || text.includes('天地盖')) {
+        tips.push('抽屉/天地盖盒建议加贴防滑贴或易揭拉扣，提升开箱顺滑度');
+    }
+    if (!tips.length) {
+        return '确保刀模、堆码方向与物流温湿度要求一致，保障运输到达后的陈列体验。';
+    }
+    return tips.join('；');
+}
 
 function showUserCenterView(viewId, context) {
     userCenterViews.forEach(v => v.classList.add('hidden'));
     const activeView = document.getElementById(viewId);
     if (activeView) activeView.classList.remove('hidden');
-    buildSidebar(document.getElementById('user-center-sidebar'), viewId);
+    setActiveSidebarLink(viewId);
 
     if (viewId === 'orders-view') {
         renderOrdersPage();
@@ -150,22 +333,207 @@ function showUserCenterView(viewId, context) {
     renderIcons();
 }
 
-function renderAddressView() {
-    const container = document.getElementById('address-list');
-    if (!container) return;
-    container.innerHTML = userAddresses.map(addr => `
-        <div class="border rounded-lg p-4 flex justify-between items-start">
-            <div>
-                <p class="font-semibold">${addr.name} ${addr.isDefault ? '<span class="ml-2 text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">默认</span>' : ''}</p>
-                <p class="text-sm text-slate-500 mt-1">${addr.phone}</p>
-                <p class="text-sm text-slate-600 mt-2">${addr.address}</p>
+function setActiveSidebarLink(activeViewId) {
+    const links = document.querySelectorAll('#user-center-sidebar .sidebar-link');
+    if (!links.length) return;
+    const highlightViewId = activeViewId === 'order-detail-view' ? 'orders-view' : activeViewId;
+    links.forEach(link => {
+        const targetView = link.dataset.view;
+        if (!targetView) return;
+        if (targetView === highlightViewId) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+}
+
+// 模态框：取消订单 (新添加)
+const cancelOrderModal = document.getElementById('cancel-order-modal') || createModalIfNeeded('cancel-order-modal');
+
+function createModalIfNeeded(id) {
+    let modal = document.getElementById(id);
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = id;
+        modal.className = 'fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 hidden';
+        modal.innerHTML = `
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+                <h2 class="text-xl font-bold mb-4">取消订单</h2>
+                <p class="text-sm text-slate-600 mb-4">订单 ID: <span id="cancel-order-id"></span></p>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">取消原因 (必填)</label>
+                    <textarea id="cancel-order-reason" rows="4" class="w-full p-2 border rounded-md" placeholder="请描述取消原因，我们将尽快为您处理退款"></textarea>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeCancelOrderModal()" class="bg-slate-100 text-slate-700 px-4 py-2 rounded">取消</button>
+                    <button type="button" onclick="confirmCancelOrder()" class="bg-red-600 text-white px-4 py-2 rounded">确认取消</button>
+                </div>
             </div>
-            <div class="flex space-x-4">
-                <button class="text-sm font-semibold text-blue-600 hover:underline">编辑</button>
-                <button class="text-sm font-semibold text-red-500 hover:underline">删除</button>
+        `;
+        document.body.appendChild(modal);
+    }
+    return modal;
+}
+
+function openCancelOrderModal(orderId) {
+    const order = orders.find(o => o.id === orderId);
+    if (!order || !['placed', 'processing'].includes(order.statusId)) {
+        alert('该订单无法取消');
+        return;
+    }
+    document.getElementById('cancel-order-id').textContent = order.id;
+    document.getElementById('cancel-order-reason').value = '';
+    const modal = document.getElementById('cancel-order-modal') || createModalIfNeeded('cancel-order-modal');
+    modal.classList.remove('hidden');
+    modal.querySelector('textarea').focus();
+    renderIcons();
+}
+
+function closeCancelOrderModal() {
+    document.getElementById('cancel-order-modal').classList.add('hidden');
+}
+
+function confirmCancelOrder() {
+    const reason = document.getElementById('cancel-order-reason').value;
+    if (!reason) {
+        alert('请填写取消原因');
+        return;
+    }
+    // 更新订单状态
+    const orderId = document.getElementById('cancel-order-id').textContent;
+    const order = orders.find(o => o.id === orderId);
+    if (order) {
+        order.statusId = 'cancelled';
+        order.status = '已取消';
+        localStorage.setItem('orders', JSON.stringify(orders));
+        // 渲染当前视图
+        if (currentOrderFilter) renderOrdersPage(currentOrderFilter);
+        closeCancelOrderModal();
+        showNotification('订单取消申请已提交，款项将在1-3日内退回', 'success');
+    }
+}
+
+// 物流查看 (简化，使用 alert 或未来集成)
+function openLogisticsModal(orderId) {
+    alert(`订单 #${orderId} 物流：使用模拟物流。实际物流需 API 集成。状态: 准备发货中。`);
+}
+
+// 退款申请 (简化)
+function openReturnOrderModal(orderId) {
+    const order = orders.find(o => o.id === orderId);
+    if (!order || !['shipped', 'received'].includes(order.statusId)) {
+        alert('该订单无法申请退款');
+        return;
+    }
+    if (confirm('确认申请退款？退款将在审核后处理 (50% 退款模拟)。')) {
+        order.statusId = 'refund-pending';
+        order.status = '退款申请中';
+        localStorage.setItem('orders', JSON.stringify(orders));
+        renderOrdersPage(currentOrderFilter);
+        showNotification('退款申请已提交，我们将在24小时内处理', 'success');
+    }
+}
+
+// 联系客服 (简化)
+function contactCustomerService(orderId) {
+    alert(`订单 #${orderId}\n客服电话: 400-888-8888\n邮箱: service@iboxify.com\n工作时间: 周一至周五 9:00-18:00`);
+}
+
+function viewAfterSalesTimeline(afterSalesId) {
+    const request = afterSales.find(item => item.id === afterSalesId);
+    if (!request) {
+        showNotification('未找到对应的售后工单', 'error');
+        return;
+    }
+    showNotification(`售后工单 ${afterSalesId} 的详细进度功能即将上线，请关注系统通知。`, 'info');
+}
+
+function renderAddressView() {
+    const defaultContainer = document.getElementById('address-default-container');
+    const listContainer = document.getElementById('address-list');
+    const totalCountEl = document.getElementById('address-total-count');
+    const defaultNameEl = document.getElementById('address-default-name');
+    const coverageEl = document.getElementById('address-coverage-count');
+    if (!defaultContainer || !listContainer) return;
+
+    if (!Array.isArray(userAddresses)) userAddresses = [];
+    if (userAddresses.length && !userAddresses.some(addr => addr.isDefault)) {
+        userAddresses[0].isDefault = true;
+        saveAddresses();
+    }
+
+    const defaultAddress = userAddresses.find(addr => addr.isDefault) || null;
+    const otherAddresses = userAddresses.filter(addr => !addr.isDefault);
+
+    if (totalCountEl) totalCountEl.textContent = userAddresses.length;
+    if (defaultNameEl) defaultNameEl.textContent = defaultAddress ? `${defaultAddress.name} · ${defaultAddress.phone}` : '尚未设置';
+    if (coverageEl) {
+        const regions = new Set(userAddresses.map(addr => (addr.address || '').split(/\s+/)[0] || addr.address || '未填'));
+        coverageEl.textContent = `${regions.size} 个地区`;
+    }
+
+    defaultContainer.innerHTML = defaultAddress
+        ? createAddressCard(defaultAddress, true)
+        : `<div class="address-empty">
+                <p>尚未设置默认收货地址</p>
+                <button type="button" class="address-action-btn primary" onclick="openAddressModal()">新建地址</button>
+           </div>`;
+
+    listContainer.innerHTML = otherAddresses.length
+        ? otherAddresses.map(addr => createAddressCard(addr, false)).join('')
+        : `<div class="address-empty muted">暂无备用地址，可添加用于不同项目的联系人。</div>`;
+
+    renderIcons();
+}
+
+function createAddressCard(address, isDefault = false) {
+    const region = (address.address || '').split(/\s+/)[0] || '地址未填写';
+    const chips = [`<span class="address-chip region">${region}</span>`];
+    if (isDefault) {
+        chips.unshift('<span class="address-chip default">默认</span>');
+    }
+
+    return `
+        <div class="address-card ${isDefault ? 'is-default' : ''}">
+            <div class="address-card-header">
+                <div>
+                    <p class="address-card-name">${address.name}</p>
+                    <p class="address-card-phone">${address.phone}</p>
+                </div>
+                <div class="address-card-tags">${chips.join('')}</div>
+            </div>
+            <p class="address-card-line">${address.address}</p>
+            <div class="address-card-actions">
+                ${isDefault ? '' : `<button type="button" onclick="setDefaultAddress(${address.id})" class="address-action-btn primary">设为默认</button>`}
+                <button type="button" onclick="openAddressModal(${address.id})" class="address-action-btn">编辑</button>
+                <button type="button" onclick="removeAddress(${address.id})" class="address-action-btn danger">删除</button>
             </div>
         </div>
-    `).join('');
+    `;
+}
+
+function setDefaultAddress(addressId) {
+    const targetId = Number(addressId);
+    userAddresses = userAddresses.map(addr => ({ ...addr, isDefault: addr.id === targetId }));
+    saveAddresses();
+    renderAddressView();
+    showNotification('默认收货地址已更新', 'success');
+}
+
+function removeAddress(addressId) {
+    const targetId = Number(addressId);
+    if (userAddresses.length <= 1) {
+        showNotification('至少保留一个收货地址', 'info');
+        return;
+    }
+    userAddresses = userAddresses.filter(addr => addr.id !== targetId);
+    if (userAddresses.length && !userAddresses.some(addr => addr.isDefault)) {
+        userAddresses[0].isDefault = true;
+    }
+    saveAddresses();
+    renderAddressView();
+    showNotification('地址已删除', 'info');
 }
 
 function renderInvoiceView() {
@@ -185,21 +553,113 @@ function renderInvoiceView() {
     `).join('');
 }
 
-function renderAfterSalesView() {
-    const container = document.getElementById('after-sales-list');
-    if (!container) return;
-    container.innerHTML = afterSales.map(as => `
-        <div class="border rounded-lg p-4 flex justify-between items-center">
-            <div>
-                <p class="font-semibold">订单 #${as.orderId} - ${as.type}</p>
-                <p class="text-sm text-slate-500 mt-1">申请日期: ${as.date}</p>
+const afterSalesStatusMeta = {
+    '待审核': {
+        badge: 'pending',
+        stage: '客服审核中，预计24小时内反馈',
+        color: '#B45309'
+    },
+    '处理中': {
+        badge: 'processing',
+        stage: '工程/仓储处理中，请关注进度更新',
+        color: '#1D4ED8'
+    },
+    '已完成': {
+        badge: 'success',
+        stage: '售后工单已完结，欢迎反馈体验',
+        color: '#047857'
+    }
+};
+
+function renderAfterSalesView(filter = afterSalesFilter) {
+    afterSalesFilter = filter || 'all';
+    const totalCountEl = document.getElementById('after-sales-total-count');
+    const pendingCountEl = document.getElementById('after-sales-pending-count');
+    const processingCountEl = document.getElementById('after-sales-processing-count');
+    const completedCountEl = document.getElementById('after-sales-completed-count');
+    const listContainer = document.getElementById('after-sales-list');
+    if (!listContainer) return;
+
+    const pendingCount = afterSales.filter(item => item.status === '待审核').length;
+    const processingCount = afterSales.filter(item => item.status === '处理中').length;
+    const completedCount = afterSales.filter(item => item.status === '已完成').length;
+
+    if (totalCountEl) totalCountEl.textContent = afterSales.length;
+    if (pendingCountEl) pendingCountEl.textContent = pendingCount;
+    if (processingCountEl) processingCountEl.textContent = processingCount;
+    if (completedCountEl) completedCountEl.textContent = completedCount;
+
+    const buttonCounts = {
+        all: afterSales.length,
+        pending: pendingCount,
+        processing: processingCount,
+        completed: completedCount
+    };
+
+    document.querySelectorAll('.after-sales-filter-btn').forEach(btn => {
+        const btnFilter = btn.dataset.filter;
+        btn.classList.toggle('active', btnFilter === afterSalesFilter);
+        const countSpan = btn.querySelector('.after-sales-filter-count');
+        if (countSpan && btnFilter && buttonCounts[btnFilter] !== undefined) {
+            countSpan.textContent = buttonCounts[btnFilter];
+        }
+    });
+
+    const filterMap = {
+        all: () => true,
+        pending: status => status === '待审核',
+        processing: status => status === '处理中',
+        completed: status => status === '已完成'
+    };
+
+    const predicate = filterMap[afterSalesFilter] || filterMap.all;
+    const filteredRequests = afterSales.filter(item => predicate(item.status));
+
+    if (filteredRequests.length === 0) {
+        listContainer.innerHTML = `<div class="after-sales-empty">暂无符合条件的售后记录，可尝试切换筛选条件。</div>`;
+        renderIcons();
+        return;
+    }
+
+    listContainer.innerHTML = filteredRequests.map(createAfterSalesCard).join('');
+    renderIcons();
+}
+
+function createAfterSalesCard(request) {
+    const meta = afterSalesStatusMeta[request.status] || afterSalesStatusMeta['处理中'];
+    const statusBadge = meta.badge || 'processing';
+    const notes = request.notes || request.reason || '';
+    const updateLabel = request.update ? `最近更新：${request.update}` : '';
+    const reasonLabel = request.reason ? `${request.type} · ${request.reason}` : request.type;
+
+    return `
+        <article class="after-sales-card">
+            <div class="after-sales-card-top">
+                <div>
+                    <p class="after-sales-card-id">工单 ${request.id}</p>
+                    <p class="after-sales-card-type">${reasonLabel}</p>
+                </div>
+                <span class="after-sales-status ${statusBadge}">${request.status}</span>
             </div>
-            <div>
-                <span class="text-sm font-medium ${as.status === '已完成' ? 'text-green-600' : 'text-yellow-600'}">${as.status}</span>
-                <button class="ml-4 text-sm font-semibold text-blue-600 hover:underline">查看详情</button>
+            <div class="after-sales-card-meta">
+                <span><i data-lucide="package" class="w-4 h-4"></i>订单 #${request.orderId}</span>
+                <span><i data-lucide="calendar" class="w-4 h-4"></i>申请日期 ${request.date}</span>
+                ${updateLabel ? `<span><i data-lucide="clock" class="w-4 h-4"></i>${updateLabel}</span>` : ''}
             </div>
-        </div>
-    `).join('');
+            ${notes ? `<p class="after-sales-card-notes">${notes}</p>` : ''}
+            <div class="after-sales-card-footer">
+                <span class="after-sales-stage">${meta.stage}</span>
+                <div class="after-sales-card-actions">
+                    <button type="button" class="after-sales-action-btn" onclick="viewAfterSalesTimeline('${request.id}')">查看进度</button>
+                    <button type="button" class="after-sales-action-btn secondary" onclick="contactCustomerService('${request.orderId}')">联系客服</button>
+                </div>
+            </div>
+        </article>
+    `;
+}
+
+function setAfterSalesFilter(status) {
+    renderAfterSalesView(status);
 }
 
 function renderCouponsView() {
@@ -636,26 +1096,6 @@ function initializeFilters() {
     renderIcons();
 }
 
-function buildSidebar(container, activeViewId) {
-    if (!container) return;
-    container.innerHTML = '';
-    sidebarTemplate.forEach(item => {
-        if (item.isHidden) return;
-        const link = document.createElement('a');
-        link.href = '#';
-        link.className = `sidebar-link flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg ${item.id === activeViewId ? 'active' : ''}`;
-        link.onclick = (e) => { e.preventDefault(); showUserCenterView(item.id); };
-        link.innerHTML = `<i data-lucide="${item.icon}" class="w-5 h-5 mr-3"></i> ${item.text}`;
-        container.appendChild(link);
-    });
-    const logoutLink = document.createElement('a');
-    logoutLink.href = '#';
-    logoutLink.className = 'flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg mt-4 border-t border-slate-200';
-    logoutLink.onclick = (e) => { e.preventDefault(); window.location.href = 'index.html'; };
-    logoutLink.innerHTML = `<i data-lucide="log-out" class="w-5 h-5 mr-3"></i> 退出登录`;
-    container.appendChild(logoutLink);
-}
-
 // --- Modals Logic ---
 const addressModal = document.getElementById('address-modal');
 const invoiceModal = document.getElementById('invoice-modal');
@@ -665,8 +1105,45 @@ const orderSuccessModal = document.getElementById('order-success-modal');
 const paymentModal = document.getElementById('payment-modal');
 const withdrawalModal = document.getElementById('withdrawal-modal');
 
-function openAddressModal() { addressModal.classList.remove('hidden'); renderIcons(); }
-function closeAddressModal() { addressModal.classList.add('hidden'); }
+function openAddressModal(addressId = null) {
+    if (!addressModal) return;
+    const form = document.getElementById('address-form');
+    const hiddenId = document.getElementById('address-id');
+    const nameInput = document.getElementById('address-name');
+    const phoneInput = document.getElementById('address-phone');
+    const addressInput = document.getElementById('address-full');
+    const defaultCheckbox = document.getElementById('address-default');
+    const modalTitle = addressModal.querySelector('h2');
+
+    if (form) form.reset();
+
+    if (addressId !== null) {
+        const address = userAddresses.find(addr => addr.id === addressId);
+        if (address) {
+            if (hiddenId) hiddenId.value = address.id;
+            if (nameInput) nameInput.value = address.name;
+            if (phoneInput) phoneInput.value = address.phone;
+            if (addressInput) addressInput.value = address.address;
+            if (defaultCheckbox) defaultCheckbox.checked = !!address.isDefault;
+            if (modalTitle) modalTitle.textContent = '编辑收货地址';
+        }
+    } else {
+        if (hiddenId) hiddenId.value = '';
+        if (defaultCheckbox) defaultCheckbox.checked = !userAddresses.length;
+        if (modalTitle) modalTitle.textContent = '添加收货地址';
+    }
+
+    addressModal.classList.remove('hidden');
+    renderIcons();
+}
+function closeAddressModal() {
+    if (!addressModal) return;
+    addressModal.classList.add('hidden');
+    const form = document.getElementById('address-form');
+    if (form) form.reset();
+    const hiddenId = document.getElementById('address-id');
+    if (hiddenId) hiddenId.value = '';
+}
 function openInvoiceModal() {
     const orderSelect = document.getElementById('invoice-order');
     if (orderSelect) {
@@ -808,9 +1285,16 @@ function switchTab(button, tabId) {
 
 function switchOrderTab(button, status) {
     const parent = button.closest('.bg-white');
-    parent.querySelectorAll('.order-tab-button').forEach(btn => btn.classList.remove('active'));
+    parent.querySelectorAll('.order-tab-button').forEach(btn => {
+        btn.classList.remove('active');
+        btn.classList.add('text-slate-500', 'border-transparent');
+    });
     button.classList.add('active');
+    button.classList.remove('text-slate-500', 'border-transparent');
     renderOrdersPage(status);
+    // 清空搜索输入以重置视图
+    document.getElementById('order-search-input').value = '';
+    document.getElementById('order-search-input').focus();
 }
 
 // --- 购物车与结算逻辑 ---
@@ -1075,50 +1559,171 @@ function confirmPayment() {
 }
 
 // --- 订单页面逻辑 ---
-function renderOrdersPage(filterStatus = 'all') {
+let currentOrderFilter = 'all';
+let searchTimeout;
+
+function handleOrderSearch(query) {
+    // 延迟 300ms 渲染以避免频繁调用
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        renderOrdersPage(currentOrderFilter, query);
+    }, 300);
+}
+
+function renderOrdersPage(filterStatus = 'all', searchQuery = '') {
     const container = document.getElementById('orders-list-container');
     if (!container) return;
 
+    currentOrderFilter = filterStatus;
+
+    const counts = {
+        all: orders.length,
+        processing: orders.filter(o => ['placed', 'processing', 'confirming', 'production'].includes(o.statusId)).length,
+        shipped: orders.filter(o => o.statusId === 'shipped').length,
+        completed: orders.filter(o => o.statusId === 'completed').length
+    };
+
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+
     const filteredOrders = orders.filter(order => {
-        if (filterStatus === 'all') return true;
-        if (filterStatus === 'in-production') return ['placed', 'processing', 'confirming', 'production'].includes(order.statusId);
-        return order.statusId === filterStatus;
+        const statusMatch = filterStatus === 'all' || order.statusId === filterStatus;
+        const searchMatch = !normalizedQuery ||
+            order.id.toLowerCase().includes(normalizedQuery) ||
+            order.items.some(item => {
+                const nameMatch = item.name && item.name.toLowerCase().includes(normalizedQuery);
+                const specsMatch = item.specs && item.specs.toLowerCase().includes(normalizedQuery);
+                return nameMatch || specsMatch;
+            });
+        return statusMatch && searchMatch;
     });
 
     if (filteredOrders.length === 0) {
-        container.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="inbox" class="w-12 h-12 mx-auto"></i><p class="mt-2">暂无相关订单</p></div>`;
+        const message = normalizedQuery ? `未找到包含 "${searchQuery}" 的订单` : '暂无相关订单';
+        container.innerHTML = `<div class="text-center py-12 text-slate-500"><i data-lucide="inbox" class="w-12 h-12 mx-auto"></i><p class="mt-2">${message}</p></div>`;
     } else {
-        container.innerHTML = filteredOrders.map(order => {
-            const firstItem = order.items[0];
-            return `
-            <div class="order-card border border-slate-200 rounded-lg">
-                <div class="bg-slate-50 px-6 py-3 flex justify-between items-center text-sm rounded-t-lg">
-                    <div><span class="font-semibold">订单号:</span> <span class="text-slate-600">${order.id}</span></div>
-                    <div><span class="font-semibold">下单时间:</span> <span class="text-slate-600">${order.date}</span></div>
-                    <div class="font-semibold text-blue-600">${order.status}</div>
+        const summaryCardsHtml = `
+            <div class="grid md:grid-cols-3 gap-4 mb-6">
+                <div class="order-summary-card subtle">
+                    <p class="text-xs font-semibold text-slate-500 tracking-wide">全部订单</p>
+                    <p class="text-2xl font-bold text-slate-900 mt-2">${counts.all}</p>
+                    <p class="text-xs text-slate-500 mt-1">含历史与在制订单</p>
                 </div>
-                <div class="p-6">
-                    <div class="flex items-start space-x-6">
-                        <img src="${firstItem.imageUrl}" alt="${firstItem.name}" class="w-24 h-24 rounded-md object-cover">
-                        <div class="flex-grow">
-                            <h4 class="font-semibold">${firstItem.name} ${order.items.length > 1 ? `等 ${order.items.length} 件商品` : ''}</h4>
-                            <p class="text-sm text-slate-500 mt-1">${firstItem.specs}</p>
-                            <p class="text-sm text-slate-500">数量: ${firstItem.quantity}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-lg font-bold">¥${order.total.toFixed(2)}</p>
-                        </div>
-                    </div>
-                    <div class="border-t border-slate-200 mt-4 pt-4 flex justify-end space-x-3">
-                        <button onclick="window.location.href='user-center.html?viewId=order-detail-view&orderId=${order.id}'" class="bg-white border border-slate-300 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50">查看详情</button>
-                        <button class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">再次购买</button>
-                    </div>
+                <div class="order-summary-card subtle">
+                    <p class="text-xs font-semibold text-slate-500 tracking-wide">生产排队</p>
+                    <p class="text-2xl font-bold text-slate-900 mt-2">${counts.processing}</p>
+                    <p class="text-xs text-slate-500 mt-1">文件处理 / 生产中</p>
+                </div>
+                <div class="order-summary-card subtle">
+                    <p class="text-xs font-semibold text-slate-500 tracking-wide">已出货</p>
+                    <p class="text-2xl font-bold text-slate-900 mt-2">${counts.shipped + counts.completed}</p>
+                    <p class="text-xs text-slate-500 mt-1">含配送中与已完成</p>
                 </div>
             </div>
-            `;
+        `;
+
+        const orderCardsHtml = filteredOrders.map(order => {
+            const firstItem = order.items[0] || {};
+            const status = orderStates.find(s => s.id === order.statusId) || { id: 'default', name: order.status };
+            const experience = getOrderExperience(order.statusId);
+            const totalQuantity = sumOrderQuantity(order);
+            const statusIndex = Math.max(0, orderStates.findIndex(s => s.id === order.statusId));
+            const progressPercent = Math.min(100, Math.max(5, Math.round(((statusIndex + 1) / orderStates.length) * 100)));
+            const specBadges = buildSpecBadges(firstItem.specs || '');
+            const chips = specBadges || '<span class="order-chip muted">规格待确认</span>';
+            const utilityButtons = [];
+            if (['placed', 'processing'].includes(order.statusId)) {
+                utilityButtons.push(`<button onclick="openCancelOrderModal('${order.id}')" class="order-utility-btn danger">取消订单</button>`);
+            }
+            if (order.statusId === 'shipped') {
+                utilityButtons.push(`<button onclick="openLogisticsModal('${order.id}')" class="order-utility-btn info">查看物流</button>`);
+            }
+            if (['shipped', 'completed'].includes(order.statusId)) {
+                utilityButtons.push(`<button onclick="openReturnOrderModal('${order.id}')" class="order-utility-btn warning">申请售后</button>`);
+            }
+            utilityButtons.push(`<button onclick="contactCustomerService('${order.id}')" class="order-utility-btn">联系客服</button>`);
+
+            return `
+            <div class="order-card mb-6">
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 p-6 pb-3">
+                    <div class="space-y-2">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <span class="font-mono text-sm text-slate-500">#${order.id}</span>
+                            <span class="order-status-pill ${experience.pillClass || 'status-default'}">${status.name}</span>
+                            <span class="text-xs text-slate-400">${experience.stageLabel}</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                            <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-4 h-4"></i>${order.date}</span>
+                            <span class="hidden sm:inline">·</span>
+                            <span class="flex items-center gap-1"><i data-lucide="package" class="w-4 h-4"></i>${totalQuantity.toLocaleString('zh-CN')} 件</span>
+                            <span class="hidden sm:inline">·</span>
+                            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-4 h-4"></i>${experience.nextMilestone}</span>
+                        </div>
+                    </div>
+                    <div class="text-left lg:text-right">
+                        <p class="text-2xl font-bold text-slate-900">${formatCurrency(order.total)}</p>
+                        <p class="text-xs text-slate-500 mt-1">含运费 ¥15.00</p>
+                    </div>
+                </div>
+                <div class="px-6 pb-6 space-y-4">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <img src="${firstItem.imageUrl || 'https://via.placeholder.com/96'}" alt="${firstItem.name || '包装产品'}" class="w-24 h-24 rounded-lg object-cover border border-slate-200">
+                        <div class="flex-1 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <p class="text-lg font-semibold text-slate-900">${firstItem.name || '定制包装方案'}${order.items.length > 1 ? ` 等 ${order.items.length} 款` : ''}</p>
+                                <span class="order-chip quantity">x${totalQuantity}</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">${chips}</div>
+                            <p class="text-sm text-slate-500 leading-relaxed">${experience.summary}</p>
+                            <div class="order-progress-bar" aria-label="订单进度">
+                                <div class="order-progress-bar-fill" style="width:${progressPercent}%"></div>
+                            </div>
+                            <div class="flex flex-wrap items-center justify-between text-xs text-slate-500">
+                                <span>进度 ${statusIndex + 1}/${orderStates.length}</span>
+                                <span class="flex items-center gap-1"><i data-lucide="truck" class="w-4 h-4"></i>${experience.logistics}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 justify-end">
+                        ${utilityButtons.join('')}
+                        <button onclick="reorderOrder('${order.id}')" class="order-utility-btn">再次采购</button>
+                        <button onclick="showUserCenterView('order-detail-view', { orderId: '${order.id}' })" class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">查看详情</button>
+                    </div>
+                </div>
+            </div>`;
         }).join('');
+
+        container.innerHTML = summaryCardsHtml + orderCardsHtml;
     }
+
+    const tabs = document.querySelectorAll('.order-tab');
+    tabs.forEach(tab => {
+        if (tab.classList.contains('all')) {
+            tab.innerHTML = `全部订单 (${counts.all})`;
+        } else if (tab.classList.contains('processing')) {
+            tab.innerHTML = `生产中 (${counts.processing})`;
+        } else if (tab.classList.contains('shipped')) {
+            tab.innerHTML = `已发货 (${counts.shipped})`;
+        } else if (tab.classList.contains('completed')) {
+            tab.innerHTML = `已完成 (${counts.completed})`;
+        }
+    });
+
     renderIcons();
+}
+
+// 订单详情模态 (简化版，扩展现有 order-detail-view 或独立)
+function showOrderDetailInModal(orderId, isInline = false) {
+    const order = orders.find(o => o.id === orderId);
+    if (!order) return;
+
+    // 如果是内联查看，渲染到右上角扩展面板 (待添加HTML)
+    // 这里简化为控制台 log 或 alert，实际可添加 expand 元素
+    console.log('Order details for', orderId); // 占位，未来可替换为模态
+
+    // 或者 navigation to full detail
+    if (!isInline) {
+        showUserCenterView('order-detail-view', { orderId });
+    }
 }
 
 // --- 订单详情页逻辑 ---
@@ -1134,93 +1739,153 @@ const orderStates = [
 function renderOrderDetailPage(orderId) {
     const order = orders.find(o => o.id === orderId);
     if (!order) {
-        document.getElementById('order-detail-view').innerHTML = `<p>订单不存在</p>`;
+        document.getElementById('order-detail-view').innerHTML = `<p class="p-8 text-center text-slate-500">订单不存在或已被删除。</p>`;
         return;
     }
+
+    const status = orderStates.find(s => s.id === order.statusId) || { id: 'default', name: order.status };
+    const experience = getOrderExperience(order.statusId);
+    const totalQuantity = sumOrderQuantity(order);
+    const firstItem = order.items[0] || {};
+    const aggregatedSpecs = Array.from(new Set(order.items.flatMap(item => (item.specs || '').split('|').map(part => part.trim()).filter(Boolean))));
+    const formatDescriptor = aggregatedSpecs.length ? aggregatedSpecs.slice(0, 4).join(' · ') + (aggregatedSpecs.length > 4 ? ' …' : '') : '规格待确认';
+    const statusIndex = Math.max(0, orderStates.findIndex(s => s.id === order.statusId));
+    const progressPercent = Math.min(100, Math.max(5, Math.round(((statusIndex + 1) / orderStates.length) * 100)));
+    const invoice = invoices.find(inv => inv.orderId === order.id);
+    const address = userAddresses.find(a => a.isDefault) || userAddresses[0];
 
     document.getElementById('order-detail-breadcrumb').innerHTML = `
         <a href="user-center.html?viewId=dashboard-view" class="hover:underline">我的账户</a> &gt;
         <a href="user-center.html?viewId=orders-view" class="hover:underline">我的订单</a> &gt;
         <span>订单 #${order.id}</span>
     `;
-    document.getElementById('order-detail-title').textContent = `订单详情`;
+
+    const numberEl = document.getElementById('order-detail-number');
+    if (numberEl) numberEl.textContent = `#${order.id}`;
+
+    const statusPill = document.getElementById('order-detail-status-pill');
+    if (statusPill) {
+        statusPill.textContent = status.name;
+        statusPill.className = `order-status-pill ${experience.pillClass || 'status-default'}`;
+    }
+
+    const stageLabelEl = document.getElementById('order-detail-stage-label');
+    if (stageLabelEl) stageLabelEl.textContent = experience.stageLabel;
+
+    const updatedEl = document.getElementById('order-detail-updated');
+    if (updatedEl) updatedEl.textContent = `下单时间：${order.date} · 当前节点：${status.name}`;
+
+    const totalEl = document.getElementById('order-detail-value-total');
+    if (totalEl) totalEl.textContent = formatCurrency(order.total);
+
+    const paymentTypeEl = document.getElementById('order-detail-payment-type');
+    if (paymentTypeEl) paymentTypeEl.textContent = '线上支付 · 已含标准运费 ¥15.00';
+
+    const quantityEl = document.getElementById('order-detail-value-quantity');
+    if (quantityEl) quantityEl.textContent = `${totalQuantity.toLocaleString('zh-CN')} 件 / ${order.items.length} SKU`;
+
+    const formatEl = document.getElementById('order-detail-value-format');
+    if (formatEl) formatEl.textContent = formatDescriptor;
+
+    const milestoneEl = document.getElementById('order-detail-next-milestone');
+    if (milestoneEl) milestoneEl.textContent = experience.nextMilestone;
+
+    const logisticsEl = document.getElementById('order-detail-logistics');
+    if (logisticsEl) logisticsEl.textContent = experience.logistics;
+
+    const notesEl = document.getElementById('order-detail-packaging-notes');
+    if (notesEl) notesEl.textContent = experience.packagingNote;
+
+    const progressLabel = document.getElementById('order-progress-label');
+    if (progressLabel) progressLabel.textContent = `进度 ${statusIndex + 1} / ${orderStates.length}`;
+
+    const progressBarFill = document.querySelector('#order-progress-bar .order-progress-bar-fill');
+    if (progressBarFill) progressBarFill.style.width = `${progressPercent}%`;
 
     const timelineContainer = document.getElementById('order-timeline');
-    const currentStatusIndex = orderStates.findIndex(s => s.id === order.statusId);
-    timelineContainer.innerHTML = orderStates.map((state, index) => {
-        const isActive = index <= currentStatusIndex;
-        return `
-        <div class="relative flex items-start timeline-item ${isActive ? 'active' : ''}">
-            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-4 ${isActive ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-500'}">
-                <i data-lucide="${state.icon}" class="w-4 h-4"></i>
-            </div>
-            <div>
-                <p class="font-semibold ${isActive ? 'text-slate-800' : 'text-slate-500'}">${state.name}</p>
-                ${isActive ? `<p class="text-xs text-slate-500 mt-1">${index === currentStatusIndex ? '进行中...' : '已完成'}</p>` : ''}
-            </div>
-        </div>`;
-    }).join('');
+    if (timelineContainer) {
+        timelineContainer.innerHTML = orderStates.map((state, index) => {
+            const isActive = index <= statusIndex;
+            const stageExperience = getOrderExperience(state.id);
+            const description = stageExperience.nextMilestone || '';
+            return `
+            <div class="relative flex items-start timeline-item ${isActive ? 'active' : ''}">
+                <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-4 ${isActive ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-500'}">
+                    <i data-lucide="${state.icon}" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <p class="font-semibold ${isActive ? 'text-slate-800' : 'text-slate-500'}">${state.name}</p>
+                    <p class="text-xs ${index === statusIndex ? 'text-blue-500' : 'text-slate-400'} mt-1">${index === statusIndex ? '进行中 · ' : ''}${description}</p>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    const productListContainer = document.getElementById('order-detail-product-list');
+    if (productListContainer) {
+        productListContainer.innerHTML = order.items.map(item => {
+            const itemChips = buildSpecBadges(item.specs || '') || '<span class="order-chip muted">规格待确认</span>';
+            return `
+            <article class="order-product-card">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <img src="${item.imageUrl || 'https://via.placeholder.com/120'}" alt="${item.name}" class="w-24 h-24 rounded-lg object-cover border border-slate-200">
+                    <div class="flex-1 space-y-3">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <h3 class="text-lg font-semibold text-slate-900">${item.name}</h3>
+                                <p class="text-xs text-slate-500 mt-1">数量 x${item.quantity}</p>
+                            </div>
+                            <span class="order-chip quantity">x${item.quantity}</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">${itemChips}</div>
+                        <p class="text-xs text-slate-500 leading-relaxed"><strong>包装建议：</strong>${generatePackagingTip(item.specs)}</p>
+                    </div>
+                </div>
+            </article>`;
+        }).join('');
+    }
 
     const infoContainer = document.getElementById('order-detail-info');
-    const address = userAddresses.find(a => a.isDefault);
-    infoContainer.innerHTML = `
-        <h3 class="text-xl font-semibold mb-4">订单信息</h3>
-        <div class="grid md:grid-cols-2 gap-8">
-            <div>
-                <h4 class="font-semibold text-slate-800 mb-3">收货信息</h4>
-                <p class="text-slate-600">${address.name}</p>
-                <p class="text-slate-600">${address.phone}</p>
-                <p class="text-slate-600">${address.address}</p>
+    if (infoContainer) {
+        const checklistHtml = (experience.checklist || []).map(item => `<li class="flex items-start gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-blue-500 mt-0.5"></i><span>${item}</span></li>`).join('');
+        infoContainer.innerHTML = `
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+                    <h3 class="text-sm font-semibold text-slate-700 flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4"></i> 收货信息</h3>
+                    <p class="text-base font-semibold text-slate-900 mt-3">${address?.name || '—'}</p>
+                    <p class="text-sm text-slate-600">${address?.phone || '—'}</p>
+                    <p class="text-sm text-slate-600 mt-2 leading-relaxed">${address?.address || '请前往“地址管理”完善收货地址信息。'}</p>
+                    <p class="text-xs text-slate-500 mt-4 flex items-center gap-2"><i data-lucide="info" class="w-4 h-4"></i> 若需临时更改收货信息，请在发货前与客服确认。</p>
+                </div>
+                <div class="rounded-xl border border-slate-200 p-5">
+                    <h3 class="text-sm font-semibold text-slate-700 flex items-center gap-2"><i data-lucide="truck" class="w-4 h-4"></i> 物流与发票</h3>
+                    <div class="space-y-3 mt-3 text-sm text-slate-600">
+                        <p class="flex items-start gap-2"><i data-lucide="navigation" class="w-4 h-4 mt-0.5 text-blue-500"></i><span>${experience.logistics}</span></p>
+                        <p class="flex items-start gap-2"><i data-lucide="receipt" class="w-4 h-4 mt-0.5 text-emerald-500"></i><span>${invoice ? `已开具发票 · ${invoice.status} · ${invoice.date}` : '尚未开票 · 收货后可在“发票管理”发起申请。'}</span></p>
+                        <p class="flex items-start gap-2 text-xs text-slate-500"><i data-lucide="alert-circle" class="w-4 h-4 mt-0.5"></i><span>如需分批发货或加急配送，可在联系客服后调整排期。</span></p>
+                    </div>
+                </div>
             </div>
-            <div>
-                <h4 class="font-semibold text-slate-800 mb-3">产品列表</h4>
-                <ul class="space-y-2 text-sm text-slate-600">
-                    ${order.items.map(item => `<li><strong>${item.name} (x${item.quantity})</strong>: ${item.specs}</li>`).join('')}
-                </ul>
+            <div class="rounded-xl border border-slate-200 p-5">
+                <h3 class="text-sm font-semibold text-slate-700 flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4"></i> 文件核对清单</h3>
+                <ul class="mt-3 space-y-2 text-sm text-slate-600">${checklistHtml}</ul>
             </div>
-        </div>
-        <div class="border-t border-slate-200 my-6"></div>
-        <div class="text-right">
-            <p class="text-slate-600">商品总价: <span class="font-semibold text-slate-800">¥${(order.total - 15).toFixed(2)}</span></p>
-            <p class="text-slate-600">运费: <span class="font-semibold text-slate-800">¥15.00</span></p>
-            <p class="mt-2 text-lg">实付款: <span class="font-bold text-2xl text-red-600">¥${order.total.toFixed(2)}</span></p>
-        </div>`;
+        `;
+    }
 
-    updateContextualBox(order);
+    updateContextualBox(order, experience);
+    renderIcons();
 }
 
-function updateContextualBox(order) {
+function updateContextualBox(order, experience = getOrderExperience(order.statusId)) {
     const contextualBox = document.getElementById('contextual-action-box');
-    let content = '';
-    switch (order.statusId) {
-        case 'placed':
-            content = `
-            <h4 class="font-semibold text-lg mb-3">待处理任务：上传生产文件</h4>
-            <p class="text-sm text-slate-600 mb-6">为确保生产顺利，请上传符合我们规范的设计文件及相关的商标授权文件。</p>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">1. 生产文件 (AI, PDF, EPS)</label>
-                    <button class="w-full bg-white border border-slate-300 px-4 py-2 rounded-lg font-semibold flex items-center justify-center space-x-2 hover:bg-slate-50">
-                        <i data-lucide="upload-cloud" class="w-4 h-4"></i>
-                        <span>点击上传</span>
-                    </button>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">2. 商标授权文件 (PDF, JPG)</label>
-                     <button class="w-full bg-white border border-slate-300 px-4 py-2 rounded-lg font-semibold flex items-center justify-center space-x-2 hover:bg-slate-50">
-                        <i data-lucide="upload-cloud" class="w-4 h-4"></i>
-                        <span>点击上传</span>
-                    </button>
-                </div>
-            </div>
-            <button onclick="updateOrderStatus('${order.id}', 'processing')" class="mt-6 w-full btn-primary text-white py-2 rounded-lg font-semibold">确认提交文件</button>
-            `;
-            break;
-        case 'processing': content = `<h4 class="font-semibold text-lg mb-3">文件处理中</h4><p class="text-sm text-slate-600">我们的工程师正在审核您的文件，通常需要1个工作日。审核通过后，我们将通知您确认。</p>`; break;
-        // ... other cases
-        default: content = `<h4 class="font-semibold text-lg mb-3">订单进行中</h4><p class="text-sm text-slate-600">您的订单正在处理中，请耐心等待状态更新。</p>`;
-    }
-    contextualBox.innerHTML = content;
+    if (!contextualBox) return;
+
+    contextualBox.innerHTML = `
+        <h4 class="font-semibold text-lg mb-3 text-slate-800">阶段提示</h4>
+        <p class="text-sm text-slate-600 leading-relaxed">${experience.summary}</p>
+        <p class="text-xs text-slate-500 mt-3">${experience.logistics}</p>
+    `;
     renderIcons();
 }
 
@@ -1447,80 +2112,128 @@ function showNotification(message, type = 'info') {
     renderIcons();
 }
 
+function reorderOrder(orderId) {
+    showNotification(`已记录订单 #${orderId} 的补货需求，我们会结合最新物料报价与您确认。`, 'info');
+}
+
 function renderDistributionDashboard() {
     const totalCommission = distributionData.orders.reduce((sum, order) => sum + order.commission, 0);
+    const totalOrderValue = distributionData.orders.reduce((sum, order) => sum + order.total, 0);
+    const totalOrders = distributionData.orders.length;
+    const settledOrders = distributionData.orders.filter(o => o.status === '已结算');
+    const pendingOrders = totalOrders - settledOrders.length;
     const withdrawnAmount = distributionData.withdrawals.reduce((sum, w) => sum + w.amount, 0);
-    const settledCommission = distributionData.orders
-        .filter(o => o.status === '已结算')
-        .reduce((sum, order) => sum + order.commission, 0);
-    const withdrawableCommission = settledCommission - withdrawnAmount;
+    const settledCommission = settledOrders.reduce((sum, order) => sum + order.commission, 0);
+    const withdrawableCommission = Math.max(settledCommission - withdrawnAmount, 0);
+    const avgOrderValue = totalOrders ? totalOrderValue / totalOrders : 0;
+    const avgCommissionRate = totalOrderValue ? (totalCommission / totalOrderValue) * 100 : 0;
 
-    document.getElementById('dist-total-commission').textContent = `¥${totalCommission.toFixed(2)}`;
-    document.getElementById('dist-withdrawable-commission').textContent = `¥${withdrawableCommission.toFixed(2)}`;
+    document.getElementById('dist-total-commission').textContent = formatCurrency(totalCommission);
+    document.getElementById('dist-withdrawable-commission').textContent = formatCurrency(withdrawableCommission);
     document.getElementById('dist-customer-count').textContent = distributionData.customers.length;
     document.getElementById('dist-level').textContent = distributionData.stats.level;
-    document.getElementById('dist-rate').textContent = `/ ${distributionData.stats.commissionRate}`;
+    document.getElementById('dist-rate').textContent = distributionData.stats.commissionRate;
+
+    document.getElementById('dist-orders-count').textContent = totalOrders;
+    document.getElementById('dist-settled-orders').textContent = settledOrders.length;
+    document.getElementById('dist-pending-orders').textContent = pendingOrders;
+    document.getElementById('dist-avg-order-value').textContent = formatCurrency(avgOrderValue);
+    document.getElementById('dist-avg-commission-rate').textContent = `${avgCommissionRate.toFixed(1)}%`;
 
     const withdrawButton = document.getElementById('withdraw-button');
     if (withdrawableCommission > 0) {
         withdrawButton.disabled = false;
-        document.getElementById('dist-withdrawable-commission-withdraw').textContent = `¥${withdrawableCommission.toFixed(2)}`;
     } else {
         withdrawButton.disabled = true;
-        document.getElementById('dist-withdrawable-commission-withdraw').textContent = '¥0.00';
     }
+    document.getElementById('dist-withdrawable-commission-withdraw').textContent = formatCurrency(withdrawableCommission);
 
     const referralLink = document.getElementById('referral-link').value;
-    document.getElementById('referral-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=96x96&data=${encodeURIComponent(referralLink)}`;
+    document.getElementById('referral-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=116x116&data=${encodeURIComponent(referralLink)}`;
 
-    // Render Earnings Chart
-    const chartContainer = document.getElementById('earnings-chart');
-    const maxEarning = Math.max(...distributionData.monthlyEarnings.map(e => e.earnings), 1); // Avoid division by zero
-    chartContainer.innerHTML = distributionData.monthlyEarnings.map(item => `
-        <div class="flex-1 flex flex-col items-center justify-end" title="${item.month}: ¥${item.earnings.toFixed(2)}">
-            <div class="w-full bg-blue-200 rounded-t-sm hover:bg-blue-400 transition-colors" style="height: ${(item.earnings / maxEarning) * 100}%;"></div>
-            <p class="text-xs text-slate-500 mt-1">${item.month}</p>
-        </div>
-    `).join('');
-
-    // Render Tables
-    const ordersBody = document.getElementById('dist-orders-table-body');
-    ordersBody.innerHTML = distributionData.orders.map(o => `
-        <tr class="border-b border-slate-200">
-            <td class="p-4 text-sm">${o.id}</td>
-            <td class="p-4 text-sm">${o.customer}</td>
-            <td class="p-4 text-sm">${o.date}</td>
-            <td class="p-4 text-sm">¥${o.total.toFixed(2)}</td>
-            <td class="p-4 text-sm font-semibold text-green-600">+¥${o.commission.toFixed(2)}</td>
-            <td class="p-4 text-sm">${o.status === '已结算' ? `<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>` : `<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">${o.status}</span>`}</td>
-        </tr>
-    `).join('');
-
-    const customersBody = document.getElementById('dist-customers-table-body');
-    customersBody.innerHTML = distributionData.customers.map(c => `
-        <tr class="border-b border-slate-200">
-            <td class="p-4 text-sm">${c.name}</td>
-            <td class="p-4 text-sm">${c.joinDate}</td>
-            <td class="p-4 text-sm">¥${c.totalSpent.toFixed(2)}</td>
-            <td class="p-4 text-sm">${c.lastOrderDate}</td>
-        </tr>
-    `).join('');
-
-    const withdrawalsBody = document.getElementById('dist-withdrawals-table-body');
-    withdrawalsBody.innerHTML = distributionData.withdrawals.map(w => `
-        <tr class="border-b border-slate-200">
-            <td class="p-4 text-sm">${w.id}</td>
-            <td class="p-4 text-sm">${w.date}</td>
-            <td class="p-4 text-sm">¥${w.amount.toFixed(2)}</td>
-            <td class="p-4 text-sm"><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">${w.status}</span></td>
-        </tr>
-    `).join('');
-
-    if (withdrawalsBody.innerHTML === '') {
-        withdrawalsBody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-slate-500">暂无提现记录</td></tr>`;
+    const chartContainer = document.getElementById('dist-earnings-chart');
+    const monthlyEarnings = distributionData.monthlyEarnings || [];
+    if (monthlyEarnings.length === 0) {
+        chartContainer.innerHTML = '<p class="dist-table-empty">暂无佣金走势数据</p>';
+    } else {
+        const maxEarning = Math.max(...monthlyEarnings.map(e => e.earnings), 1);
+        chartContainer.innerHTML = monthlyEarnings.map(item => {
+            const height = maxEarning ? (item.earnings / maxEarning) * 100 : 0;
+            return `
+                <div class="dist-chart-bar" title="${item.month}：¥${item.earnings.toFixed(2)}">
+                    <div class="dist-chart-bar-fill" style="height:${height}%"></div>
+                    <span class="dist-chart-bar-label">${item.month}</span>
+                </div>
+            `;
+        }).join('');
     }
 
-    renderWithdrawalAccounts(); // 渲染主账户列表
+    const earningsHighlightEl = document.getElementById('dist-earnings-highlight');
+    if (earningsHighlightEl) {
+        if (monthlyEarnings.length === 0) {
+            earningsHighlightEl.textContent = '暂无走势数据';
+        } else {
+            const latest = monthlyEarnings[monthlyEarnings.length - 1];
+            const previous = monthlyEarnings.length > 1 ? monthlyEarnings[monthlyEarnings.length - 2] : null;
+            if (previous && previous.earnings !== 0) {
+                const diff = latest.earnings - previous.earnings;
+                const rate = (diff / previous.earnings) * 100;
+                const trend = diff >= 0 ? '环比增长' : '环比下降';
+                const symbol = diff >= 0 ? '+' : '';
+                earningsHighlightEl.textContent = `${latest.month} 佣金 ¥${latest.earnings.toFixed(0)} · ${trend} ${symbol}${rate.toFixed(1)}%`;
+            } else if (previous && previous.earnings === 0 && latest.earnings > 0) {
+                earningsHighlightEl.textContent = `${latest.month} 佣金 ¥${latest.earnings.toFixed(0)} · 新增收益`; 
+            } else {
+                earningsHighlightEl.textContent = `${latest.month} 佣金 ¥${latest.earnings.toFixed(0)}`;
+            }
+        }
+    }
+
+    const ordersBody = document.getElementById('dist-orders-table-body');
+    if (distributionData.orders.length === 0) {
+        ordersBody.innerHTML = `<tr><td colspan="6" class="dist-table-empty">暂无渠道订单</td></tr>`;
+    } else {
+        ordersBody.innerHTML = distributionData.orders.map(o => `
+            <tr>
+                <td>${o.id}</td>
+                <td>${o.customer}</td>
+                <td>${o.date}</td>
+                <td>${formatCurrency(o.total)}</td>
+                <td class="text-emerald-600 font-semibold">+${formatCurrency(o.commission)}</td>
+                <td>${o.status === '已结算' ? '<span class="dist-status success">已结算</span>' : '<span class="dist-status pending">待结算</span>'}</td>
+            </tr>
+        `).join('');
+    }
+
+    const customersBody = document.getElementById('dist-customers-table-body');
+    if (distributionData.customers.length === 0) {
+        customersBody.innerHTML = `<tr><td colspan="4" class="dist-table-empty">暂无客户数据</td></tr>`;
+    } else {
+        customersBody.innerHTML = distributionData.customers.map(c => `
+            <tr>
+                <td>${c.name}</td>
+                <td>${c.joinDate}</td>
+                <td>${formatCurrency(c.totalSpent)}</td>
+                <td>${c.lastOrderDate}</td>
+            </tr>
+        `).join('');
+    }
+
+    const withdrawalsBody = document.getElementById('dist-withdrawals-table-body');
+    if (distributionData.withdrawals.length === 0) {
+        withdrawalsBody.innerHTML = `<tr><td colspan="4" class="dist-table-empty">暂无提现记录</td></tr>`;
+    } else {
+        withdrawalsBody.innerHTML = distributionData.withdrawals.map(w => `
+            <tr>
+                <td>${w.id}</td>
+                <td>${w.date}</td>
+                <td>${formatCurrency(w.amount)}</td>
+                <td><span class="dist-status info">${w.status}</span></td>
+            </tr>
+        `).join('');
+    }
+
+    renderWithdrawalAccounts();
 }
 
 function copyReferralLink(button) {
@@ -2066,10 +2779,54 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addressForm) {
         addressForm.addEventListener('submit', e => {
             e.preventDefault();
-            // In a real app, you would save the address to a server.
-            // Here we just close the modal.
-            alert('地址已保存！');
+            const idField = document.getElementById('address-id');
+            const nameInput = document.getElementById('address-name');
+            const phoneInput = document.getElementById('address-phone');
+            const addressInput = document.getElementById('address-full');
+            const defaultCheckbox = document.getElementById('address-default');
+
+            const name = nameInput?.value.trim();
+            const phone = phoneInput?.value.trim();
+            const fullAddress = addressInput?.value.trim();
+            const isDefaultChecked = !!defaultCheckbox?.checked;
+
+            if (!name || !phone || !fullAddress) {
+                showNotification('请完整填写收货人、电话与地址信息', 'error');
+                return;
+            }
+
+            const idValue = idField?.value;
+            let updatedAddresses;
+
+            if (idValue) {
+                const addressId = Number(idValue);
+                updatedAddresses = userAddresses.map(addr => {
+                    if (addr.id === addressId) {
+                        return { ...addr, name, phone, address: fullAddress, isDefault: isDefaultChecked };
+                    }
+                    return isDefaultChecked ? { ...addr, isDefault: false } : addr;
+                });
+            } else {
+                const newAddress = {
+                    id: Date.now(),
+                    name,
+                    phone,
+                    address: fullAddress,
+                    isDefault: isDefaultChecked || userAddresses.length === 0
+                };
+                updatedAddresses = isDefaultChecked ? userAddresses.map(addr => ({ ...addr, isDefault: false })) : [...userAddresses];
+                updatedAddresses.push(newAddress);
+            }
+
+            if (updatedAddresses.length && !updatedAddresses.some(addr => addr.isDefault)) {
+                updatedAddresses[0].isDefault = true;
+            }
+
+            userAddresses = updatedAddresses;
+            saveAddresses();
+            renderAddressView();
             closeAddressModal();
+            showNotification('地址已保存', 'success');
         });
     }
 
