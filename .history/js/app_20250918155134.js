@@ -697,7 +697,7 @@ function closePaymentModal() { paymentModal.classList.add('hidden'); }
 function openWithdrawalModal() {
     const withdrawableAmount = parseFloat(document.getElementById('dist-withdrawable-commission').textContent.replace('¥', ''));
     document.getElementById('withdrawal-modal-amount').textContent = `¥${withdrawableAmount.toFixed(2)}`;
-    renderWithdrawalAccounts('withdrawal-account-list-modal');
+    renderWithdrawalAccounts();
     withdrawalModal.classList.remove('hidden');
     renderIcons();
 }
@@ -706,8 +706,8 @@ function closeWithdrawalModal() {
     document.getElementById('add-account-form').classList.add('hidden');
 }
 
-function renderWithdrawalAccounts(containerId = 'withdrawal-account-list') {
-    const container = document.getElementById(containerId);
+function renderWithdrawalAccounts() {
+    const container = document.getElementById('withdrawal-account-list');
     if (withdrawalAccounts.length === 0) {
         container.innerHTML = `
             <div class="text-center p-4 bg-slate-50 rounded-lg">
@@ -754,9 +754,6 @@ function saveWithdrawalAccount() {
     document.getElementById('account-number').value = '';
 
     renderWithdrawalAccounts();
-    if (document.getElementById('withdrawal-modal').classList.contains('flex')) {
-        renderWithdrawalAccounts('withdrawal-account-list-modal');
-    }
 }
 
 function handleWithdrawal() {
@@ -1236,27 +1233,6 @@ function updateOrderStatus(orderId, newStatusId) {
 }
 
 // --- Distribution Logic ---
-function toggleApplyForm(type) {
-    const individualForm = document.getElementById('individual-form');
-    const companyForm = document.getElementById('company-form');
-    const buttons = document.querySelectorAll('.apply-tab-button');
-
-    buttons.forEach(btn => {
-        btn.classList.remove('active', 'border-blue-600', 'text-blue-600');
-        btn.classList.add('text-slate-500', 'border-transparent');
-    });
-
-    if (type === 'individual') {
-        individualForm.classList.remove('hidden');
-        companyForm.classList.add('hidden');
-        buttons[0].classList.add('active', 'border-blue-600', 'text-blue-600');
-    } else {
-        individualForm.classList.add('hidden');
-        companyForm.classList.remove('hidden');
-        buttons[1].classList.add('active', 'border-blue-600', 'text-blue-600');
-    }
-}
-
 function renderDistributionParentView() {
     const applyView = document.getElementById('distribution-apply-view');
     const pendingView = document.getElementById('distribution-pending-view');
@@ -1271,7 +1247,6 @@ function renderDistributionParentView() {
 
     if (distributionStatus === 'none') {
         applyView.classList.remove('hidden');
-        toggleApplyForm('individual'); // 默认显示个人申请
     } else if (distributionStatus === 'pending') {
         pendingView.classList.remove('hidden');
         renderPendingView();
@@ -1461,15 +1436,6 @@ function renderDistributionDashboard() {
     document.getElementById('dist-level').textContent = distributionData.stats.level;
     document.getElementById('dist-rate').textContent = `/ ${distributionData.stats.commissionRate}`;
 
-    const withdrawButton = document.getElementById('withdraw-button');
-    if (withdrawableCommission > 0) {
-        withdrawButton.disabled = false;
-        document.getElementById('dist-withdrawable-commission-withdraw').textContent = `¥${withdrawableCommission.toFixed(2)}`;
-    } else {
-        withdrawButton.disabled = true;
-        document.getElementById('dist-withdrawable-commission-withdraw').textContent = '¥0.00';
-    }
-
     const referralLink = document.getElementById('referral-link').value;
     document.getElementById('referral-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=96x96&data=${encodeURIComponent(referralLink)}`;
 
@@ -1519,8 +1485,6 @@ function renderDistributionDashboard() {
     if (withdrawalsBody.innerHTML === '') {
         withdrawalsBody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-slate-500">暂无提现记录</td></tr>`;
     }
-
-    renderWithdrawalAccounts(); // 渲染主账户列表
 }
 
 function copyReferralLink(button) {
