@@ -314,11 +314,6 @@ function showUserCenterView(viewId, context) {
     const activeView = document.getElementById(viewId);
     if (activeView) activeView.classList.remove('hidden');
     setActiveSidebarLink(viewId);
-    
-    // 更新移动端导航状态
-    updateMobileNav(viewId);
-    // 自动关闭移动端菜单
-    closeMobileMenu();
 
     if (viewId === 'orders-view') {
         renderOrdersPage();
