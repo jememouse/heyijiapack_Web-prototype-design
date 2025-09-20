@@ -285,208 +285,162 @@
                             </div>
                             <div id="distribution-view" class="user-center-view hidden">
                                 <!-- 申请分销视图 -->
-                                <div id="distribution-apply-view" class="distribution-apply">
-                                    <!-- 优化后的申请页面 -->
-                                    <div class="bg-white rounded-lg shadow-sm p-6">
-                                        <!-- 页面标题与介绍 -->
-                                        <div class="mb-8">
-                                            <div class="flex items-start justify-between">
-                                                <div>
-                                                    <h1 class="text-2xl font-semibold text-slate-900">申请成为分销商</h1>
-                                                    <p class="text-slate-600 mt-1 text-sm">预计1-2个工作日完成审核</p>
-                                                </div>
-                                                <div class="text-right text-sm">
-                                                    <p class="text-slate-500">咨询热线</p>
-                                                    <p class="font-medium text-blue-600">400-888-8888</p>
-                                                </div>
-                                            </div>
-                                            <!-- 分销商权益 -->
-                                            <div class="mt-4 flex flex-wrap gap-4">
-                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm">
-                                                    <i data-lucide="wallet" class="w-4 h-4"></i>
-                                                    佣金10%起
-                                                </span>
-                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm">
-                                                    <i data-lucide="calendar" class="w-4 h-4"></i>
-                                                    月度结算
-                                                </span>
-                                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-sm">
-                                                    <i data-lucide="gift" class="w-4 h-4"></i>
-                                                    专属物料
-                                                </span>
-                                            </div>
+                                <div id="distribution-apply-view" class="distribution-apply space-y-8">
+                                    <div class="distribution-apply-header flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                                        <div>
+                                            <h1 class="text-3xl font-bold text-slate-900">申请成为分销商</h1>
+                                            <p class="text-slate-600 mt-2 text-sm">提交核心资料即可进入审核，预计 1-3 个工作日完成资质确认。</p>
+                                            <ul class="distribution-apply-highlights">
+                                                <li><i data-lucide="wallet" class="w-4 h-4"></i>佣金自 10% 起，按月结算</li>
+                                                <li><i data-lucide="briefcase" class="w-4 h-4"></i>支持个人 / 企业两种主体</li>
+                                                <li><i data-lucide="sparkles" class="w-4 h-4"></i>专属物料与营销支持</li>
+                                            </ul>
                                         </div>
+                                        <div class="distribution-apply-contact">
+                                            <span class="text-xs text-slate-500">渠道顾问热线</span>
+                                            <span class="text-sm font-medium text-slate-700">service@iboxify.com · 400-888-8888</span>
+                                        </div>
+                                    </div>
 
-                                        <div class="grid lg:grid-cols-3 gap-8">
-                                            <div class="lg:col-span-2">
-                                                <!-- 申请表单切换器 -->
-                                                <div class="border-b border-slate-200 mb-6">
-                                                    <div class="flex gap-6">
-                                                        <button onclick="toggleApplyForm('individual')" data-form="individual" 
-                                                            class="px-2 py-3 text-sm font-medium border-b-2 border-blue-600 text-blue-600">
-                                                            个人申请
-                                                        </button>
-                                                        <button onclick="toggleApplyForm('company')" data-form="company"
-                                                            class="px-2 py-3 text-sm font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900">
-                                                            企业申请
-                                                        </button>
-                                                    </div>
+                                    <div class="distribution-apply-content">
+                                        <div class="distribution-apply-main">
+                                            <!-- 优化后的申请表单布局 -->
+                                            <div class="bg-white rounded-lg shadow-sm p-6">
+                                                <!-- 标签切换 -->
+                                                <div class="flex space-x-4 mb-6">
+                                                    <button onclick="toggleApplyForm('individual')" data-form="individual" class="flex-1 py-2 px-4 rounded-lg font-medium text-center transition-all active:bg-blue-50 active:text-blue-600 active:border-b-2 active:border-blue-600">个人申请</button>
+                                                    <button onclick="toggleApplyForm('company')" data-form="company" class="flex-1 py-2 px-4 rounded-lg font-medium text-center transition-all hover:bg-slate-50">企业申请</button>
                                                 </div>
 
                                                 <!-- 个人申请表单 -->
-                                                <form id="individual-form" class="space-y-6" novalidate>
-                                                    <!-- 基本信息 -->
-                                                    <div class="grid sm:grid-cols-2 gap-4">
-                                                        <div>
-                                                            <label for="individual-name" class="block text-sm font-medium text-slate-700 mb-1">姓名</label>
-                                                            <input type="text" id="individual-name" 
-                                                                class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-1 focus:ring-blue-500" 
-                                                                placeholder="您的真实姓名" required>
-                                                        </div>
-                                                        <div>
-                                                            <label for="individual-phone" class="block text-sm font-medium text-slate-700 mb-1">手机号码</label>
-                                                            <input type="tel" id="individual-phone" 
-                                                                class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-1 focus:ring-blue-500" 
-                                                                placeholder="用于审核联系" required>
+                                                <form id="individual-form" class="space-y-4" novalidate>
+                                                    <!-- 基本信息卡片 -->
+                                                    <div class="bg-slate-50 p-4 rounded-lg">
+                                                        <div class="grid sm:grid-cols-2 gap-4">
+                                                            <div class="space-y-1">
+                                                                <label for="individual-name" class="text-sm font-medium text-slate-700">姓名</label>
+                                                                <input type="text" id="individual-name" placeholder="请输入真实姓名" class="w-full px-3 py-2 rounded-md border-slate-300 focus:ring-1 focus:ring-blue-500" required>
+                                                            </div>
+                                                            <div class="space-y-1">
+                                                                <label for="individual-phone" class="text-sm font-medium text-slate-700">手机号码</label>
+                                                                <input type="tel" id="individual-phone" placeholder="审核沟通用" class="w-full px-3 py-2 rounded-md border-slate-300 focus:ring-1 focus:ring-blue-500" required>
+                                                            </div>
+                                                            <div class="space-y-1">
+                                                                <label for="individual-id" class="text-sm font-medium text-slate-700">身份证号</label>
+                                                                <input type="text" id="individual-id" placeholder="用于实名认证" class="w-full px-3 py-2 rounded-md border-slate-300 focus:ring-1 focus:ring-blue-500" required>
+                                                            </div>
+                                                            <div class="space-y-1">
+                                                                <label for="individual-city" class="text-sm font-medium text-slate-700">所在城市</label>
+                                                                <input type="text" id="individual-city" placeholder="如：上海市" class="w-full px-3 py-2 rounded-md border-slate-300 focus:ring-1 focus:ring-blue-500" required>
+                                                            </div>
                                                         </div>
                                                     </div>
 
                                                     <!-- 渠道信息 -->
-                                                    <div>
-                                                        <label for="individual-experience" class="block text-sm font-medium text-slate-700 mb-1">
-                                                            渠道资源描述
-                                                        </label>
-                                                        <textarea id="individual-experience" rows="3" 
-                                                            class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-1 focus:ring-blue-500"
-                                                            placeholder="请简要描述您的渠道资源和销售经验"></textarea>
+                                                    <div class="space-y-1">
+                                                        <label for="individual-experience" class="text-sm font-medium text-slate-700">渠道经验描述</label>
+                                                        <textarea id="individual-experience" rows="2" placeholder="请简要描述您的相关经验和资源优势" class="w-full px-3 py-2 rounded-md border-slate-300 focus:ring-1 focus:ring-blue-500"></textarea>
                                                     </div>
 
                                                     <!-- 提交按钮 -->
-                                                    <div class="flex items-center justify-between pt-4 border-t border-slate-200">
-                                                        <p class="text-xs text-slate-500">
-                                                            提交即表示同意<a href="#" class="text-blue-600 hover:underline">《分销合作协议》</a>
-                                                        </p>
-                                                        <button type="button" onclick="handleDistributionApply('individual')"
-                                                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                                            <i data-lucide="send" class="w-4 h-4 mr-2"></i>
-                                                            提交申请
-                                                        </button>
+                                                    <div class="pt-4 flex items-center justify-between">
+                                                        <p class="text-xs text-slate-500">提交即表示同意<a href="#" class="text-blue-600 hover:underline">《渠道合作协议》</a></p>
+                                                        <button type="button" onclick="handleDistributionApply('individual')" class="btn-primary text-white px-6 py-2 rounded-lg font-medium">提交申请</button>
                                                     </div>
                                                 </form>
 
                                                 <!-- 企业申请表单 -->
-                                                <form id="company-form" class="hidden space-y-6" novalidate>
-                                                    <!-- 企业信息 -->
-                                                    <div class="grid sm:grid-cols-2 gap-4">
-                                                        <div>
-                                                            <label for="company-name" class="block text-sm font-medium text-slate-700 mb-1">公司名称</label>
-                                                            <input type="text" id="company-name" 
-                                                                class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-1 focus:ring-blue-500" 
-                                                                placeholder="营业执照上的名称" required>
-                                                        </div>
-                                                        <div>
-                                                            <label for="business-license" class="block text-sm font-medium text-slate-700 mb-1">统一社会信用代码</label>
-                                                            <input type="text" id="business-license" 
-                                                                class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-1 focus:ring-blue-500" 
-                                                                placeholder="18位代码" required>
+                                                <form id="company-form" class="hidden space-y-4" novalidate>
+                                                    <!-- 企业信息卡片 -->
+                                                    <div class="bg-slate-50 p-4 rounded-lg">
+                                                        <div class="grid sm:grid-cols-2 gap-4">
+                                                            <div class="space-y-1">
+                                                                <label for="company-name" class="text-sm font-medium text-slate-700">公司名称</label>
+                                                                <input type="text" id="company-name" placeholder="营业执照上的名称" class="w-full px-3 py-2 rounded-md border-slate-300 focus:ring-1 focus:ring-blue-500" required>
+                                                            </div>
+                                                            <div class="space-y-1">
+                                                                <label for="business-license" class="text-sm font-medium text-slate-700">统一社会信用代码</label>
+                                                                <input type="text" id="business-license" placeholder="18位代码" class="w-full px-3 py-2 rounded-md border-slate-300 focus:ring-1 focus:ring-blue-500" required>
+                                                            </div>
                                                         </div>
                                                     </div>
 
-                                                    <!-- 联系信息 -->
-                                                    <div class="grid sm:grid-cols-2 gap-4">
-                                                        <div>
-                                                            <label for="contact-person" class="block text-sm font-medium text-slate-700 mb-1">联系人</label>
-                                                            <input type="text" id="contact-person" 
-                                                                class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-1 focus:ring-blue-500" 
-                                                                placeholder="主要对接人" required>
-                                                        </div>
-                                                        <div>
-                                                            <label for="contact-phone" class="block text-sm font-medium text-slate-700 mb-1">联系电话</label>
-                                                            <input type="tel" id="contact-phone" 
-                                                                class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-1 focus:ring-blue-500" 
-                                                                placeholder="用于审核沟通" required>
+                                                    <!-- 联系人信息 -->
+                                                    <div class="bg-slate-50 p-4 rounded-lg">
+                                                        <div class="grid sm:grid-cols-2 gap-4">
+                                                            <div class="space-y-1">
+                                                                <label for="contact-person" class="text-sm font-medium text-slate-700">联系人</label>
+                                                                <input type="text" id="contact-person" placeholder="主要对接人" class="w-full px-3 py-2 rounded-md border-slate-300 focus:ring-1 focus:ring-blue-500" required>
+                                                            </div>
+                                                            <div class="space-y-1">
+                                                                <label for="contact-phone" class="text-sm font-medium text-slate-700">联系电话</label>
+                                                                <input type="tel" id="contact-phone" placeholder="审核沟通用" class="w-full px-3 py-2 rounded-md border-slate-300 focus:ring-1 focus:ring-blue-500" required>
+                                                            </div>
                                                         </div>
                                                     </div>
 
                                                     <!-- 业务信息 -->
-                                                    <div>
-                                                        <label for="business-scope" class="block text-sm font-medium text-slate-700 mb-1">主营业务</label>
-                                                        <textarea id="business-scope" rows="3" 
-                                                            class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-1 focus:ring-blue-500"
-                                                            placeholder="请描述贵公司的主要业务方向和目标客户群体"></textarea>
+                                                    <div class="space-y-1">
+                                                        <label for="business-scope" class="text-sm font-medium text-slate-700">主营业务</label>
+                                                        <textarea id="business-scope" rows="2" placeholder="请描述公司主要业务方向和客户群体" class="w-full px-3 py-2 rounded-md border-slate-300 focus:ring-1 focus:ring-blue-500" required></textarea>
                                                     </div>
 
                                                     <!-- 提交按钮 -->
-                                                    <div class="flex items-center justify-between pt-4 border-t border-slate-200">
-                                                        <p class="text-xs text-slate-500">
-                                                            提交即表示同意<a href="#" class="text-blue-600 hover:underline">《分销合作协议》</a>
-                                                        </p>
-                                                        <button type="button" onclick="handleDistributionApply('company')"
-                                                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                                            <i data-lucide="send" class="w-4 h-4 mr-2"></i>
-                                                            提交申请
-                                                        </button>
+                                                    <div class="pt-4 flex items-center justify-between">
+                                                        <p class="text-xs text-slate-500">提交即表示同意<a href="#" class="text-blue-600 hover:underline">《渠道合作协议》</a></p>
+                                                        <button type="button" onclick="handleDistributionApply('company')" class="btn-primary text-white px-6 py-2 rounded-lg font-medium">提交申请</button>
                                                     </div>
                                                 </form>
                                             </div>
+                                        </div>
 
-                                            <!-- 右侧信息栏 -->
-                                            <aside class="lg:border-l lg:pl-8 lg:space-y-6">
-                                                <!-- 申请流程 -->
-                                                <div>
-                                                    <h3 class="text-sm font-medium text-slate-800 mb-3">申请流程</h3>
-                                                    <ol class="space-y-3">
-                                                        <li class="flex items-start">
-                                                            <span class="flex-none flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-xs font-medium mr-3 mt-0.5">1</span>
-                                                            <div>
-                                                                <p class="text-sm font-medium text-slate-800">提交申请</p>
-                                                                <p class="text-xs text-slate-500">填写基本信息</p>
-                                                            </div>
+                                        <!-- 优化后的右侧信息栏 -->
+                                        <aside class="distribution-apply-side mt-6 lg:mt-0">
+                                            <div class="bg-white rounded-lg shadow-sm p-6 space-y-6">
+                                                <!-- 申请步骤 -->
+                                                <div class="space-y-2">
+                                                    <h3 class="font-semibold text-slate-800">申请步骤</h3>
+                                                    <ol class="space-y-2">
+                                                        <li class="flex items-center text-sm text-slate-600">
+                                                            <span class="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs font-medium mr-2">1</span>
+                                                            填写基本信息
                                                         </li>
-                                                        <li class="flex items-start">
-                                                            <span class="flex-none flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-600 text-xs font-medium mr-3 mt-0.5">2</span>
-                                                            <div>
-                                                                <p class="text-sm font-medium text-slate-800">资质审核</p>
-                                                                <p class="text-xs text-slate-500">1-2个工作日完成</p>
-                                                            </div>
+                                                        <li class="flex items-center text-sm text-slate-600">
+                                                            <span class="flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 text-slate-600 text-xs font-medium mr-2">2</span>
+                                                            等待审核反馈 (1-2个工作日)
                                                         </li>
-                                                        <li class="flex items-start">
-                                                            <span class="flex-none flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-600 text-xs font-medium mr-3 mt-0.5">3</span>
-                                                            <div>
-                                                                <p class="text-sm font-medium text-slate-800">开通权限</p>
-                                                                <p class="text-xs text-slate-500">签署协议并激活账号</p>
-                                                            </div>
+                                                        <li class="flex items-center text-sm text-slate-600">
+                                                            <span class="flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 text-slate-600 text-xs font-medium mr-2">3</span>
+                                                            签署协议并开通权限
                                                         </li>
                                                     </ol>
                                                 </div>
 
-                                                <!-- 温馨提示 -->
-                                                <div class="bg-blue-50 rounded-lg p-4">
-                                                    <h4 class="text-sm font-medium text-blue-800 mb-2">温馨提示</h4>
-                                                    <ul class="space-y-2">
-                                                        <li class="flex items-start gap-2">
-                                                            <i data-lucide="check-circle" class="w-4 h-4 text-blue-600 mt-0.5"></i>
-                                                            <span class="text-sm text-blue-700">提供详细的渠道资源描述可加快审核</span>
+                                                <!-- 审核提示 -->
+                                                <div class="p-4 bg-blue-50 rounded-lg">
+                                                    <h4 class="font-medium text-blue-800 mb-2">温馨提示</h4>
+                                                    <ul class="space-y-1 text-sm text-blue-600">
+                                                        <li class="flex items-center">
+                                                            <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
+                                                            资料完整可加快审核进度
                                                         </li>
-                                                        <li class="flex items-start gap-2">
-                                                            <i data-lucide="phone" class="w-4 h-4 text-blue-600 mt-0.5"></i>
-                                                            <span class="text-sm text-blue-700">工作时间随时答疑，欢迎咨询</span>
+                                                        <li class="flex items-center">
+                                                            <i data-lucide="phone" class="w-4 h-4 mr-2"></i>
+                                                            请保持电话畅通以便沟通
                                                         </li>
                                                     </ul>
                                                 </div>
 
-                                                <!-- 联系方式 -->
-                                                <div class="text-center py-4">
-                                                    <span class="text-sm text-slate-500">渠道合作咨询</span>
-                                                    <div class="flex items-center justify-center gap-2 mt-1 text-blue-600">
-                                                        <i data-lucide="mail" class="w-4 h-4"></i>
-                                                        <a href="mailto:partner@iboxify.com" class="text-sm font-medium hover:underline">
-                                                            partner@iboxify.com
-                                                        </a>
+                                                <!-- 咨询入口 -->
+                                                <div class="text-center space-y-2">
+                                                    <span class="text-sm text-slate-600">有疑问？联系渠道顾问</span>
+                                                    <div class="flex items-center justify-center space-x-2 text-blue-600">
+                                                        <i data-lucide="phone-call" class="w-4 h-4"></i>
+                                                        <span class="font-medium">400-888-8888</span>
                                                     </div>
                                                 </div>
-                                            </aside>
-                                        </div>
+                                            </div>
+                                        </aside>
                                     </div>
                                 </div>
 
@@ -1369,220 +1323,6 @@
 
     <script src="js/product-data.js"></script>
     <script src="js/app.js"></script>
-
-    <!-- 分销商申请与审核流程脚本 -->
-    <script>
-        // 处理分销商申请提交
-        function handleDistributionApply(type) {
-            const isValid = validateDistributionForm(type);
-            if (!isValid) {
-                return;
-            }
-
-            // 收集表单数据
-            const formData = collectFormData(type);
-            
-            // 模拟API提交
-            setTimeout(() => {
-                // 隐藏申请表单视图
-                document.getElementById('distribution-apply-view').classList.add('hidden');
-                
-                // 显示审核中状态视图
-                const pendingView = document.getElementById('distribution-pending-view');
-                pendingView.classList.remove('hidden');
-                
-                // 更新提交时间
-                const currentTime = new Date().toLocaleString('zh-CN', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                document.getElementById('submit-time').textContent = currentTime;
-                
-                // 显示申请类型
-                document.getElementById('apply-type').textContent = type === 'individual' ? '个人分销商' : '企业分销商';
-                
-                // 初始化审核进度
-                initializeReviewProgress();
-            }, 1000);
-        }
-
-        // 表单验证
-        function validateDistributionForm(type) {
-            const form = document.getElementById(`${type}-form`);
-            const requiredFields = form.querySelectorAll('[required]');
-            let isValid = true;
-
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    field.classList.add('border-red-500');
-                    isValid = false;
-                } else {
-                    field.classList.remove('border-red-500');
-                }
-            });
-
-            if (!isValid) {
-                alert('请填写所有必填项');
-            }
-            return isValid;
-        }
-
-        // 收集表单数据
-        function collectFormData(type) {
-            const form = document.getElementById(`${type}-form`);
-            const formData = {};
-            form.querySelectorAll('input, textarea').forEach(field => {
-                formData[field.id] = field.value;
-            });
-            return formData;
-        }
-
-        // 初始化审核进度
-        function initializeReviewProgress() {
-            // 模拟审核进度更新
-            const progressBar = document.querySelector('[role="progressbar"]');
-            const initialProgress = 30;
-            progressBar.style.width = initialProgress + '%';
-            progressBar.setAttribute('aria-valuenow', initialProgress);
-        }
-
-        // 模拟审核通过
-        function simulateApproval() {
-            // 显示加载状态
-            const approvalBtn = event.target;
-            const originalText = approvalBtn.innerHTML;
-            approvalBtn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> 处理中...';
-            approvalBtn.disabled = true;
-
-            // 模拟API调用延迟
-            setTimeout(() => {
-                // 隐藏审核视图
-                document.getElementById('distribution-pending-view').classList.add('hidden');
-                
-                // 显示分销商管理仪表板
-                const dashboardView = document.getElementById('distribution-dashboard-view');
-                dashboardView.classList.remove('hidden');
-                
-                // 初始化仪表板数据
-                initializeDashboard();
-                
-                // 刷新Lucide图标
-                lucide.createIcons();
-            }, 1500);
-        }
-
-        // 模拟审核拒绝
-        function simulateRejection() {
-            // 显示加载状态
-            const rejectionBtn = event.target;
-            const originalText = rejectionBtn.innerHTML;
-            rejectionBtn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> 处理中...';
-            rejectionBtn.disabled = true;
-
-            // 模拟API调用延迟
-            setTimeout(() => {
-                // 隐藏审核视图
-                document.getElementById('distribution-pending-view').classList.add('hidden');
-                
-                // 显示拒绝视图
-                const rejectedView = document.getElementById('distribution-rejected-view');
-                rejectedView.classList.remove('hidden');
-                
-                // 设置拒绝原因
-                document.getElementById('rejection-reason').innerHTML = `
-                    <div class="p-4 bg-red-50 rounded-lg">
-                        <h4 class="text-sm font-medium text-red-800 mb-2">审核未通过原因</h4>
-                        <ul class="space-y-2 text-sm text-red-700">
-                            <li class="flex items-start gap-2">
-                                <i data-lucide="alert-circle" class="w-4 h-4 mt-0.5"></i>
-                                <span>渠道经验描述不够详细，需要补充具体的行业经验和成功案例</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <i data-lucide="alert-circle" class="w-4 h-4 mt-0.5"></i>
-                                <span>未提供相关资质证明文件，需要补充业务资质或授权证明</span>
-                            </li>
-                        </ul>
-                    </div>
-                `;
-                
-                // 刷新Lucide图标
-                lucide.createIcons();
-            }, 1500);
-        }
-
-        // 重置分销申请
-        function resetDistributionApplication() {
-            // 隐藏拒绝视图
-            document.getElementById('distribution-rejected-view').classList.add('hidden');
-            
-            // 显示申请表单视图
-            document.getElementById('distribution-apply-view').classList.remove('hidden');
-            
-            // 清空表单
-            document.getElementById('individual-form').reset();
-            document.getElementById('company-form').reset();
-        }
-
-        // 初始化分销商仪表板
-        function initializeDashboard() {
-            // 设置基础数据
-            document.getElementById('dist-total-commission').textContent = '¥1,280.00';
-            document.getElementById('dist-withdrawable-commission').textContent = '¥680.00';
-            document.getElementById('dist-customer-count').textContent = '3';
-            document.getElementById('dist-level').textContent = '普通分销商';
-            document.getElementById('dist-rate').textContent = '10%';
-            
-            // 启用提现按钮
-            document.getElementById('withdraw-button').disabled = false;
-            
-            // 添加示例订单数据
-            const ordersTable = document.getElementById('dist-orders-table-body');
-            ordersTable.innerHTML = `
-                <tr>
-                    <td>#20250920001</td>
-                    <td>张三</td>
-                    <td>2025-09-20</td>
-                    <td>¥1,200.00</td>
-                    <td>¥120.00</td>
-                    <td><span class="status-badge completed">已结算</span></td>
-                </tr>
-                <tr>
-                    <td>#20250919002</td>
-                    <td>李四</td>
-                    <td>2025-09-19</td>
-                    <td>¥800.00</td>
-                    <td>¥80.00</td>
-                    <td><span class="status-badge pending">处理中</span></td>
-                </tr>
-            `;
-        }
-
-        // 切换申请表单类型
-        function toggleApplyForm(type) {
-            const individualForm = document.getElementById('individual-form');
-            const companyForm = document.getElementById('company-form');
-            const tabs = document.querySelectorAll('[data-form]');
-
-            tabs.forEach(tab => {
-                if (tab.dataset.form === type) {
-                    tab.classList.add('active', 'bg-blue-50', 'text-blue-600', 'border-b-2', 'border-blue-600');
-                } else {
-                    tab.classList.remove('active', 'bg-blue-50', 'text-blue-600', 'border-b-2', 'border-blue-600');
-                }
-            });
-
-            if (type === 'individual') {
-                individualForm.classList.remove('hidden');
-                companyForm.classList.add('hidden');
-            } else {
-                individualForm.classList.add('hidden');
-                companyForm.classList.remove('hidden');
-            }
-        }
-    </script>
 </body>
 
 </html>
