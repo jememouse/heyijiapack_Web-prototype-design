@@ -130,7 +130,7 @@ const materialData = {
     },
     "银卡纸": {
         "priceFactor": 1.2, 
-        "desc": "银色金属光泽，适合高端包装", 
+        "desc": "银色金属光泽，适合高端包装，建议使用UV胶印", 
         "allowedPrinting": ["uv-offset"], // 只允许UV胶印
         "thicknesses": {
             "0.45mm": [
@@ -1380,7 +1380,7 @@ function handleAddToCart() {
     } else if (printingMethod === 'digital') {
         printingSpec.push('精美数码印刷');
     } else if (printingMethod === 'offset') {
-        const specParts = ['常规胶印方式 (CMYK'];
+        const specParts = ['胶印方式 (CMYK'];
         const spotColorCount = document.querySelector('input[name="printing-spot-color"]:checked').value;
         if (spotColorCount > 0) {
             specParts.push(` + ${spotColorCount}个专色`);
@@ -2371,19 +2371,15 @@ function toggleInnerTrayMaterialOptions(materialType) {
 
 function renderMaterialOptions() {
     const container = document.getElementById('material-type-options');
-    container.innerHTML = Object.keys(materialData).map((key, index) => {
-        const material = materialData[key];
-        return `
-        <label class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 hover:shadow-sm transition-all block">
-            <input type="radio" name="material" value="${key}" data-price-factor="${material.priceFactor}" 
-                onchange="handleMaterialChange()" class="sr-only" ${index === 0 ? 'checked' : ''}>
-            <div>
-                <span class="font-semibold text-base text-slate-800 mb-1 block">${key}</span>
-                <p class="text-sm text-slate-600">${material.desc}</p>
+    container.innerHTML = Object.keys(materialData).map((key, index) => `
+        <label class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 hover:shadow-md transition-all block">
+            <input type="radio" name="material" value="${key}" data-price-factor="${materialData[key].priceFactor}" onchange="handleMaterialChange()" class="sr-only" ${index === 0 ? 'checked' : ''}>
+            <div class="text-center">
+                <span class="font-semibold text-base text-slate-800 mb-2 block">${key}</span>
+                <p class="text-sm text-slate-600 leading-relaxed">${materialData[key].desc}</p>
             </div>
         </label>
-        `;
-    }).join('');
+    `).join('');
     handleMaterialChange();
 }
 

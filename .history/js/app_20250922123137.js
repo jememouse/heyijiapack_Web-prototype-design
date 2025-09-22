@@ -114,6 +114,7 @@ const materialData = {
     "单铜纸": {
         "priceFactor": 1.0, 
         "desc": "挺度好，印刷效果佳", 
+        "feature": "适合高端包装",
         "allowedPrinting": ["offset", "digital"], // 允许胶印和数码印刷
         "thicknesses": {
             "0.45mm": [
@@ -131,6 +132,7 @@ const materialData = {
     "银卡纸": {
         "priceFactor": 1.2, 
         "desc": "银色金属光泽，适合高端包装", 
+        "feature": "推荐UV胶印",
         "allowedPrinting": ["uv-offset"], // 只允许UV胶印
         "thicknesses": {
             "0.45mm": [
@@ -145,6 +147,7 @@ const materialData = {
     "粉灰纸": {
         "priceFactor": 0.9, 
         "desc": "一面白一面灰，性价比高", 
+        "feature": "性价比之选",
         "allowedPrinting": ["offset", "digital"], // 允许胶印和数码印刷
         "thicknesses": {
             "0.55mm": [
@@ -2373,13 +2376,33 @@ function renderMaterialOptions() {
     const container = document.getElementById('material-type-options');
     container.innerHTML = Object.keys(materialData).map((key, index) => {
         const material = materialData[key];
+        const features = material.features.map(feature => 
+            `<span class="inline-flex items-center gap-1 px-2 py-1 bg-${material.color}-50 text-${material.color}-700 rounded text-xs font-medium">
+                <i data-lucide="check" class="w-3 h-3"></i>${feature}
+            </span>`
+        ).join('');
+        
         return `
-        <label class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 hover:shadow-sm transition-all block">
+        <label class="relative border rounded-lg p-4 cursor-pointer has-[:checked]:bg-${material.color}-50 has-[:checked]:border-${material.color}-500 hover:shadow-lg transition-all block group">
             <input type="radio" name="material" value="${key}" data-price-factor="${material.priceFactor}" 
-                onchange="handleMaterialChange()" class="sr-only" ${index === 0 ? 'checked' : ''}>
-            <div>
-                <span class="font-semibold text-base text-slate-800 mb-1 block">${key}</span>
+                onchange="handleMaterialChange()" class="sr-only peer" ${index === 0 ? 'checked' : ''}>
+            <div class="space-y-3">
+                <div class="flex items-start justify-between">
+                    <div class="flex gap-2 items-center">
+                        <div class="w-8 h-8 rounded-full bg-${material.color}-100 text-${material.color}-600 flex items-center justify-center">
+                            <i data-lucide="${material.icon}" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-semibold text-slate-800">${key}</h3>
+                    </div>
+                    <div class="relative w-5 h-5 rounded-full border-2 border-slate-300 peer-checked:border-${material.color}-500 flex items-center justify-center">
+                        <div class="w-3 h-3 rounded-full bg-${material.color}-500 opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                    </div>
+                </div>
                 <p class="text-sm text-slate-600">${material.desc}</p>
+                <div class="flex flex-wrap gap-2">${features}</div>
+                <div class="mt-3 p-3 bg-${material.color}-50/50 rounded-lg text-xs text-slate-600 hidden group-hover:block transition-all">
+                    ${material.details}
+                </div>
             </div>
         </label>
         `;

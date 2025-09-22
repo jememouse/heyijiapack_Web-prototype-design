@@ -114,6 +114,10 @@ const materialData = {
     "单铜纸": {
         "priceFactor": 1.0, 
         "desc": "挺度好，印刷效果佳", 
+        "features": ["挺度优异", "抗折耐磨", "色彩饱满", "适合高端包装"],
+        "details": "高档礼盒首选用纸，印刷效果精美，适用于化妆品、电子产品等高端包装",
+        "icon": "sparkles",
+        "color": "blue",
         "allowedPrinting": ["offset", "digital"], // 允许胶印和数码印刷
         "thicknesses": {
             "0.45mm": [
@@ -131,6 +135,10 @@ const materialData = {
     "银卡纸": {
         "priceFactor": 1.2, 
         "desc": "银色金属光泽，适合高端包装", 
+        "features": ["金属光泽", "防潮防水", "UV效果佳", "奢华高端"],
+        "details": "带有金属光泽的高端包装用纸，UV印刷效果出众，适用于高档化妆品、奢侈品包装",
+        "icon": "star",
+        "color": "yellow",
         "allowedPrinting": ["uv-offset"], // 只允许UV胶印
         "thicknesses": {
             "0.45mm": [
@@ -144,7 +152,7 @@ const materialData = {
     },
     "粉灰纸": {
         "priceFactor": 0.9, 
-        "desc": "一面白一面灰，性价比高", 
+        "desc": "一面优质白面，一面灰色面，挺度适中，印刷效果稳定，经济实惠的包装材料首选", 
         "allowedPrinting": ["offset", "digital"], // 允许胶印和数码印刷
         "thicknesses": {
             "0.55mm": [
@@ -2371,19 +2379,15 @@ function toggleInnerTrayMaterialOptions(materialType) {
 
 function renderMaterialOptions() {
     const container = document.getElementById('material-type-options');
-    container.innerHTML = Object.keys(materialData).map((key, index) => {
-        const material = materialData[key];
-        return `
-        <label class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 hover:shadow-sm transition-all block">
-            <input type="radio" name="material" value="${key}" data-price-factor="${material.priceFactor}" 
-                onchange="handleMaterialChange()" class="sr-only" ${index === 0 ? 'checked' : ''}>
-            <div>
-                <span class="font-semibold text-base text-slate-800 mb-1 block">${key}</span>
-                <p class="text-sm text-slate-600">${material.desc}</p>
+    container.innerHTML = Object.keys(materialData).map((key, index) => `
+        <label class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 hover:shadow-md transition-all block">
+            <input type="radio" name="material" value="${key}" data-price-factor="${materialData[key].priceFactor}" onchange="handleMaterialChange()" class="sr-only" ${index === 0 ? 'checked' : ''}>
+            <div class="text-center">
+                <span class="font-semibold text-base text-slate-800 mb-2 block">${key}</span>
+                <p class="text-sm text-slate-600 leading-relaxed">${materialData[key].desc}</p>
             </div>
         </label>
-        `;
-    }).join('');
+    `).join('');
     handleMaterialChange();
 }
 

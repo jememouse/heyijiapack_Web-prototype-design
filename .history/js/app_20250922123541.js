@@ -2377,9 +2377,12 @@ function renderMaterialOptions() {
         <label class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 hover:shadow-sm transition-all block">
             <input type="radio" name="material" value="${key}" data-price-factor="${material.priceFactor}" 
                 onchange="handleMaterialChange()" class="sr-only" ${index === 0 ? 'checked' : ''}>
-            <div>
-                <span class="font-semibold text-base text-slate-800 mb-1 block">${key}</span>
-                <p class="text-sm text-slate-600">${material.desc}</p>
+            <div class="flex justify-between">
+                <div>
+                    <span class="font-semibold text-base text-slate-800 mb-1 block">${key}</span>
+                    <p class="text-sm text-slate-600">${material.desc}</p>
+                </div>
+                <span class="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded h-fit">${material.feature}</span>
             </div>
         </label>
         `;

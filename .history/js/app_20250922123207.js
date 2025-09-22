@@ -114,6 +114,7 @@ const materialData = {
     "单铜纸": {
         "priceFactor": 1.0, 
         "desc": "挺度好，印刷效果佳", 
+        "feature": "适合高端包装",
         "allowedPrinting": ["offset", "digital"], // 允许胶印和数码印刷
         "thicknesses": {
             "0.45mm": [
@@ -131,6 +132,7 @@ const materialData = {
     "银卡纸": {
         "priceFactor": 1.2, 
         "desc": "银色金属光泽，适合高端包装", 
+        "feature": "推荐UV胶印",
         "allowedPrinting": ["uv-offset"], // 只允许UV胶印
         "thicknesses": {
             "0.45mm": [
@@ -145,6 +147,7 @@ const materialData = {
     "粉灰纸": {
         "priceFactor": 0.9, 
         "desc": "一面白一面灰，性价比高", 
+        "feature": "性价比之选",
         "allowedPrinting": ["offset", "digital"], // 允许胶印和数码印刷
         "thicknesses": {
             "0.55mm": [
@@ -2377,9 +2380,12 @@ function renderMaterialOptions() {
         <label class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 hover:shadow-sm transition-all block">
             <input type="radio" name="material" value="${key}" data-price-factor="${material.priceFactor}" 
                 onchange="handleMaterialChange()" class="sr-only" ${index === 0 ? 'checked' : ''}>
-            <div>
-                <span class="font-semibold text-base text-slate-800 mb-1 block">${key}</span>
-                <p class="text-sm text-slate-600">${material.desc}</p>
+            <div class="flex justify-between">
+                <div>
+                    <span class="font-semibold text-base text-slate-800 mb-1 block">${key}</span>
+                    <p class="text-sm text-slate-600">${material.desc}</p>
+                </div>
+                <span class="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded h-fit">${material.feature}</span>
             </div>
         </label>
         `;

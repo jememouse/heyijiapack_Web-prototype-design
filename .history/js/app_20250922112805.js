@@ -112,10 +112,7 @@ const distributionData = {
 
 const materialData = {
     "单铜纸": {
-        "priceFactor": 1.0, 
-        "desc": "挺度好，印刷效果佳", 
-        "allowedPrinting": ["offset", "digital"], // 允许胶印和数码印刷
-        "thicknesses": {
+        "priceFactor": 1.0, "desc": "挺度好，印刷效果佳", "thicknesses": {
             "0.45mm": [
                 { "value": "305g", "factor": 1.0, "isDefault": true },
                 { "value": "325g", "factor": 1.1 },
@@ -129,10 +126,7 @@ const materialData = {
         }
     },
     "银卡纸": {
-        "priceFactor": 1.2, 
-        "desc": "银色金属光泽，适合高端包装", 
-        "allowedPrinting": ["uv-offset"], // 只允许UV胶印
-        "thicknesses": {
+        "priceFactor": 1.2, "desc": "银色金属光泽，适合高端包装", "thicknesses": {
             "0.45mm": [
                 { "value": "300g", "factor": 1.0, "isDefault": true },
                 { "value": "350g", "factor": 1.1 }
@@ -143,10 +137,7 @@ const materialData = {
         }
     },
     "粉灰纸": {
-        "priceFactor": 0.9, 
-        "desc": "一面白一面灰，性价比高", 
-        "allowedPrinting": ["offset", "digital"], // 允许胶印和数码印刷
-        "thicknesses": {
+        "priceFactor": 0.9, "desc": "一面白一面灰，性价比高", "thicknesses": {
             "0.55mm": [
                 { "value": "350g", "factor": 1.0, "isDefault": true },
                 { "value": "400g", "factor": 1.1 }
@@ -1380,7 +1371,7 @@ function handleAddToCart() {
     } else if (printingMethod === 'digital') {
         printingSpec.push('精美数码印刷');
     } else if (printingMethod === 'offset') {
-        const specParts = ['常规胶印方式 (CMYK'];
+        const specParts = ['胶印方式 (CMYK'];
         const spotColorCount = document.querySelector('input[name="printing-spot-color"]:checked').value;
         if (spotColorCount > 0) {
             specParts.push(` + ${spotColorCount}个专色`);
@@ -2304,32 +2295,14 @@ function copyReferralLink(button) {
 // --- Customization & Product Logic ---
 
 function toggleSpotColorOptions(method) {
-    const uvOptionsDiv = document.getElementById('uv-options');
-    const offsetSpotOptionsDiv = document.getElementById('offset-spot-options');
+    const spotColorDiv = document.getElementById('spot-color-options');
 
-    // 首先隐藏所有选项
-    uvOptionsDiv.classList.add('hidden');
-    offsetSpotOptionsDiv.classList.add('hidden');
-
-    // 根据印刷方式显示对应选项
-    switch (method) {
-        case 'offset':
-            // 显示胶印专色选项
-            offsetSpotOptionsDiv.classList.remove('hidden');
-            // 重置UV专色选项
-            document.querySelector('input[name="uv-spot-color"][value="0"]').checked = true;
-            break;
-        case 'uv-offset':
-            // 显示UV选项（包含UV专色和特殊工艺）
-            uvOptionsDiv.classList.remove('hidden');
-            // 重置胶印专色选项
-            document.querySelector('input[name="offset-spot-color"][value="0"]').checked = true;
-            break;
-        default:
-            // 其他印刷方式，重置所有专色选项
-            document.querySelector('input[name="offset-spot-color"][value="0"]').checked = true;
-            document.querySelector('input[name="uv-spot-color"][value="0"]').checked = true;
-            break;
+    if (method === 'offset') {
+        spotColorDiv.classList.remove('hidden');
+    } else {
+        spotColorDiv.classList.add('hidden');
+        // Reset spot color options when not in offset mode
+        document.querySelector('input[name="printing-spot-color"][value="0"]').checked = true;
     }
 
     updateQuote();
@@ -2371,88 +2344,16 @@ function toggleInnerTrayMaterialOptions(materialType) {
 
 function renderMaterialOptions() {
     const container = document.getElementById('material-type-options');
-    container.innerHTML = Object.keys(materialData).map((key, index) => {
-        const material = materialData[key];
-        return `
-        <label class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 hover:shadow-sm transition-all block">
-            <input type="radio" name="material" value="${key}" data-price-factor="${material.priceFactor}" 
-                onchange="handleMaterialChange()" class="sr-only" ${index === 0 ? 'checked' : ''}>
-            <div>
-                <span class="font-semibold text-base text-slate-800 mb-1 block">${key}</span>
-                <p class="text-sm text-slate-600">${material.desc}</p>
+    container.innerHTML = Object.keys(materialData).map((key, index) => `
+        <label class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 hover:shadow-md transition-all block">
+            <input type="radio" name="material" value="${key}" data-price-factor="${materialData[key].priceFactor}" onchange="renderGrammageOptions(this.value); updateQuote();" class="sr-only" ${index === 0 ? 'checked' : ''}>
+            <div class="text-center">
+                <span class="font-semibold text-base text-slate-800 mb-2 block">${key}</span>
+                <p class="text-sm text-slate-600 leading-relaxed">${materialData[key].desc}</p>
             </div>
         </label>
-        `;
-    }).join('');
-    handleMaterialChange();
-}
-
-function handleMaterialChange() {
-    const selectedMaterial = document.querySelector('input[name="material"]:checked').value;
-    const grammageContainer = document.getElementById('grammage-options-container');
-    const materialInfo = materialData[selectedMaterial];
-
-    if (!materialInfo) {
-        grammageContainer.innerHTML = '';
-        return;
-    }
-
-    // 更新可用的印刷方式
-    const printingMethods = document.querySelectorAll('input[name="printing-method"]');
-    printingMethods.forEach(method => {
-        const methodValue = method.value;
-        const isAllowed = materialInfo.allowedPrinting.includes(methodValue);
-        method.disabled = !isAllowed;
-        const label = method.closest('label');
-        
-        if (isAllowed) {
-            label.classList.remove('opacity-50', 'cursor-not-allowed');
-            label.classList.add('cursor-pointer');
-        } else {
-            label.classList.add('opacity-50', 'cursor-not-allowed');
-            label.classList.remove('cursor-pointer');
-            if (method.checked) {
-                // 如果当前选中的印刷方式不可用，自动选择第一个可用的印刷方式
-                const firstAllowedMethod = document.querySelector(`input[name="printing-method"][value="${materialInfo.allowedPrinting[0]}"]`);
-                if (firstAllowedMethod) {
-                    firstAllowedMethod.checked = true;
-                    toggleSpotColorOptions(firstAllowedMethod.value);
-                }
-            }
-        }
-    });
-
-    const thicknessOptions = Object.keys(materialInfo.thicknesses).map(thickness => {
-        const thicknessData = materialInfo.thicknesses[thickness];
-        const defaultOption = thicknessData.find(g => g.isDefault) || thicknessData[0];
-        
-        return {
-            thickness,
-            defaultGrammage: defaultOption.value,
-            options: thicknessData
-        };
-    });
-
-    const html = thicknessOptions.map((thickOpt, index) => `
-        <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">${thickOpt.thickness}</label>
-            <div class="flex flex-wrap gap-2">
-                ${thickOpt.options.map(opt => `
-                    <label class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
-                        <input type="radio" name="grammage" value="${opt.value}"
-                            data-price-factor="${opt.factor}"
-                            onchange="updateQuote()"
-                            class="sr-only"
-                            ${opt.isDefault ? 'checked' : ''}>
-                        ${opt.value}
-                    </label>
-                `).join('')}
-            </div>
-        </div>
     `).join('');
-
-    grammageContainer.innerHTML = html;
-    updateQuote();
+    renderGrammageOptions(Object.keys(materialData)[0]);
 }
 
 function renderGrammageOptions(materialType) {
@@ -2770,41 +2671,14 @@ function updateQuote() {
 
     const printingMethod = document.querySelector('input[name="printing-method"]:checked').value;
 
-    // 根据印刷方式调整基础价格
-    switch (printingMethod) {
-        case 'none':
-            baseFactor *= 0.8; // 不印刷的折扣
-            break;
-        case 'digital':
-            baseFactor *= 1.2; // 数码印刷的基础价格
-            break;
-        case 'offset':
-            baseFactor *= 1.0; // 标准胶印方式
-            // 获取胶印专色选项的价格系数
-            const offsetSpotColorFactor = parseFloat(document.querySelector('input[name="offset-spot-color"]:checked').dataset.priceFactor);
-            additionalCost += offsetSpotColorFactor * quantity * 10; // 胶印专色成本
-            break;
-        case 'uv-offset':
-            baseFactor *= 1.35; // UV胶印的基础价格更高
-
-            // 计算UV专色成本
-            const uvSpotColorFactor = parseFloat(document.querySelector('input[name="uv-spot-color"]:checked').dataset.priceFactor);
-            additionalCost += uvSpotColorFactor * quantity * 12; // UV专色成本（单价比普通专色高）
-
-            // 计算白墨成本（如果选择）
-            const whiteInkCheckbox = document.querySelector('input[name="uv-white-ink"]:checked');
-            if (whiteInkCheckbox) {
-                const whiteInkFactor = parseFloat(whiteInkCheckbox.dataset.priceFactor);
-                additionalCost += whiteInkFactor * quantity * 12; // 白墨印刷成本
-            }
-
-            // 计算逆向UV工艺成本（如果选择）
-            const reverseUVCheckbox = document.querySelector('input[name="uv-reverse"]:checked');
-            if (reverseUVCheckbox) {
-                const reverseUVFactor = parseFloat(reverseUVCheckbox.dataset.priceFactor);
-                additionalCost += reverseUVFactor * quantity * 15; // 逆向UV工艺成本
-            }
-            break;
+    if (printingMethod === 'none') {
+        baseFactor *= 0.8; // Discount for no printing
+    } else if (printingMethod === 'digital') {
+        baseFactor *= 1.2; // Different base cost for digital
+    } else if (printingMethod === 'offset') {
+        baseFactor *= 1.0; // Offset is standard
+        const spotColorFactor = parseFloat(document.querySelector('input[name="printing-spot-color"]:checked').dataset.priceFactor);
+        additionalCost += spotColorFactor * quantity * 10; // Spot color cost
     }
 
     // Calculate special processes cost

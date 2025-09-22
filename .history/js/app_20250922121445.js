@@ -112,10 +112,7 @@ const distributionData = {
 
 const materialData = {
     "单铜纸": {
-        "priceFactor": 1.0, 
-        "desc": "挺度好，印刷效果佳", 
-        "allowedPrinting": ["offset", "digital"], // 允许胶印和数码印刷
-        "thicknesses": {
+        "priceFactor": 1.0, "desc": "挺度好，印刷效果佳", "thicknesses": {
             "0.45mm": [
                 { "value": "305g", "factor": 1.0, "isDefault": true },
                 { "value": "325g", "factor": 1.1 },
@@ -129,10 +126,7 @@ const materialData = {
         }
     },
     "银卡纸": {
-        "priceFactor": 1.2, 
-        "desc": "银色金属光泽，适合高端包装", 
-        "allowedPrinting": ["uv-offset"], // 只允许UV胶印
-        "thicknesses": {
+        "priceFactor": 1.2, "desc": "银色金属光泽，适合高端包装", "thicknesses": {
             "0.45mm": [
                 { "value": "300g", "factor": 1.0, "isDefault": true },
                 { "value": "350g", "factor": 1.1 }
@@ -143,10 +137,7 @@ const materialData = {
         }
     },
     "粉灰纸": {
-        "priceFactor": 0.9, 
-        "desc": "一面白一面灰，性价比高", 
-        "allowedPrinting": ["offset", "digital"], // 允许胶印和数码印刷
-        "thicknesses": {
+        "priceFactor": 0.9, "desc": "一面白一面灰，性价比高", "thicknesses": {
             "0.55mm": [
                 { "value": "350g", "factor": 1.0, "isDefault": true },
                 { "value": "400g", "factor": 1.1 }
@@ -1380,7 +1371,7 @@ function handleAddToCart() {
     } else if (printingMethod === 'digital') {
         printingSpec.push('精美数码印刷');
     } else if (printingMethod === 'offset') {
-        const specParts = ['常规胶印方式 (CMYK'];
+        const specParts = ['胶印方式 (CMYK'];
         const spotColorCount = document.querySelector('input[name="printing-spot-color"]:checked').value;
         if (spotColorCount > 0) {
             specParts.push(` + ${spotColorCount}个专色`);
@@ -2371,88 +2362,16 @@ function toggleInnerTrayMaterialOptions(materialType) {
 
 function renderMaterialOptions() {
     const container = document.getElementById('material-type-options');
-    container.innerHTML = Object.keys(materialData).map((key, index) => {
-        const material = materialData[key];
-        return `
-        <label class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 hover:shadow-sm transition-all block">
-            <input type="radio" name="material" value="${key}" data-price-factor="${material.priceFactor}" 
-                onchange="handleMaterialChange()" class="sr-only" ${index === 0 ? 'checked' : ''}>
-            <div>
-                <span class="font-semibold text-base text-slate-800 mb-1 block">${key}</span>
-                <p class="text-sm text-slate-600">${material.desc}</p>
+    container.innerHTML = Object.keys(materialData).map((key, index) => `
+        <label class="border rounded-lg p-4 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 hover:shadow-md transition-all block">
+            <input type="radio" name="material" value="${key}" data-price-factor="${materialData[key].priceFactor}" onchange="renderGrammageOptions(this.value); updateQuote();" class="sr-only" ${index === 0 ? 'checked' : ''}>
+            <div class="text-center">
+                <span class="font-semibold text-base text-slate-800 mb-2 block">${key}</span>
+                <p class="text-sm text-slate-600 leading-relaxed">${materialData[key].desc}</p>
             </div>
         </label>
-        `;
-    }).join('');
-    handleMaterialChange();
-}
-
-function handleMaterialChange() {
-    const selectedMaterial = document.querySelector('input[name="material"]:checked').value;
-    const grammageContainer = document.getElementById('grammage-options-container');
-    const materialInfo = materialData[selectedMaterial];
-
-    if (!materialInfo) {
-        grammageContainer.innerHTML = '';
-        return;
-    }
-
-    // 更新可用的印刷方式
-    const printingMethods = document.querySelectorAll('input[name="printing-method"]');
-    printingMethods.forEach(method => {
-        const methodValue = method.value;
-        const isAllowed = materialInfo.allowedPrinting.includes(methodValue);
-        method.disabled = !isAllowed;
-        const label = method.closest('label');
-        
-        if (isAllowed) {
-            label.classList.remove('opacity-50', 'cursor-not-allowed');
-            label.classList.add('cursor-pointer');
-        } else {
-            label.classList.add('opacity-50', 'cursor-not-allowed');
-            label.classList.remove('cursor-pointer');
-            if (method.checked) {
-                // 如果当前选中的印刷方式不可用，自动选择第一个可用的印刷方式
-                const firstAllowedMethod = document.querySelector(`input[name="printing-method"][value="${materialInfo.allowedPrinting[0]}"]`);
-                if (firstAllowedMethod) {
-                    firstAllowedMethod.checked = true;
-                    toggleSpotColorOptions(firstAllowedMethod.value);
-                }
-            }
-        }
-    });
-
-    const thicknessOptions = Object.keys(materialInfo.thicknesses).map(thickness => {
-        const thicknessData = materialInfo.thicknesses[thickness];
-        const defaultOption = thicknessData.find(g => g.isDefault) || thicknessData[0];
-        
-        return {
-            thickness,
-            defaultGrammage: defaultOption.value,
-            options: thicknessData
-        };
-    });
-
-    const html = thicknessOptions.map((thickOpt, index) => `
-        <div>
-            <label class="block text-sm font-medium text-slate-700 mb-2">${thickOpt.thickness}</label>
-            <div class="flex flex-wrap gap-2">
-                ${thickOpt.options.map(opt => `
-                    <label class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
-                        <input type="radio" name="grammage" value="${opt.value}"
-                            data-price-factor="${opt.factor}"
-                            onchange="updateQuote()"
-                            class="sr-only"
-                            ${opt.isDefault ? 'checked' : ''}>
-                        ${opt.value}
-                    </label>
-                `).join('')}
-            </div>
-        </div>
     `).join('');
-
-    grammageContainer.innerHTML = html;
-    updateQuote();
+    renderGrammageOptions(Object.keys(materialData)[0]);
 }
 
 function renderGrammageOptions(materialType) {

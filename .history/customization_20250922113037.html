@@ -159,43 +159,43 @@
                                         <label
                                             class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
                                             <div>
-                                                <span class="font-semibold text-sm">常规胶印方式</span>
-                                                <p class="text-xs text-slate-500 mt-1">适合大批量生产，默认包含CMYK四色印刷</p>
+                                                <span class="font-semibold text-sm">胶印方式</span>
+                                                <p class="text-xs text-slate-500 mt-1">适合大批量生产，默认包含CMYK四色，可增加专色</p>
                                             </div>
                                             <input type="radio" name="printing-method" value="offset"
                                                 onchange="toggleSpotColorOptions(this.value)"
                                                 class="h-4 w-4 text-blue-600 focus:ring-blue-500">
                                         </label>
 
-                                        <!-- 胶印专色选项 (条件显示) -->
-                                        <div id="offset-spot-options"
+                                        <!-- 专色选项 (条件显示) -->
+                                        <div id="spot-color-options"
                                             class="hidden ml-4 pl-4 border-l-2 border-blue-200 space-y-3">
-                                            <label class="block text-sm font-medium text-slate-700">增加专色数量</label>
+                                            <label class="block text-sm font-medium text-slate-700">专色数量</label>
                                             <div class="flex flex-wrap gap-2">
                                                 <label
                                                     class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
-                                                    <input type="radio" name="offset-spot-color" value="0"
+                                                    <input type="radio" name="printing-spot-color" value="0"
                                                         data-price-factor="0" onchange="updateQuote()" class="sr-only"
                                                         checked>
                                                     无专色
                                                 </label>
                                                 <label
                                                     class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
-                                                    <input type="radio" name="offset-spot-color" value="1"
+                                                    <input type="radio" name="printing-spot-color" value="1"
                                                         data-price-factor="0.2" onchange="updateQuote()"
                                                         class="sr-only">
                                                     1个专色
                                                 </label>
                                                 <label
                                                     class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
-                                                    <input type="radio" name="offset-spot-color" value="2"
+                                                    <input type="radio" name="printing-spot-color" value="2"
                                                         data-price-factor="0.4" onchange="updateQuote()"
                                                         class="sr-only">
                                                     2个专色
                                                 </label>
                                                 <label
                                                     class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
-                                                    <input type="radio" name="offset-spot-color" value="3"
+                                                    <input type="radio" name="printing-spot-color" value="3"
                                                         data-price-factor="0.6" onchange="updateQuote()"
                                                         class="sr-only">
                                                     3个专色
@@ -205,82 +205,6 @@
                                                 <div class="text-xs text-blue-700">
                                                     <p class="font-medium mb-1">专色说明</p>
                                                     <p>专色是指预先调配好的特定颜色油墨，可实现更精准的色彩表现，常用于品牌标准色、金属色等特殊效果。</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- UV胶印方式 -->
-                                        <label
-                                            class="border rounded-lg p-3 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 flex items-center justify-between">
-                                            <div>
-                                                <span class="font-semibold text-sm">UV胶印方式</span>
-                                                <p class="text-xs text-slate-500 mt-1">UV油墨速干特性，适合特种纸张，可实现特殊印刷效果</p>
-                                            </div>
-                                            <input type="radio" name="printing-method" value="uv-offset"
-                                                onchange="toggleSpotColorOptions(this.value)"
-                                                class="h-4 w-4 text-blue-600 focus:ring-blue-500">
-                                        </label>
-
-                                        <!-- UV选项（条件显示） -->
-                                        <div id="uv-options"
-                                            class="hidden ml-4 pl-4 border-l-2 border-blue-200 space-y-4">
-                                            <!-- UV专色选项 -->
-                                            <div class="space-y-3">
-                                                <label class="block text-sm font-medium text-slate-700">增加专色数量</label>
-                                                <div class="flex flex-wrap gap-2">
-                                                    <label
-                                                        class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
-                                                        <input type="radio" name="uv-spot-color" value="0"
-                                                            data-price-factor="0" onchange="updateQuote()" class="sr-only"
-                                                            checked>
-                                                        无专色
-                                                    </label>
-                                                    <label
-                                                        class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
-                                                        <input type="radio" name="uv-spot-color" value="1"
-                                                            data-price-factor="0.25" onchange="updateQuote()"
-                                                            class="sr-only">
-                                                        1个专色
-                                                    </label>
-                                                    <label
-                                                        class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
-                                                        <input type="radio" name="uv-spot-color" value="2"
-                                                            data-price-factor="0.5" onchange="updateQuote()"
-                                                            class="sr-only">
-                                                        2个专色
-                                                    </label>
-                                                    <label
-                                                        class="border rounded-md px-3 py-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 text-sm hover:shadow-sm transition-all">
-                                                        <input type="radio" name="uv-spot-color" value="3"
-                                                            data-price-factor="0.75" onchange="updateQuote()"
-                                                            class="sr-only">
-                                                        3个专色
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <!-- UV特殊工艺选项 -->
-                                            <div class="space-y-3">
-                                                <label class="block text-sm font-medium text-slate-700">UV特殊工艺</label>
-                                                <div class="space-y-2">
-                                                    <label class="flex items-center justify-between border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500">
-                                                        <div>
-                                                            <span class="text-sm font-medium">印刷白墨</span>
-                                                            <p class="text-xs text-slate-500">在深色材质上打印白色底色，提升色彩表现</p>
-                                                        </div>
-                                                        <input type="checkbox" name="uv-white-ink" value="white-ink"
-                                                            data-price-factor="0.3" onchange="updateQuote()"
-                                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500">
-                                                    </label>
-                                                    <label class="flex items-center justify-between border rounded-md p-2 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500">
-                                                        <div>
-                                                            <span class="text-sm font-medium">逆向UV工艺</span>
-                                                            <p class="text-xs text-slate-500">在表面涂层下印刷，实现防刮花效果</p>
-                                                        </div>
-                                                        <input type="checkbox" name="uv-reverse" value="reverse-uv"
-                                                            data-price-factor="0.4" onchange="updateQuote()"
-                                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500">
-                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
