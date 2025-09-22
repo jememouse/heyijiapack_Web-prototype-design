@@ -714,7 +714,8 @@
                                     <h3 class="text-lg font-semibold mb-3">10. 输入数量 * <span
                                             class="text-xs text-green-600 font-normal">（支持1个起订）</span></h3>
                                     <div class="relative">
-                                        <input type="number" name="quantity" id="quantity" value="1" min="1"
+                                        <label for="quantity" class="block text-sm font-medium text-slate-700 mb-1">数量 *</label>
+                                        <input type="number" name="quantity" id="quantity" value="1" min="1" placeholder="请输入数量"
                                             oninput="updateQuote()"
                                             class="w-full p-4 bg-white border-2 border-slate-400 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-500 transition-colors font-semibold text-lg text-slate-900">
                                         <div
@@ -725,31 +726,78 @@
                                     <p class="text-xs text-slate-500 mt-2">最小起订量：1个，无需担心库存压力</p>
                                 </div>
                             </div>
-                            <!-- 价格 -->
-                            <div class="bg-white rounded-xl shadow-sm p-6 mt-6 sticky bottom-6">
-                                <div class="space-y-2 text-sm">
-                                    <div class="flex justify-between items-center text-slate-600"><span>产品单价</span><span
-                                            id="unit-price" class="font-medium text-slate-800">¥ 0.00</span></div>
-                                    <div class="flex justify-between items-center text-slate-600"><span>产品总价</span><span
-                                            id="subtotal-price" class="font-medium text-slate-800">¥ 0.00</span></div>
-                                    <div class="flex justify-between items-center text-slate-600"><span>物流费用</span><span
-                                            id="logistics-fee" class="font-medium text-slate-800">¥ 0.00</span></div>
-                                    <div class="flex justify-between items-center text-slate-600"><span>预计货期</span><span
-                                            id="lead-time" class="font-medium text-slate-800">-</span></div>
-                                </div>
-                                <div class="border-t border-slate-200 my-4"></div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-lg font-semibold">总计价</span>
-                                    <span id="total-price" class="text-2xl font-bold text-blue-600">¥ 0.00</span>
-                                </div>
-                                <button onclick="handleAddToCart()"
-                                    class="mt-6 w-full btn-primary text-white px-8 py-3 rounded-lg font-bold text-base transition-all">加入购物车</button>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
+
+        <!-- 价格面板 - 浮动在页面底部 -->
+        <div id="floating-price-panel" class="fixed bottom-0 left-0 right-0 bg-white shadow-2xl border-t border-slate-200 z-40 md:border-t-0 md:shadow-lg">
+            <div class="px-4 py-3 md:px-6 md:py-3 flex flex-col md:flex-row md:items-start md:justify-between gap-1 md:gap-1">
+                <!-- 合并总计与价格明细面板 -->
+                <div class="w-full md:w-1/2 text-left">
+                    <div class="bg-white rounded-lg p-3 md:p-4 border border-slate-200 shadow-sm flex flex-col md:flex-row gap-2 md:gap-3 items-start md:items-center justify-between min-h-10">
+                        <!-- 总计部分 -->
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2.5 border border-blue-200 flex flex-row items-center justify-between gap-3 flex-1">
+                            <!-- 总价块 -->
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-bold text-slate-700">总价</span>
+                                <span id="total-price" class="text-lg md:text-xl font-extrabold text-blue-600">¥ 16.31</span>
+                            </div>
+                            <!-- 预计货期块 -->
+                            <div class="flex items-center text-xs text-slate-500 gap-1">
+                                <i data-lucide="calendar" class="w-3 h-3 text-slate-400"></i>
+                                <span id="lead-time-desktop">预计货期 - 3天</span>
+                            </div>
+                        </div>
+                        <!-- 价格明细部分 - 移动端一行水平 -->
+                        <div class="flex-1 md:w-1/2 text-xs md:text-sm text-slate-600 flex flex-col gap-1 h-full">
+                            <!-- 移动端两行：单价 / 毛重 -->
+                            <div class="flex flex-col gap-1 md:hidden">
+                                <div class="flex items-center justify-start">
+                                    <span class="text-xs text-slate-600">单价</span>
+                                    <span id="unit-price-mobile" class="text-sm text-slate-900 font-semibold text-left ml-2">¥ 4.29</span>
+                                </div>
+                                <div class="flex items-center justify-start">
+                                    <span class="text-xs text-slate-600">毛重</span>
+                                    <span id="weight-mobile" class="text-sm text-slate-900 font-semibold text-left ml-2">10kg</span>
+                                </div>
+                            </div>
+                            <!-- 桌面端两行：单价 / 毛重 -->
+                            <div class="hidden md:flex flex-col gap-1 flex-1">
+                                <div class="flex items-center justify-start">
+                                    <span class="text-sm text-slate-600">单价</span>
+                                    <span id="unit-price" class="text-sm text-slate-900 font-semibold text-left ml-2">¥ 4.29</span>
+                                </div>
+                                <div class="flex items-center justify-start">
+                                    <span class="text-sm text-slate-600">毛重</span>
+                                    <span id="weight" class="text-sm text-slate-900 font-semibold text-left ml-2">10kg</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 行动区：数量输入 + 按钮 -->
+                <div class="w-full md:w-1/2 flex flex-col md:flex-row gap-3 md:gap-0 items-end md:items-center justify-end mt-2 md:mt-0">
+                    <div class="flex flex-col items-start w-full md:w-auto">
+                        <label class="hidden sm:block text-xs md:text-sm font-bold text-slate-700 mb-1">数量</label>
+                        <div class="relative flex items-center w-full md:w-auto">
+                            <button onclick="updateQuantityPanel(-1)" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-l-lg border border-slate-300 transition-colors flex items-center justify-center">-</button>
+                            <input type="number" id="quantity-panel" value="1" min="1" placeholder="1" oninput="syncQuantityAndUpdate()"
+                                class="flex-1 p-2 text-center bg-white border-0 focus:outline-none font-semibold text-sm md:text-base text-slate-900 border-l border-r border-slate-300 h-10">
+                            <button onclick="updateQuantityPanel(1)" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-r-lg border border-slate-300 transition-colors flex items-center justify-center">+</button>
+                        </div>
+                        <p class="hidden sm:block text-xs text-slate-500 mt-1">最小起订量：1个</p>
+                    </div>
+                    <button onclick="handleAddToCart()" class="flex-shrink-0 flex items-center justify-center btn-primary text-white px-8 py-3 md:py-4 rounded-xl font-bold text-sm md:text-base transition-all shadow-lg hover:shadow-xl bg-gradient-to-r from-blue-600 to-blue-700 h-10 md:h-auto">
+                        <i data-lucide="shopping-cart" class="w-4 h-4 mr-2"></i>
+                        加入购物车
+                    </button>
+                </div>
+            </div>
+        </div>
 
         <footer class="bg-white border-t border-slate-200 mt-16">
             <div class="container mx-auto px-8 md:px-16 py-8">

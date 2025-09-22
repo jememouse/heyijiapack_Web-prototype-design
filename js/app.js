@@ -2846,14 +2846,17 @@ function updateQuote() {
         const logisticsFee = quantity * 0.02 + 12;
 
         document.getElementById('unit-price').textContent = `¥ ${finalUnitPrice.toFixed(2)}`;
-        document.getElementById('subtotal-price').textContent = `¥ ${subtotal.toFixed(2)}`;
-        document.getElementById('logistics-fee').textContent = `¥ ${logisticsFee.toFixed(2)}`;
         document.getElementById('total-price').textContent = `¥ ${(subtotal + logisticsFee).toFixed(2)}`;
+        // 更新统一明细：单价 + 毛重 (PC/移动端)
+        const unitPriceElements = document.querySelectorAll('#unit-price, #unit-price-mobile');
+        const weightElements = document.querySelectorAll('#weight, #weight-mobile');
+        unitPriceElements.forEach(el => el.textContent = `¥ ${finalUnitPrice.toFixed(2)}`);
+        // 计算毛重：每个盒子 0.1kg
+        const weightPerItem = 0.1; // kg per item
+        const totalWeight = (quantity * weightPerItem).toFixed(0);
+        weightElements.forEach(el => el.textContent = `${totalWeight}kg`);
 
-        const leadTime = 7 + Math.ceil(quantity / 2000) + (additionalCost > 0 ? 2 : 0);
-        const deliveryDate = new Date();
-        deliveryDate.setDate(deliveryDate.getDate() + leadTime);
-        document.getElementById('lead-time').textContent = deliveryDate.toLocaleDateString('zh-CN');
+        document.getElementById('lead-time-desktop').textContent = '预计货期 - 3天';
     } else {
         document.getElementById('unit-price').textContent = '¥ 0.00';
         document.getElementById('subtotal-price').textContent = '¥ 0.00';
@@ -2995,5 +2998,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+    }
+});
+
+// 同步面板数量输入框与原数量
+function syncQuantityAndUpdate() {
+    const originalQuantity = document.getElementById('quantity');
+    const panelQuantity = document.getElementById('quantity-panel');
+    if (originalQuantity && panelQuantity) {
+        const newValue = parseInt(panelQuantity.value) || 1;
+        originalQuantity.value = newValue;
+        panelQuantity.value = newValue;
+        updateQuote();
+    }
+}
+
+// 初始化时同步面板数量
+document.addEventListener('DOMContentLoaded', function() {
+    const originalQuantity = document.getElementById('quantity');
+    const panelQuantity = document.getElementById('quantity-panel');
+    if (originalQuantity && panelQuantity) {
+        panelQuantity.value = originalQuantity.value;
+        panelQuantity.addEventListener('input', syncQuantityAndUpdate);
     }
 });
